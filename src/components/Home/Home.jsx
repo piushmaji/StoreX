@@ -3,6 +3,8 @@ import Navbar from '../Navbar/Navbar'
 import ImgSlider from './ImgSlider'
 import Deal from './Deal'
 import CategoryCards from './CategoryCards/CategoryCards'
+import SendInquiry from './SendInquiry'
+import RecomendedItems from './RecomendedItems'
 
 const Home = () => {
     const homeDecorData = {
@@ -132,6 +134,12 @@ const Home = () => {
 
             {/* ELectronics and gadgets section */}
             <CategoryCards {...electronicsGadgets} />
+
+            {/* Send Inquiry section */}
+            <SendInquiry />
+
+            {/* Recomended Items section */}
+            <RecomendedItems />
         </div>
     )
 }
