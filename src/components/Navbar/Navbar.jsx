@@ -9,7 +9,7 @@ const Navbar = () => {
                     <Menu className='lg:hidden h-7 w-7' />
                     <img
                         className='lg:h-22 lg:w-22 h-18 w-18 drop-shadow-lg'
-                        src="../public/img/mainLogo.png" alt="logo" />
+                        src="img/mainLogo.png" alt="logo" />
                     <h1 className='text-3xl text-blue-500'>StoreX</h1>
                 </div>
 
