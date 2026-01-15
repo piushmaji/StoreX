@@ -7,6 +7,7 @@ import SendInquiry from './SendInquiry'
 import RecomendedItems from './RecomendedItems'
 import ExtraService from './ExtraService'
 import Suppliers from './Suppliers'
+import Footer from '../Footer/Footer'
 
 const Home = () => {
     const homeDecorData = {
@@ -152,6 +153,7 @@ const Home = () => {
                 {/* Suppliers by region section  */}
                 <Suppliers />
             </div>
+            <Footer />
         </div>
     )
 }

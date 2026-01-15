@@ -31,10 +31,10 @@ const Navbar = () => {
                 </div>
 
                 {/* Search bar section */}
-                <form className='flex justify-center items-center col-span-2 lg:col-span-4 lg:order-2 p-2 '>
-
+                <form className='relative flex justify-center items-center col-span-2 lg:col-span-4 lg:order-2 p-2 '>
+                    <Search className="absolute lg:left-6 left-14 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                     <input
-                        className='border-2 border-r w-4/6 h-10 rounded-l-xl p-2 focus:outline-none focus:ring-0 border-blue-500'
+                        className='border-2 border-r w-4/6 h-10 rounded-l-xl pl-10 focus:outline-none focus:ring-0 border-blue-500 '
                         type="text" placeholder='Search' />
 
                     <select className='border-2 w-1/6 h-10 border-l-0 p-2 focus:outline-none focus:ring-0 border-blue-500 hidden lg:block md:block sm:block'>

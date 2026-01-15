@@ -7,9 +7,9 @@ const SendInquiry = () => {
                 <div>
                     <img
                         className='lg:h-100 h-140  w-full object-cover rounded-lg '
-                        src="https://images.unsplash.com/photo-1449247666642-264389f5f5b1?q=80&w=2069&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" />
+                        src="img/quiry/factory.svg" alt="" />
                 </div>
-                <div className='lg:h-100 h-140 grid lg:grid-cols-6 justify-center items-center absolute inset-0  bg-linear-to-r from-blue-500/80 to-teal-300/40 rounded-lg lg:pb-2 lg:pt-2'>
+                <div className='lg:h-100 h-140 grid lg:grid-cols-6 justify-center items-center absolute inset-0  bg-linear-to-r from-blue-600/80 to-teal-300/50 rounded-lg lg:pb-2 lg:pt-2'>
                     <div className=' lg:col-span-2 flex flex-col  lg:pt-0 lg:pl-14 pt-5 pl-16  gap-5 text-justify text-gray-100'>
                         <h1 className='text-4xl text-left text-gray-50 w-110'>An easy way to send requests to all suppliers</h1>
                         <p className='w-90'>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Facilis quos enim error sunt quibusdam, suscipit cupiditate itaque rem earum expedita?</p>
