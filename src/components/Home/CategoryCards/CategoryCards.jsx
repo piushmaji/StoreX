@@ -23,7 +23,7 @@ const CategoryCards = ({ title, buttonText, bgImage, items }) => {
 
                     {items.map((category) => (
                         <div
-                            key={items.id}
+                            key={category.id}
                             className="h-48 w-full flex bg-gray-50 border-r border-b border-gray-300 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
                             <div className="pt-5 pl-3">
                                 <h1 className="text-xl pb-2">{category.name}</h1>

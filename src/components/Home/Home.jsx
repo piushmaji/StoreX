@@ -5,9 +5,12 @@ import Deal from './Deal'
 import CategoryCards from './CategoryCards/CategoryCards'
 import SendInquiry from './SendInquiry'
 import RecomendedItems from './RecomendedItems'
+import ExtraService from './ExtraService'
+import Suppliers from './Suppliers'
 
 const Home = () => {
     const homeDecorData = {
+        id: 101,
         title: "Home and Outdoor",
         buttonText: "Source Now",
         bgImage: "https://images.unsplash.com/photo-1616046229478-9901c5536a45?q=80&w=1480&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -64,6 +67,7 @@ const Home = () => {
     }
 
     const electronicsGadgets = {
+        id: 102,
         title: "Electronics and gadgets",
         buttonText: "Source Now",
         bgImage: "https://images.unsplash.com/photo-1623970405357-1eb737075953?q=80&w=1036&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
@@ -119,27 +123,35 @@ const Home = () => {
         ],
     }
     return (
-        <div className='w-full bg-gray-50'>
+        <div className='w-full bg-blue-50 '>
             {/* navbar */}
             <Navbar />
 
-            {/* image slider page */}
-            <ImgSlider />
+            <div className='lg:p-18 lg:pt-4 lg:pb-0'>
+                {/* image slider page */}
+                <ImgSlider />
 
-            {/* Deal section page */}
-            <Deal />
+                {/* Deal section page */}
+                <Deal />
 
-            {/* Home and decor section */}
-            <CategoryCards {...homeDecorData} />
+                {/* Home and decor section */}
+                <CategoryCards {...homeDecorData} />
 
-            {/* ELectronics and gadgets section */}
-            <CategoryCards {...electronicsGadgets} />
+                {/* ELectronics and gadgets section */}
+                <CategoryCards {...electronicsGadgets} />
 
-            {/* Send Inquiry section */}
-            <SendInquiry />
+                {/* Send Inquiry section */}
+                <SendInquiry />
 
-            {/* Recomended Items section */}
-            <RecomendedItems />
+                {/* Recomended Items section */}
+                <RecomendedItems />
+
+                {/* Extra Service section */}
+                <ExtraService />
+
+                {/* Suppliers by region section  */}
+                <Suppliers />
+            </div>
         </div>
     )
 }

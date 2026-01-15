@@ -79,10 +79,10 @@ const Navbar = () => {
 
                         <select name="shipment" id="shipment" className='focus:outline-0'>
                             <option value="Ship" disabled>Ship To</option>
-                            <option value="India">India</option>
-                            <option value="Japan">Japan</option>
-                            <option value="UK">UK</option>
-                            <option value="USA">USA</option>
+                            <option value="India">India 🇮🇳</option>
+                            <option value="Japan">Japan 🇯🇵</option>
+                            <option value="UK">UK 🇬🇧</option>
+                            <option value="USA">USA 🇺🇸</option>
                         </select>
                     </div>
                 </div>
