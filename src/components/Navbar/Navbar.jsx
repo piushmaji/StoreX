@@ -14,7 +14,7 @@ const Navbar = () => {
                 </div>
 
                 {/* Profile section */}
-                <div className='flex grid-span-1 lg:col-span-2 gap-4 text-gray-500 lg:order-3 pl-28 sm:pl-36 md:pl-52 lg:pl-16'>
+                <div className='flex grid-span-1 lg:col-span-2 gap-4 text-gray-500 lg:order-3  sm:pl-36 md:pl-52 lg:pl-16'>
                     <div className='flex flex-col items-center justify-center'>
                         <UserRound />
                         <h2>Profile</h2>
@@ -54,7 +54,7 @@ const Navbar = () => {
             </div>
 
             <div className='hidden md:block lg:block'>
-                <div className='flex justify-around items-center gap-5 h-15 border border-l-0 border-r-0 border-gray-300 w-full pl-4 bg-gray-50 '>
+                <div className='flex justify-between items-center pl-42 pr-32 h-15 border border-l-0 border-r-0 border-gray-300 w-full bg-gray-50 '>
 
                     <div className='flex gap-2 '>
                         <Menu />
