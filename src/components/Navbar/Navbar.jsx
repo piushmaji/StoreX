@@ -2,19 +2,19 @@ import { Heart, Menu, MessageSquareText, Search, ShoppingCart, UserRound } from 
 const Navbar = () => {
     return (
         <div>
-            <div className='grid grid-cols-2 lg:grid-cols-8 w-full h-36 lg:h-20 bg-gray-50 items-center overflow-x-hidden md:pl-10'>
+            <div className='grid grid-cols-2 lg:grid-cols-8 w-full h-36 lg:h-20 bg-gray-50 overflow-x-hidden md:pl-10'>
 
                 {/* BrandName section */}
-                <div className='flex h-full lg:col-span-2 lg:justify-center items-center pl-3'>
+                <div className='flex h-full lg:col-span-2 items-center lg:pl-10 pl-2 gap-2'>
                     <Menu className='lg:hidden h-7 w-7' />
                     <img
-                        className='lg:h-22 lg:w-22 h-18 w-18 drop-shadow-lg'
-                        src="img/mainLogo.png" alt="logo" />
+                        className='h-12 w-12 drop-shadow-lg bg-gray-50 border-2 border-blue-500 rounded-2xl p-1'
+                        src="img/Logo/storex.png" alt="logo" />
                     <h1 className='text-3xl text-blue-500'>StoreX</h1>
                 </div>
 
                 {/* Profile section */}
-                <div className='flex grid-span-1 lg:col-span-2 gap-4 text-gray-500 lg:order-3  sm:pl-36 md:pl-52 lg:pl-16'>
+                <div className='flex grid-span-1 lg:col-span-2 gap-4 text-gray-500 lg:order-3  sm:pl-38 md:pl-52 lg:pl-16 pl-37'>
                     <div className='flex flex-col items-center justify-center'>
                         <UserRound />
                         <h2>Profile</h2>

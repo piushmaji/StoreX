@@ -124,7 +124,7 @@ const Home = () => {
         ],
     }
     return (
-        <div className='w-full bg-blue-50 '>
+        <div className='w-full bg-blue-50 overflow-x-hidden '>
             {/* navbar */}
             <Navbar />
 
