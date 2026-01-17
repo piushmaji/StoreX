@@ -1,13 +1,12 @@
-import React from "react";
-
+import factory from '../../assets/images/quiry/factory.svg'
 const SendInquiry = () => {
   return (
     <section className="p-2">
       <div className="relative rounded-xl overflow-hidden min-h-125">
-        
+
         {/* Background Image */}
         <img
-          src="img/quiry/factory.svg"
+          src={factory}
           alt="Factory"
           className="absolute inset-0 w-full h-full object-cover"
         />

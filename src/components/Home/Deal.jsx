@@ -1,12 +1,12 @@
 import React from 'react'
-
+import { laptop, phone, headphone, camera, watch } from '../../assets/images/DealsandOffers'
 const Deal = () => {
     const products = [
-        { name: "Laptop", img: "img/DealsandOffers/laptop.svg", discount: "10%" },
-        { name: "Phone", img: "img/DealsandOffers/phone.svg", discount: "15%" },
-        { name: "Headphones", img: "img/DealsandOffers/headphone.svg", discount: "20%" },
-        { name: "Camera", img: "img/DealsandOffers/camera.svg", discount: "12%" },
-        { name: "Watch", img: "img/DealsandOffers/watch.svg", discount: "18%" }
+        { name: "Laptop", img: laptop, discount: "10%" },
+        { name: "Phone", img: phone, discount: "15%" },
+        { name: "Headphones", img: headphone, discount: "20%" },
+        { name: "Camera", img: camera, discount: "12%" },
+        { name: "Watch", img: watch, discount: "18%" }
     ];
     const timeData = [
         {

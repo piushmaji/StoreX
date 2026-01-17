@@ -1,5 +1,4 @@
-import React from 'react'
-
+import {bag,blezzer,headphone,cattle,jacket,pant,tshirt,wallet,pot} from '../../assets/images/items-img/index'
 const RecomendedItems = () => {
 
     const products = [
@@ -8,70 +7,70 @@ const RecomendedItems = () => {
             title: "Men's T-Shirt",
             price: 10.30,
             description: "T-shirts with multiple colors, comfortable cotton fabric for daily wear.",
-            img: "/img/items-img/tshirt.svg"
+            img:tshirt
         },
         {
             id: 2,
             title: "Winter Jacket",
             price: 10.30,
             description: "Brown winter jacket with warm inner lining and hood.",
-            img: "/img/items-img/jacket.svg"
+            img:jacket
         },
         {
             id: 3,
             title: "Men's Blazer",
             price: 12.50,
             description: "Stylish blue blazer suitable for formal occasions.",
-            img: "/img/items-img/blezzer.svg"
+            img: blezzer
         },
         {
             id: 4,
             title: "Men's Wallet",
             price: 34.00,
             description: "Premium leather wallet with multiple card slots.",
-            img: "/img/items-img/wallet.svg"
+            img: wallet
         },
         {
             id: 5,
             title: "Leather Backpack",
             price: 99.00,
             description: "Durable leather backpack for travel and daily use.",
-            img: "/img/items-img/bag.svg"
+            img: bag
         },
         {
             id: 6,
             title: "Denim Shorts",
             price: 9.99,
             description: "Classic blue denim shorts with a modern fit.",
-            img: "/img/items-img/pant.svg"
+            img: pant
         },
         {
             id: 7,
             title: "Gaming Headset",
             price: 8.99,
             description: "Comfortable gaming headset with noise-isolating mic.",
-            img: "/img/items-img/headphone.svg"
+            img: headphone
         },
         {
             id: 8,
             title: "Smartwatch",
             price: 10.30,
             description: "Modern silver smartwatch with fitness tracking features.",
-            img: "/img/items-img/bag.svg"
+            img: bag
         },
         {
             id: 9,
             title: "Clay Pot",
             price: 10.30,
             description: "Traditional clay pot suitable for cooking and storage.",
-            img: "/img/items-img/pot.svg"
+            img: pot
         },
         {
             id: 10,
             title: "Electric Kettle",
             price: 80.95,
             description: "Modern electric kettle with fast boiling technology.",
-            img: "/img/items-img/cattle.svg"
+            img: cattle
         }
     ];
 

@@ -1,4 +1,3 @@
-import Navbar from '../Navbar/Navbar'
 import ImgSlider from './ImgSlider'
 import Deal from './Deal'
 import CategoryCards from './CategoryCards/CategoryCards'
@@ -6,7 +5,6 @@ import SendInquiry from './SendInquiry'
 import RecomendedItems from './RecomendedItems'
 import ExtraService from './ExtraService'
 import Suppliers from './Suppliers'
-import Footer from '../Footer/Footer'
 
 const Home = () => {
     const homeDecorData = {
@@ -124,9 +122,7 @@ const Home = () => {
     }
     return (
         <div className='w-full bg-blue-50 overflow-x-hidden '>
-            {/* navbar */}
-            <Navbar />
-
+            
             <div className='lg:p-18 lg:pt-4 lg:pb-0'>
                 {/* image slider page */}
                 <ImgSlider />
@@ -152,7 +148,6 @@ const Home = () => {
                 {/* Suppliers by region section  */}
                 <Suppliers />
             </div>
-            <Footer />
         </div>
     )
 }

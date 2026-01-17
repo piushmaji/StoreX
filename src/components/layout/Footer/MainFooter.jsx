@@ -1,5 +1,7 @@
 import { ChevronUp, Facebook, Instagram, Linkedin, Twitter, Youtube } from 'lucide-react'
-import React from 'react'
+import storex from '../../../assets/images/Logo/storex.png'
+import appleApp from '../../../assets/images/Footer/appleApp.svg'
+import playStore from '../../../assets/images/Footer/playStore.svg'
 
 const MainFooter = () => {
 
@@ -57,7 +59,7 @@ const MainFooter = () => {
           <div className='flex flex-col sm:col-span-2 lg:col-span-2'>
             <div className='flex flex-col items-start gap-3 px-4 py-2'>
               <div className='flex items-center gap-2'>
-                <img className='h-10 w-10 drop-shadow-lg bg-gray-50 border-2 border-blue-500 rounded-2xl p-1' src="img/Logo/storex.png" alt="Logo" />
+                <img className='h-10 w-10 drop-shadow-lg bg-gray-50 border-2 border-blue-500 rounded-2xl p-1' src={storex} alt="Logo" />
                 <h1 className='text-2xl font-semibold'>StoreX</h1>
               </div>
               <div>
@@ -97,8 +99,8 @@ const MainFooter = () => {
               <h1 className='font-medium text-sm sm:text-base'>Get App</h1>
             </div>
             <div className='flex flex-col gap-2'>
-              <img className='hover:cursor-pointer w-32 sm:w-36' src="img/Footer/appleApp.svg" alt="appleApp" />
-              <img className='hover:cursor-pointer w-32 sm:w-36' src="img/Footer/playStore.svg" alt="playStore" />
+              <img className='hover:cursor-pointer w-32 sm:w-36' src={appleApp} alt="appleApp" />
+              <img className='hover:cursor-pointer w-32 sm:w-36' src={playStore} alt="playStore" />
             </div>
           </div>
         </div>

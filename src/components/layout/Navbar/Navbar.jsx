@@ -1,4 +1,6 @@
 import { Heart, Menu, MessageSquareText, Search, ShoppingCart, UserRound } from 'lucide-react'
+import storex from "../../../assets/images/Logo/storex.png"
+
 const Navbar = () => {
     return (
         <div>
@@ -7,9 +9,7 @@ const Navbar = () => {
                 {/* BrandName section */}
                 <div className='flex h-full lg:col-span-2 col-span-6 items-center gap-2'>
                     <Menu className='sm:hidden h-7 w-7' />
-                    <img
-                        className='h-10 w-10 drop-shadow-lg bg-gray-50 border-2 border-blue-500 rounded-2xl p-1'
-                        src="img/Logo/storex.png" alt="logo" />
+                    <img className='h-10 w-10 drop-shadow-lg bg-gray-50 border-2 border-blue-500 rounded-2xl p-1' src={storex} />
                     <h1 className='text-3xl text-blue-500'>StoreX</h1>
                 </div>
 
