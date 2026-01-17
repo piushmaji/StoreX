@@ -1,4 +1,3 @@
-import React from 'react'
 import Navbar from '../Navbar/Navbar'
 import ImgSlider from './ImgSlider'
 import Deal from './Deal'

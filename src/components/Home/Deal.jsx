@@ -8,36 +8,48 @@ const Deal = () => {
         { name: "Camera", img: "img/DealsandOffers/camera.svg", discount: "12%" },
         { name: "Watch", img: "img/DealsandOffers/watch.svg", discount: "18%" }
     ];
+    const timeData = [
+        {
+            id: 1,
+            value: 4,
+            label: "Days",
+        },
+        {
+            id: 2,
+            value: 12,
+            label: "Hour",
+        },
+        {
+            id: 3,
+            value: 32,
+            label: "Min",
+        },
+        {
+            id: 4,
+            value: 53,
+            label: "Sec",
+        },
+    ];
 
     return (
-        <div className='m-2  h-screen lg:h-64 grid grid-rows-6 grid-cols-2 lg:grid-cols-12 lg:col-span-1 lg:grid-rows-1'>
+        <div className='m-2 grid grid-cols-12 lg:col-span-1'>
 
             {/* Deal and offers section */}
-            <div className='h-full col-start-1 col-end-7 row-span-1 lg:col-span-3 bg-gray-50 grid grid-cols-8 lg:block border border-gray-300'>
-                <div className='flex flex-col items-center pt-7 pl-3 col-span-3'>
-                    <h1 className='text-2xl'>Deals and Offers</h1>
-                    <h2 className='text-lg text-gray-400'>Hygiene Equipments</h2>
+            <div className='col-span-12 lg:col-span-3 bg-gray-50 border border-gray-300 flex lg:flex-col justify-between items-center p-5 gap-4'>
+                <div className='flex flex-col '>
+                    <h1 className=' text-xl lg:text-2xl '>Deals and Offers</h1>
+                    <h2 className='text-md text-gray-400'>Hygiene Equipments</h2>
                 </div>
-                <div className='grid grid-cols-4 col-span-5 p-6 lg:pt-7 items-center justify-items-center '>
-                    <div className='h-13 w-13  bg-gray-300 flex flex-col items-center rounded-lg'>
-                        <h2>4</h2>
-                        <h3>Days</h3>
-                    </div>
-                    <div className='h-13 w-13 bg-gray-300 flex flex-col items-center rounded-lg'>
-                        <h2>12</h2>
-                        <h3>Hour</h3>
-                    </div>
-                    <div className='h-13 w-13 bg-gray-300 flex flex-col items-center rounded-lg'>
-                        <h2>32</h2>
-                        <h3>Min</h3>
-                    </div>
-                    <div className='h-13 w-13 bg-gray-300 flex flex-col items-center rounded-lg'>
-                        <h2>53</h2>
-                        <h3>Sec</h3>
-                    </div>
+                <div className='grid grid-cols-4 items-center justify-items-center gap-4'>
+                    {timeData.map((items) => [
+                        <div key={items.id} className='lg:h-13 lg:w-13 h-12 w-12 bg-gray-300 flex flex-col items-center rounded-lg'>
+                            <h2>{items.value}</h2>
+                            <h3>{items.label}</h3>
+                        </div>
+                    ])}
                 </div>
             </div>
-            <div className='h-64 grid grid-cols-2 col-span-2 lg:grid-cols-5  lg:col-span-9 row-span-5 lg:row-col-5'>
+            <div className='grid grid-cols-2 col-span-12 lg:grid-cols-5  lg:col-span-9'>
 
                 {/* Deal Card section */}
 
@@ -54,7 +66,7 @@ const Deal = () => {
                             />
                         </div>
 
-                        <div className="text-2xl flex justify-center">
+                        <div className="text-xl flex justify-center">
                             <h1>{product.name}</h1>
                         </div>
 

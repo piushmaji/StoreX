@@ -2,25 +2,28 @@ import { Heart, Menu, MessageSquareText, Search, ShoppingCart, UserRound } from 
 const Navbar = () => {
     return (
         <div>
-            <div className='grid grid-cols-2 lg:grid-cols-8 w-full h-36 lg:h-20 bg-gray-50 overflow-x-hidden md:pl-10'>
+            <div className='grid grid-cols-12 w-full lg:px-20 lg:py-4 p-2 bg-gray-50 overflow-x-hidden gap-4'>
 
                 {/* BrandName section */}
-                <div className='flex h-full lg:col-span-2 items-center lg:pl-10 pl-2 gap-2'>
-                    <Menu className='lg:hidden h-7 w-7' />
+                <div className='flex h-full lg:col-span-2 col-span-6 items-center gap-2'>
+                    <Menu className='sm:hidden h-7 w-7' />
                     <img
-                        className='h-12 w-12 drop-shadow-lg bg-gray-50 border-2 border-blue-500 rounded-2xl p-1'
+                        className='h-10 w-10 drop-shadow-lg bg-gray-50 border-2 border-blue-500 rounded-2xl p-1'
                         src="img/Logo/storex.png" alt="logo" />
                     <h1 className='text-3xl text-blue-500'>StoreX</h1>
                 </div>
 
                 {/* Profile section */}
-                <div className='flex grid-span-1 lg:col-span-2 gap-4 text-gray-500 lg:order-3  sm:pl-38 md:pl-52 lg:pl-16 pl-37'>
+                <div className='flex justify-end lg:col-span-3 col-span-6 gap-4 text-gray-500 lg:order-3 '>
                     <div className='flex flex-col items-center justify-center'>
                         <UserRound />
                         <h2>Profile</h2>
                     </div>
-
-                    <div className='flex-col items-center justify-center hidden lg:flex md:flex sm:flex'>
+                    <div className='lg:flex flex-col items-center justify-center hidden md:hidden'>
+                        <MessageSquareText />
+                        <h2>Message</h2>
+                    </div>
+                    <div className='flex flex-col items-center justify-center'>
                         <Heart />
                         <h2>Wishlist</h2>
                     </div>
@@ -31,13 +34,13 @@ const Navbar = () => {
                 </div>
 
                 {/* Search bar section */}
-                <form className='relative flex justify-center items-center col-span-2 lg:col-span-4 lg:order-2 p-2 '>
-                    <Search className="absolute lg:left-6 left-14 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <form className='relative flex justify-center items-center col-span-12 lg:col-span-7 lg:order-2 '>
+                    <Search className="absolute lg:left-6 left-5 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                     <input
-                        className='border-2 border-r w-4/6 h-10 rounded-l-xl pl-10 focus:outline-none focus:ring-0 border-blue-500 '
+                        className='border-2 border-r w-full h-10 rounded-l-xl px-12 focus:outline-none focus:ring-0 border-blue-500 '
                         type="text" placeholder='Search' />
 
-                    <select className='border-2 w-1/6 h-10 border-l-0 p-2 focus:outline-none focus:ring-0 border-blue-500 hidden lg:block md:block sm:block'>
+                    <select className='flex-1 border-2 h-10 border-l-0 p-2 focus:outline-none focus:ring-0 border-blue-500 hidden sm:block'>
                         <option value="Category">Category</option>
                         <option value="Phone">Phone</option>
                         <option value="Laptop">Laptop</option>
@@ -45,21 +48,18 @@ const Navbar = () => {
                         <option value="Cloths">Cloths</option>
                     </select>
 
-                    <input
-                        className=' w-1/6 h-10 border-l-0 rounded-r-xl p-2 focus:outline-none focus:ring-0 bg-blue-500 text-white'
-                        type="submit" name="search" />
-
+                    <button className='h-10 w-32 border-l-0 rounded-r-xl p-2 focus:outline-none focus:ring-0 bg-blue-500 text-white'>Submit</button>
                 </form>
 
             </div>
 
-            <div className='hidden md:block lg:block'>
-                <div className='flex justify-between items-center pl-42 pr-32 h-15 border border-l-0 border-r-0 border-gray-300 w-full bg-gray-50 '>
+            <div className='hidden sm:block '>
+                <div className='min-h-14 flex items-center justify-between border border-l-0 border-r-0 border-gray-300 w-full bg-gray-50 lg:px-20 sm:px-2 lg:text-sm text-xs  '>
 
-                    <div className='flex gap-2 '>
+                    <div className='flex gap-2 items-center'>
                         <Menu />
                         <h2>All Category</h2>
-                        <div className='flex gap-5'>
+                        <div className='flex gap-5 '>
                             <a href="#">Hot offers</a>
                             <a href="#">Gift Boxes</a>
                             <a href="#">Projects</a>

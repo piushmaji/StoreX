@@ -1,58 +1,72 @@
-import React from 'react'
+import React from "react";
 
 const SendInquiry = () => {
-    return (
-        <div className='p-2'>
-            <div className=' lg:h-100 h-140 relative '>
-                <div>
-                    <img
-                        className='lg:h-100 h-140  w-full object-cover rounded-lg '
-                        src="img/quiry/factory.svg" alt="" />
-                </div>
-                <div className='lg:h-100 h-140 grid lg:grid-cols-6 justify-center items-center absolute inset-0  bg-linear-to-r from-blue-600/80 to-teal-300/50 rounded-lg lg:pb-2 lg:pt-2'>
-                    <div className=' lg:col-span-2 flex flex-col  lg:pt-0 lg:pl-14 pt-5 pl-16  gap-5 text-justify text-gray-100'>
-                        <h1 className='text-4xl text-left text-gray-50 w-110'>An easy way to send requests to all suppliers</h1>
-                        <p className='w-90'>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Facilis quos enim error sunt quibusdam, suscipit cupiditate itaque rem earum expedita?</p>
-                    </div>
-                    <div className='flex justify-end-safe items-center w-full col-span-4 p-2 pr-10 '>
-                        <form className='lg:h-90 h-80 lg:w-[50%]  p-5 bg-gray-50 flex flex-col gap-5 rounded-2xl'>
-                            <h1 className='text-xl'>Send quote to suppliers</h1>
-                            <input
-                                className='h-10 w-96 rounded-lg bg-gray-50 border border-gray-300 p-2 focus:outline-none'
-                                readOnly
-                                type="text"
-                                value='What item you need?' />
-                            <textarea
-                                className='h-20 w-96 rounded-lg bg-gray-50 border border-gray-300 p-2 placeholder-gray-300 focus:outline-none'
-                                type="r"
-                                placeholder='Type More Detail' />
+  return (
+    <section className="p-2">
+      <div className="relative rounded-xl overflow-hidden min-h-125">
+        
+        {/* Background Image */}
+        <img
+          src="img/quiry/factory.svg"
+          alt="Factory"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
 
-                            <div className='flex gap-5'>
-                                <input
-                                    className='h-10 w-48 rounded-lg bg-gray-50 border border-gray-300 p-2 placeholder-gray-600 focus:outline-none'
-                                    type="text"
-                                    placeholder='Quantity' />
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-linear-to-r from-blue-600/80 to-teal-300/60" />
 
-                                <select className='h-10 w-40 rounded-lg bg-gray-50 border border-gray-300 p-2 placeholder-gray-600 focus:outline-none'>
-                                    <option value="Pcs">Pcs</option>
-                                    <option value="1">1</option>
-                                    <option value="2">2</option>
-                                    <option value="3">3</option>
-                                    <option value="4">4</option>
-                                    <option value="More">More</option>
-                                </select>
-                            </div>
+        {/* Content */}
+        <div className="relative z-10 flex flex-col lg:flex-row items-center lg:items-start justify-between gap-10 px-6 lg:px-14 py-14">
 
-                            <button
-                                className='h-10 w-40 rounded-lg bg-blue-500 p-2 text-gray-50'
-                            >Send Inquiry</button>
+          {/* Left Content */}
+          <div className="text-white max-w-xl space-y-4">
+            <h1 className="text-2xl lg:text-3xl font-semibold">
+              An easy way to send requests to all suppliers
+            </h1>
+            <p className="text-sm text-gray-100">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Facilis quos enim error sunt quibusdam.
+            </p>
+          </div>
 
-                        </form>
-                    </div>
-                </div>
+          {/* Form */}
+          <form className="bg-white rounded-2xl w-full max-w-md p-6 space-y-4 shadow-lg">
+            <h2 className="text-lg font-semibold">Send quote to suppliers</h2>
+
+            <input
+              type="text"
+              readOnly
+              value="What item you need?"
+              className="w-full h-10 border border-gray-300 rounded-lg px-3 text-sm focus:outline-none"
+            />
+
+            <textarea
+              placeholder="Type more details"
+              className="w-full h-24 border border-gray-300 rounded-lg px-3 py-2 text-sm resize-none focus:outline-none"
+            />
+
+            <div className="flex gap-3">
+              <input
+                type="text"
+                placeholder="Quantity"
+                className="flex-1 h-10 border border-gray-300 rounded-lg px-3 text-sm focus:outline-none"
+              />
+
+              <select className="w-28 h-10 border border-gray-300 rounded-lg px-2 text-sm focus:outline-none">
+                <option>Pcs</option>
+                <option>Kg</option>
+                <option>Ton</option>
+              </select>
             </div>
-        </div>
-    )
-}
 
-export default SendInquiry
+            <button className="w-40 h-10 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition">
+              Send Inquiry
+            </button>
+          </form>
+
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default SendInquiry;

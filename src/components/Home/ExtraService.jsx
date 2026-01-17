@@ -49,9 +49,9 @@ const ExtraService = () => {
                                 </div>
 
                                 {/* Icon Section */}
-                                <div className="lg:h-18 lg:w-18 h-14 w-14 lg:top-27 lg:right-9 top-19 right-4 flex justify-center items-center absolute bg-neutral-50 rounded-full ">
+                                <div className="lg:h-18 lg:w-18 h-12 w-12  lg:top-27 lg:right-9 top-14 right-4 flex justify-center items-center absolute bg-neutral-50 rounded-full ">
                                 </div>
-                                <div className="lg:h-16 lg:w-16 h-12 w-12 lg:top-28 lg:right-10 top-20 right-5 flex justify-center items-center absolute bg-blue-200 rounded-full shadow-lg ">
+                                <div className="lg:h-16 lg:w-16 h-10 w-10 lg:top-28 lg:right-10 top-15 right-5 flex justify-center items-center absolute bg-blue-200 rounded-full shadow-lg ">
                                     <Icon className="h-6 w-6" />
                                 </div>
 
