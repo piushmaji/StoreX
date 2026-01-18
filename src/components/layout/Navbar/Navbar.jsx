@@ -1,5 +1,6 @@
 import { Heart, Menu, MessageSquareText, Search, ShoppingCart, UserRound } from 'lucide-react'
 import storex from "../../../assets/images/Logo/storex.png"
+import { Link } from 'react-router-dom'
 
 const Navbar = () => {
     return (
@@ -9,16 +10,16 @@ const Navbar = () => {
                 {/* BrandName section */}
                 <div className='flex h-full lg:col-span-2 col-span-6 items-center gap-2'>
                     <Menu className='sm:hidden h-7 w-7' />
-                    <img className='h-10 w-10 drop-shadow-lg bg-gray-50 border-2 border-blue-500 rounded-2xl p-1' src={storex} />
-                    <h1 className='text-3xl text-blue-500'>StoreX</h1>
+                    <Link to='/'> <img className='h-10 w-10 drop-shadow-lg bg-gray-50 border-2 border-blue-500 rounded-2xl p-1' src={storex} /></Link>
+                    <Link to='/'><h1 className='text-3xl text-blue-500'>StoreX</h1></Link>
                 </div>
 
                 {/* Profile section */}
                 <div className='flex justify-end lg:col-span-3 col-span-6 gap-4 text-gray-500 lg:order-3 '>
-                    <div className='flex flex-col items-center justify-center'>
+                    <Link to="/product" > <div className='flex flex-col items-center justify-center'>
                         <UserRound />
                         <h2>Profile</h2>
-                    </div>
+                    </div></Link>
                     <div className='lg:flex flex-col items-center justify-center hidden md:hidden'>
                         <MessageSquareText />
                         <h2>Message</h2>
@@ -87,7 +88,7 @@ const Navbar = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     )
 }
 
