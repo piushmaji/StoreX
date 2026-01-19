@@ -3,7 +3,7 @@ import { filterConfig } from './filterConfig'
 
 const FilteredCategory = () => {
     return (
-        <div className='h-full bg-blue-50'>
+        <div className='h-full bg-gray-50'>
             <div>
                 {/* Category section */}
                 <div className="border-t border-gray-400 flex flex-col gap-4 py-4">
