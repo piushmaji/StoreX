@@ -165,7 +165,7 @@ const ProductCategory = () => {
       {/* Next Page section  */}
       <div className='flex justify-end-safe items-center py-4 gap-4'>
         <div>
-          <select className=' p-2 bg-white border border-gray-300 rounded-lg '>
+          <select className='p-2 bg-white border border-gray-300 rounded-lg '>
             <option value="ShowPages">Show Pages</option>
             <option value="Show 10">Show 10</option>
             <option value="Show 20">Show 20</option>
@@ -174,23 +174,23 @@ const ProductCategory = () => {
         </div>
         <div>
           <div className='flex items-center justify-center '>
-            <div className='h-8 w-10 bg-gray-50 flex items-center justify-center rounded-l-lg border border-gray-400 border-r-0 '>
+            <button className='h-10 w-10 bg-gray-50 flex items-center justify-center rounded-l-lg border border-gray-400 border-r-0 '>
               <ChevronLeft />
-            </div>
-            <div className='h-8 w-10 bg-gray-50 flex items-center justify-center border border-gray-400 border-r-0 '>
+            </button>
+            <div className='h-10 w-10 bg-gray-50 flex items-center justify-center border border-gray-400 border-r-0 '>
               <h1>1</h1>
             </div>
 
-            <div className='h-8 w-10 bg-gray-50 flex items-center justify-center border border-gray-400 border-r-0 '>
+            <div className='h-10 w-10 bg-gray-50 flex items-center justify-center border border-gray-400 border-r-0 '>
               <h1>2</h1>
             </div>
 
-            <div className='h-8 w-10 bg-gray-50 flex items-center justify-center border border-gray-400 '>
+            <div className='h-10 w-10 bg-gray-50 flex items-center justify-center border border-gray-400 '>
               <h1>3</h1>
             </div>
 
-            <div className='h-8 w-10 bg-gray-50 flex items-center justify-center rounded-r-lg border border-gray-400 border-l-0'>
-              <ChevronRight /></div>
+            <button className='h-10 w-10 bg-gray-50 flex items-center justify-center rounded-r-lg border border-gray-400 border-l-0'>
+              <ChevronRight /></button>
           </div>
         </div>
       </div>
