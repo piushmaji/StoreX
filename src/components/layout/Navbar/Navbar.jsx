@@ -29,8 +29,10 @@ const Navbar = () => {
                         <h2>Wishlist</h2>
                     </div>
                     <div className='flex flex-col items-center justify-center'>
-                        <ShoppingCart />
-                        <h2>Cart</h2>
+                        <Link to='/product/:id'>
+                            <ShoppingCart />
+                            <h2>Cart</h2>
+                        </Link>
                     </div>
                 </div>
 

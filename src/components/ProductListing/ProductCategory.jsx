@@ -111,7 +111,7 @@ const ProductCategory = () => {
         {/* Each Product Category section  */}
         {products.map((items) => [
 
-          <div key={items.id} className='w-full flex bg-white border border-gray-300 rounded-lg p-4'>
+          <div key={items.id} className='w-full flex bg-white border border-gray-300 rounded-lg p-4 hover:cursor-pointer group transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg '>
 
             {/* image  */}
             <div className='w-1/4'>

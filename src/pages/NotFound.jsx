@@ -5,7 +5,7 @@ const NotFound = () => {
     const navigate = useNavigate();
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 flex items-center justify-center px-4 relative overflow-hidden">
+        <div className="min-h-screen bg-linear-to-br from-blue-500 via-blue-600 to-blue-700 flex items-center justify-center px-4 relative overflow-hidden">
             {/* Geometric Background Pattern */}
             <div className="absolute inset-0 opacity-10">
                 <div className="absolute top-20 left-20 w-64 h-64 border-2 border-white transform rotate-45"></div>
@@ -32,7 +32,7 @@ const NotFound = () => {
                         <div className="relative w-32 h-32 md:w-40 md:h-40">
                             {/* Hole */}
                             <div className="w-full h-full bg-blue-800 rounded-full shadow-2xl shadow-blue-900/50 flex items-center justify-center">
-                                <div className="w-[85%] h-[85%] bg-gradient-to-b from-blue-900 to-black rounded-full"></div>
+                                <div className="w-[85%] h-[85%] bg-linear-to-b from-blue-900 to-black rounded-full"></div>
                             </div>
 
                             {/* Ladder */}
