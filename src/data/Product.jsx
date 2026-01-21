@@ -1,4 +1,4 @@
-import { collar, fold, front, wearing } from '../assets/images/ProductsAllSideImages/Tshirt/index'
+import { collar, fold, front, wearing, front1 } from '../assets/images/ProductsAllSideImages/Tshirt/index'
 
 const product = {
     id: "p001",
@@ -10,7 +10,7 @@ const product = {
         collar,
         fold,
         wearing,
-        front,
+        front1,
     ],
 
     rating: {

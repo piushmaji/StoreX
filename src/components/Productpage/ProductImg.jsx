@@ -13,9 +13,9 @@ const ProductImg = () => {
                     {/* Image Showcase Section  */}
                     <section className=' md:grid grid-cols-8 gap-6'>
                         <section className="col-span-3">
-                            <div className='flex justify-around' >
+                            <div className='h-96 flex justify-around' >
                                 <img
-                                    className=' h-full w-full border border-gray-300 rounded-lg object-contain'
+                                    className='h-96 w-full border border-gray-300 rounded-lg object-contain p-4'
                                     src={activeImg} alt={product.title} />
                             </div>
 
