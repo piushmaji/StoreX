@@ -9,7 +9,8 @@ const ProductImg = () => {
             <div key={product.id} >
 
                 <section className=" border border-gray-300 rounded-lg p-6">
-                    
+
+                    {/* Image Showcase Section  */}
                     <section className=' md:grid grid-cols-8 gap-6'>
                         <section className="col-span-3">
                             <div className='flex justify-around' >
@@ -17,9 +18,11 @@ const ProductImg = () => {
                                     className=' h-full w-full border border-gray-300 rounded-lg object-contain'
                                     src={activeImg} alt={product.title} />
                             </div>
-                            <div className='flex py-2 justify-around'>
+
+                            {/*ThumbNail Section */}
+                            <div className='w-full bg-amber-500 flex justify-between p-2 overflow-scroll '>
                                 {product.images.map((img, i) => (
-                                    <img className="h-20 w-20  border border-gray-300 rounded-lg" key={i} src={img} alt={`thumb-${i}`} onClick={() => setActiveImg(img)} />
+                                    <img className="h-20 w-20 border border-gray-300 rounded-lg" key={i} src={img} alt={`thumb-${i}`} onClick={() => setActiveImg(img)} />
                                 ))}
                             </div>
                         </section>
