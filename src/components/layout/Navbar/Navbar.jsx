@@ -3,6 +3,7 @@ import storex from "../../../assets/images/Logo/storex.png"
 import { Link } from 'react-router-dom'
 
 const Navbar = () => {
+
     return (
         <div>
             <div className='grid grid-cols-12 w-full lg:px-20 lg:py-4 p-2 bg-gray-50 overflow-x-hidden gap-4'>
@@ -29,7 +30,7 @@ const Navbar = () => {
                         <h2>Wishlist</h2>
                     </div>
                     <div className='flex flex-col items-center justify-center'>
-                        <Link to='/product/:id'>
+                        <Link to='/product/p003'>
                             <ShoppingCart />
                             <h2>Cart</h2>
                         </Link>

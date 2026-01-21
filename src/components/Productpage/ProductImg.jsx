@@ -1,9 +1,15 @@
 import { Check, Crown, Globe, MessageSquareText, ShieldCheck, X } from "lucide-react"
-import product from "../../data/Product"
 import { useState } from "react"
+import products from "../../data/Products"
+import { useParams } from 'react-router-dom'
 
 const ProductImg = () => {
+
+    const { id } = useParams()
+    const product = products[id]
+
     const [activeImg, setActiveImg] = useState(product.images[0])
+
     return (
         <div>
             <div key={product.id} >
@@ -105,7 +111,7 @@ const ProductImg = () => {
 
                         </section>
 
-                        <section className="col-span-2">
+                        <section className="col-span-2 ">
                             <div className="border border-gray-300 rounded-lg p-6">
                                 <div className="flex gap-4 border-b border-gray-300 pb-4">
                                     <div className="h-14 w-14 flex justify-center items-center bg-green-200 rounded-xl text-4xl text-green-500">
@@ -119,7 +125,7 @@ const ProductImg = () => {
                                 <div className="flex flex-col gap-4 text-gray-400 pt-2">
                                     <div className="flex gap-4 items-center">
                                         <img
-                                            className="h-4 w-6 bg-amber-300"
+                                            className="h-4 w-6 object-cover"
                                             src={product.seller.flag} alt="logo" />
                                         <h1>{product.seller.location}</h1>
 
