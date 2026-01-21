@@ -8,9 +8,9 @@ const ProductImg = () => {
         <div>
             <div key={product.id} >
 
-                <section className="border border-gray-300 rounded-lg p-6">
+                <section className=" border border-gray-300 rounded-lg p-6">
                     
-                    <section className='grid grid-cols-8 gap-6'>
+                    <section className=' md:grid grid-cols-8 gap-6'>
                         <section className="col-span-3">
                             <div className='flex justify-around' >
                                 <img
