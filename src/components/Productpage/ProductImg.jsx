@@ -20,9 +20,9 @@ const ProductImg = () => {
                             </div>
 
                             {/*ThumbNail Section */}
-                            <div className='w-full bg-amber-500 flex justify-between p-2 overflow-scroll '>
+                            <div className='w-full flex justify-between gap-2 py-2 overflow-scroll '>
                                 {product.images.map((img, i) => (
-                                    <img className="h-20 w-20 border border-gray-300 rounded-lg" key={i} src={img} alt={`thumb-${i}`} onClick={() => setActiveImg(img)} />
+                                    <img className="h-20 w-20 border border-gray-300 rounded-lg hover:cursor-pointer" key={i} src={img} alt={`thumb-${i}`} onClick={() => setActiveImg(img)} />
                                 ))}
                             </div>
                         </section>
