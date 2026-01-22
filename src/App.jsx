@@ -3,6 +3,7 @@ import HomePage from "./pages/HomePage"
 import ProductListingPage from "./pages/ProductListingPage"
 import NotFound from "./pages/NotFound"
 import ProductDetails from "./pages/ProductDetails"
+import CartPage from "./pages/CartPage"
 
 
 const router = createBrowserRouter([
@@ -18,6 +19,10 @@ const router = createBrowserRouter([
   {
     path: '/product/:id',
     element: <ProductDetails />
+  },
+  {
+    path: '/cart',
+    element: <CartPage />
   }
 ])
 const App = () => {

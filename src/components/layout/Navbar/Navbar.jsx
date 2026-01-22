@@ -17,10 +17,10 @@ const Navbar = () => {
 
                 {/* Profile section */}
                 <div className='flex justify-end lg:col-span-3 col-span-6 gap-4 text-gray-500 lg:order-3 '>
-                    <Link to="/product" > <div className='flex flex-col items-center justify-center'>
+                    <div className='flex flex-col items-center justify-center'>
                         <UserRound />
                         <h2>Profile</h2>
-                    </div></Link>
+                    </div>
                     <div className='lg:flex flex-col items-center justify-center hidden md:hidden'>
                         <MessageSquareText />
                         <h2>Message</h2>
@@ -30,11 +30,11 @@ const Navbar = () => {
                         <h2>Wishlist</h2>
                     </div>
                     <div className='flex flex-col items-center justify-center'>
-                        <Link to='/product/p003'>
+                        <Link to='/cart'>
 
                             <div className='relative'>
-                                <div className='h-5 w-5 absolute bg-red-400 rounded-full left-6 -top-2 items-center justify-center flex p-1'>
-                                    <span className='text-white text-xs'>14</span>
+                                <div className='h-5 w-5 absolute bg-red-400 rounded-full left-4 -top-2 items-center justify-center flex p-1 border-2 border-gray-50'>
+                                    <span className='text-white text-xs'>0</span>
                                 </div>
                                 <ShoppingCart />
                             </div>
@@ -68,7 +68,10 @@ const Navbar = () => {
 
                     <div className='flex gap-2 items-center'>
                         <Menu />
-                        <h2>All Category</h2>
+                        <Link to="/product" >
+                            <div>
+                                <h2>All Category</h2>
+                            </div> </Link>
                         <div className='flex gap-5 '>
                             <a href="#">Hot offers</a>
                             <a href="#">Gift Boxes</a>
