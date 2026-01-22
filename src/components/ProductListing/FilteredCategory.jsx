@@ -1,5 +1,4 @@
 import { ChevronUp } from "lucide-react"
-import { filterConfig } from './filterConfig'
 
 const FilteredCategory = () => {
     return (

@@ -31,7 +31,13 @@ const Navbar = () => {
                     </div>
                     <div className='flex flex-col items-center justify-center'>
                         <Link to='/product/p003'>
-                            <ShoppingCart />
+
+                            <div className='relative'>
+                                <div className='h-5 w-5 absolute bg-red-400 rounded-full left-6 -top-2 items-center justify-center flex p-1'>
+                                    <span className='text-white text-xs'>14</span>
+                                </div>
+                                <ShoppingCart />
+                            </div>
                             <h2>Cart</h2>
                         </Link>
                     </div>

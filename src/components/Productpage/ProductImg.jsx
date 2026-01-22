@@ -1,4 +1,4 @@
-import { Check, Crown, Globe, MessageSquareText, ShieldCheck, X } from "lucide-react"
+import { Check, Crown, Globe, MessageSquareText, ShieldCheck, ShoppingCart, X } from "lucide-react"
 import { useState } from "react"
 import products from "../../data/Products"
 import { useParams } from 'react-router-dom'
@@ -111,7 +111,7 @@ const ProductImg = () => {
 
                         </section>
 
-                        <section className="col-span-2 ">
+                        <section className="col-span-2 flex flex-col gap-7">
                             <div className="border border-gray-300 rounded-lg p-6">
                                 <div className="flex gap-4 border-b border-gray-300 pb-4">
                                     <div className="h-14 w-14 flex justify-center items-center bg-green-200 rounded-xl text-4xl text-green-500">
@@ -143,6 +143,12 @@ const ProductImg = () => {
                                     <button className="p-2 bg-blue-600 rounded-lg text-white">Send inquiry</button>
                                     <button className="p-2 text-blue-600 rounded-lg bg-white border border-gray-300">Seller’s profile</button>
                                 </div>
+                            </div>
+                            <div className="bg-gray-50 border border-gray-300 rounded-lg flex justify-center items-center p-10">
+                                <button className="p-3 bg-red-500 rounded-lg text-white flex gap-2 hover:cursor-pointer hover:bg-red-600 shadow-xl">
+                                    <ShoppingCart />
+                                    <span>Add To Cart</span>
+                                </button>
                             </div>
                         </section>
                     </section>
