@@ -91,7 +91,7 @@ const MyCart = () => {
                         </div>
 
                         {/* payment and bill section */}
-                        <div className='bg-gray-50 p-4 rounded-lg border border-gray-300 '>
+                        <div className='p-4 rounded-lg border border-gray-300 shadow-xl '>
                             <div className='flex flex-col gap-4'>
                                 <div className='border-b border-gray-300 pb-4'>
                                     <div className='flex flex-col gap-2'>

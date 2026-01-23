@@ -5,7 +5,7 @@ import BasicInfo from './BasicInfo'
 
 const Cart = () => {
     return (
-        <div className='flex flex-col lg:px-20 lg:pt-4 gap-4'>
+        <div className='flex flex-col lg:px-20 lg:pt-4 gap-4 bg-gray-50'>
 
 
             {/*My cart section */}
