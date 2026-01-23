@@ -48,8 +48,8 @@ const MyCart = () => {
                                             </div>
                                             <p>Seller: <span>Artel Market</span></p>
                                         </div>
-                                        <div className='flex lg:gap-2 gap-1'>
-                                            <button className='lg:px-4 p-2 lg:py-2 bg-gray-50 text-sm border border-gray-300 rounded-lg font-light text-red-500 shadow-md cursor-pointer active:scale-95 transition-all duration-200'>Remove</button>
+                                        <div className='w-[60%] flex flex-col lg:flex-row gap-2 '>
+                                            <button className='px-4 py-2 bg-gray-50 text-sm border border-gray-300 rounded-lg font-light text-red-500 shadow-md cursor-pointer active:scale-95 transition-all duration-200'>Remove</button>
                                             <button className='px-4 py-2 bg-gray-50 text-sm border border-gray-300 rounded-lg font-light text-blue-500 shadow-md cursor-pointer active:scale-95 transition-all duration-200'>Save to later</button>
                                         </div>
                                     </div>
