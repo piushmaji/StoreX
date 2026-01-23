@@ -21,10 +21,10 @@ const MyCart = () => {
 
                             <div className='w-full flex justify-between border-b border-gray-300'>
 
-                                <div className='flex gap-4'>
-                                    <div className='h-32 w-32 bg-gray-200 border border-gray-300 rounded-lg flex items-center justify-center p-2'>
+                                <div className='flex gap-4 pb-4'>
+                                    <div className='lg:h-32 lg:w-32 h-24 w-24 bg-gray-200 border border-gray-300 rounded-lg flex items-center justify-center p-2'>
                                         <img
-                                            className='h-28 w-28 object-fill'
+                                            className='lg:h-28 lg:w-28 h-20 w-20 object-fill'
                                             src="https://rukminim2.flixcart.com/image/832/832/xif0q/mobile/y/l/1/-original-imahbfd4cgh53kmh.jpeg?q=70&crop=false" alt="phone" />
                                     </div>
                                     <div className='flex flex-col font-light text-gray-400 gap-2 '>
@@ -48,8 +48,8 @@ const MyCart = () => {
                                             </div>
                                             <p>Seller: <span>Artel Market</span></p>
                                         </div>
-                                        <div className='flex gap-2 pb-4'>
-                                            <button className='px-4 py-2 bg-gray-50 text-sm border border-gray-300 rounded-lg font-light text-red-500 shadow-md cursor-pointer active:scale-95 transition-all duration-200'>Remove</button>
+                                        <div className='flex lg:gap-2 gap-1'>
+                                            <button className='lg:px-4 p-2 lg:py-2 bg-gray-50 text-sm border border-gray-300 rounded-lg font-light text-red-500 shadow-md cursor-pointer active:scale-95 transition-all duration-200'>Remove</button>
                                             <button className='px-4 py-2 bg-gray-50 text-sm border border-gray-300 rounded-lg font-light text-blue-500 shadow-md cursor-pointer active:scale-95 transition-all duration-200'>Save to later</button>
                                         </div>
                                     </div>
