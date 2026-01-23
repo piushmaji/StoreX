@@ -2,7 +2,7 @@ import { ShoppingCart } from 'lucide-react'
 
 const SaveForLater = () => {
     return (
-        <div className='py-8'>
+        <div className='lg:py-8 pb-8'>
             {/*Saved for later section */}
             <section className='flex flex-col border border-gray-300 rounded-lg px-6 py-4  gap-4'>
                 <div className='text-lg font-semibold'>
@@ -25,6 +25,7 @@ const SaveForLater = () => {
                             </button>
                         </div>
                     </div>
+                    
 
                 </div>
             </section>
