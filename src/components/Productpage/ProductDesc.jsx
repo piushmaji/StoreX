@@ -22,28 +22,29 @@ const ProductDesc = () => {
         <div>
             {/*Product Description wala Section */}
             <div className='grid grid-cols-8  gap-4 rounded-lg '>
-                <div className='col-span-6 border border-gray-300 rounded-lg'>
+
+                <div className='lg:col-span-6 col-span-8 border border-gray-300 rounded-lg'>
 
                     {/*navbar Section */}
-                    <div className='flex w-[60%] justify-between px-2 '>
+                    <div className='flex lg:w-[60%] justify-between lg:px-2 p-2 items-center'>
 
-                        <div className='p-4'><h1>Description</h1></div>
-                        <div className='p-4'><h1>Reviews</h1></div>
-                        <div className='p-4'><h1>Shipping</h1></div>
-                        <div className='p-4'><h1>About Seller</h1></div>
+                        <div className='lg:p-4 p-1'><h1>Description</h1></div>
+                        <div className='lg:p-4 p-1'><h1>Reviews</h1></div>
+                        <div className='lg:p-4 p-1'><h1>Shipping</h1></div>
+                        <div className='lg:p-4 p-1'><h1>About Seller</h1></div>
 
                     </div>
 
                     {/*Description Section */}
                     <div className='p-6 w-full border-t border-gray-300'>
                         {/*Description */}
-                        <div className='w-[90%] text-justify'>
+                        <div className='lg:w-[90%] text-justify'>
                             <p>{product.description},{product.features},{Object.values(product.specs)},{Object.values(product.details)}</p>
                         </div>
 
                         {/*Model Table */}
 
-                        <table className="w-[65%] border border-gray-400 border-collapse my-4">
+                        <table className="lg:w-[65%] w-[80%] border border-gray-400 border-collapse my-4">
                             <tbody>
                                 {Object.entries(product.specs).map(([key, value]) => (
                                     <tr key={key} className="border-b border-gray-400">
@@ -71,7 +72,7 @@ const ProductDesc = () => {
                 </div>
 
                 {/* You may like wala extra products wala section */}
-                <div className='col-span-2'>
+                <div className='lg:col-span-2 col-span-8'>
                     <div className='p-4 border border-gray-300 rounded-lg'>
                         <div>
                             <div className='text-xl font-semibold pb-4'><h1>You may like</h1></div>

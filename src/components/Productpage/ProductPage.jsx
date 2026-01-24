@@ -4,7 +4,7 @@ import RelatedProduct from "./RelatedProduct"
 const ProductPage = () => {
 
     return (
-        <div className='min-h-screen flex flex-col justify-between gap-4 lg:px-20 lg:pt-4 overflow-x-hidden bg-gray-50 '>
+        <div className='min-h-screen flex flex-col justify-between gap-4 lg:px-20 lg:pt-4 p-2 overflow-x-hidden bg-gray-50 '>
             {/*Product Image Section */}
             <ProductImg />
 
