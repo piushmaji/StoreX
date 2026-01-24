@@ -15,7 +15,7 @@ const ProductImg = () => {
         if (product?.images?.length) {
             setActiveImg(product.images[0])
         }
-    },)
+    }, [product])
 
     return (
         <div>
@@ -129,7 +129,7 @@ const ProductImg = () => {
 
                         </section>
 
-                        <section className="col-span-2 flex flex-col gap-7">
+                        <section className="col-span-2 flex flex-col gap-5">
                             <div className="border border-gray-300 rounded-lg p-6">
                                 <div className="flex gap-4 border-b border-gray-300 pb-4">
                                     <div className="h-14 w-14 flex justify-center items-center bg-green-200 rounded-xl text-4xl text-green-500">
@@ -158,12 +158,12 @@ const ProductImg = () => {
                                     </div>
                                 </div>
                                 <div className="flex flex-col gap-4 pt-4">
-                                    <button className="p-2 bg-blue-600 rounded-lg text-white">Send inquiry</button>
-                                    <button className="p-2 text-blue-600 rounded-lg bg-white border border-gray-300">Seller’s profile</button>
+                                    <button className="p-2 bg-blue-600 rounded-lg text-white cursor-pointer active:scale-95 transition-all duration-200">Send inquiry</button>
+                                    <button className="p-2 text-blue-600 rounded-lg bg-white border border-gray-300 cursor-pointer active:scale-95 transition-all duration-200">Seller’s profile</button>
                                 </div>
                             </div>
                             <div className="bg-gray-50 border border-gray-300 rounded-lg flex justify-center items-center p-10">
-                                <button className="p-3 bg-red-500 rounded-lg text-white flex gap-2 hover:cursor-pointer hover:bg-red-600 shadow-xl">
+                                <button className="py-3 px-4 bg-red-500 rounded-lg text-white flex gap-2 hover:cursor-pointer hover:bg-red-600 shadow-xl text-sm border border-gray-300 font-light cursor-pointer active:scale-95 transition-all duration-200" >
                                     <ShoppingCart />
                                     <span>Add To Cart</span>
                                 </button>

@@ -26,7 +26,8 @@ import {
     image1 as iphone1,
     image2 as iphone2,
     image3 as iphone3,
-    image4 as iphone4
+    image4 as iphone4,
+    image5 as iphone5,
 } from '../assets/images/products/iphone/index';
 
 import {
@@ -279,7 +280,7 @@ const products = {
         id: "p004",
         title: "iPhone 15 Pro Max - 256GB",
         inStock: true,
-        images: [iphone1, iphone2, iphone3, iphone4],
+        images: [iphone1, iphone2, iphone3, iphone4, iphone5],
         category: "iphone",
         rating: {
             stars: 4.9,
