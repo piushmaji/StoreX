@@ -82,10 +82,10 @@ const ProductDesc = () => {
 
                                         <div key={item.id} >
                                             <div className='h-28 flex gap-4'>
-                                                <div className='h-28 w-28 rounded-lg border bg-white border-gray-300 p-1 flex items-center justify-center'>
+                                                <div className='h-28 w-[35%] rounded-lg border bg-gray-200 border-gray-300 p-2 flex items-center justify-center'>
                                                     <img className=' h-24 w-24 rounded-lg object-contain' src={item.images[0]} alt={item.title} />
                                                 </div>
-                                                <div className=''>
+                                                <div className='w-[65%]'>
                                                     <div><h1>{item.title}</h1></div>
                                                     <div className='text-gray-300'><h1>$7.00-$99.5</h1></div>
                                                 </div>
