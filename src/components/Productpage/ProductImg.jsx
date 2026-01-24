@@ -1,5 +1,5 @@
 import { Check, Crown, Globe, MessageSquareText, ShieldCheck, ShoppingCart, X } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import products from "../../data/Products"
 import { useParams } from 'react-router-dom'
 
@@ -9,6 +9,13 @@ const ProductImg = () => {
     const product = products[id]
 
     const [activeImg, setActiveImg] = useState(product.images[0])
+
+    useEffect(() => {
+
+        if (product?.images?.length) {
+            setActiveImg(product.images[0])
+        }
+    },)
 
     return (
         <div>
@@ -60,12 +67,23 @@ const ProductImg = () => {
                                     </div>
 
                                 </div>
-                                <div className="flex gap-5 px-6 py-4 bg-orange-200 mb-2">
+                                <div className="flex gap-5 px-6 py-4 bg-orange-100 mb-2 ">
+
+                                    {/* Sale Price/Current price */}
+                                    <div className="flex gap-5">
+                                        <div className="flex flex-col items-center">
+                                            <h1 className="font-bold text-xl">₹{product.pricing.retail.salePrice}</h1>
+                                            <h2 className="text-gray-600 font-light text-xs">For 1Pcs</h2>
+                                        </div>
+                                        <div className="border-r-2 border-gray-500" />
+                                    </div>
+
+                                    {/* Bulk price  */}
                                     {product.pricing.bulk.map((item, i) => (
                                         <div key={i} className="flex gap-5">
                                             <div>
-                                                <h1 className={`font-bold text-xl ${i === 0 ? 'text-red-500' : ''}`}>${item.price}</h1>
-                                                <h2 className="text-gray-600 font-light">{item.range}</h2>
+                                                <h1 className={`font-bold text-xl ${i === 0 ? 'text-red-500' : ''}`}>₹{item.price}</h1>
+                                                <h2 className="text-gray-600 text-xs font-light">{item.range}</h2>
                                             </div>
                                             {i !== product.pricing.bulk.length - 1 && (
                                                 <div className="border-r-2 border-gray-500" />
