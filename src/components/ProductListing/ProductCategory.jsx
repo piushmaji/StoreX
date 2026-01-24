@@ -52,12 +52,12 @@ const ProductCategory = () => {
 
               {/* image  */}
               <div className='w-1/4'>
-                <img className='w-full' src={product.images[0]} alt={product.title} />
+                <img className='h-64 w-full object-contain' src={product.images[0]} alt={product.title} />
               </div>
               <div className='flex w-full justify-between'>
 
                 {/* Name  */}
-                <div className='flex flex-col justify-evenly gap-2 px-4'>
+                <div className='flex flex-col justify-evenly px-4'>
                   <section>
                     <h1>{product.title}</h1>
                   </section>
@@ -65,8 +65,8 @@ const ProductCategory = () => {
                   {/* price,old price and ratings  */}
                   <section>
                     <div className='flex gap-2 items-center'>
-                      <h2 className='font-extrabold text-lg'>₹{product.pricing[1].price}</h2>
-                      <h2 className='line-through text-gray-500 text-sm'>₹{product.pricing[0].price}</h2>
+                      <h2 className='font-extrabold text-lg'>₹{product.pricing.retail.salePrice}</h2>
+                      <h2 className='line-through text-gray-500 text-sm'>₹{product.pricing.retail.originalPrice}</h2>
                     </div>
                     <div className='flex gap-6'>
                       <div className='flex gap-2'>
@@ -74,7 +74,7 @@ const ProductCategory = () => {
                         <h1 className='text-yellow-500'>{product.rating.score}</h1>
                       </div>
                       <li className='text-gray-400'>{product.rating.sold} Sold</li>
-                      <li className='text-lime-600'>Free Shipping</li>
+                      <li className='text-lime-600'>{product.shipping.type}</li>
                     </div>
                   </section>
 

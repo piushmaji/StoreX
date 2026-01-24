@@ -61,13 +61,13 @@ const ProductImg = () => {
 
                                 </div>
                                 <div className="flex gap-5 px-6 py-4 bg-orange-200 mb-2">
-                                    {product.pricing.map((item, i) => (
+                                    {product.pricing.bulk.map((item, i) => (
                                         <div key={i} className="flex gap-5">
                                             <div>
                                                 <h1 className={`font-bold text-xl ${i === 0 ? 'text-red-500' : ''}`}>${item.price}</h1>
-                                                <h2 className="text-gray-600 font-light">{product.pricing[0].range}</h2>
+                                                <h2 className="text-gray-600 font-light">{item.range}</h2>
                                             </div>
-                                            {i !== product.pricing.length - 1 && (
+                                            {i !== product.pricing.bulk.length - 1 && (
                                                 <div className="border-r-2 border-gray-500" />
                                             )}
                                         </div>
