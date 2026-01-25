@@ -47,6 +47,7 @@ const ProductCategory = () => {
           <Link
             key={product.id}
             to={`${product.id}`}
+            target="_blank"
           >
             <div key={product.id} className='w-full flex bg-white border border-gray-300 rounded-lg p-4 hover:cursor-pointer group transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg '>
 

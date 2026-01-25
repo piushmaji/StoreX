@@ -78,7 +78,7 @@ const ProductDesc = () => {
                             <div className='text-xl font-semibold pb-4'><h1>You may like</h1></div>
                             <div className='flex flex-col gap-2'>
                                 {featured.map((item) => (
-                                    <Link key={item.id} to={`/product/${item.id}`}>
+                                    <Link key={item.id} to={`/product/${item.id}`} target="_blank">
 
                                         <div key={item.id} >
                                             <div className='h-28 flex gap-4'>

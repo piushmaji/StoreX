@@ -121,9 +121,9 @@ const Home = () => {
         ],
     }
     return (
-        <div className='w-full bg-blue-50 overflow-x-hidden '>
+        <div className='w-full bg-gray-50 overflow-x-hidden '>
             
-            <div className='lg:p-18 lg:pt-4 lg:pb-0'>
+            <div className='lg:p-18 lg:pt-8 lg:pb-0'>
                 {/* image slider page */}
                 <ImgSlider />
 
