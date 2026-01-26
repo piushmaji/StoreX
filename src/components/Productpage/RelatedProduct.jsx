@@ -38,7 +38,7 @@ const RelatedProduct = () => {
                                 </div>
                             </Link>
 
-                            <div className="absolute -right-1 top-3">
+                            <div className="absolute lg:right-0 lg:top-4 -right-1 top-3">
                                 <WishListIcon />
                             </div>
 
