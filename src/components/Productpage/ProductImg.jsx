@@ -1,4 +1,4 @@
-import { Check, Crown, Globe, MessageSquareText, ShieldCheck, ShoppingCart, X } from "lucide-react"
+import { Check, Crown, Globe, MessageSquareText, ShieldCheck, ShoppingCart, X, Zap } from "lucide-react"
 import { useEffect, useState } from "react"
 import products from "../../data/Products"
 import { useParams } from 'react-router-dom'
@@ -25,24 +25,43 @@ const ProductImg = () => {
 
                     {/* Image Showcase Section  */}
                     <section className=' md:grid grid-cols-8 gap-6'>
-                        <section className="col-span-3">
-                            <div className='h-96 flex justify-around' >
-                                <img
-                                    className='h-96 w-full border border-gray-300 rounded-lg object-contain p-4'
-                                    src={activeImg} alt={product.title} />
-                            </div>
+                        <section className="col-span-3 flex flex-col gap-2">
 
-                            {/*ThumbNail Section */}
-                            <div className='w-full flex justify-between gap-2 py-2 overflow-scroll '>
-                                {product.images.map((img, i) => (
-                                    <img className="h-20 w-20 border border-gray-300 rounded-lg hover:cursor-pointer" key={i} src={img} alt={`thumb-${i}`} onClick={() => setActiveImg(img)} />
-                                ))}
-                            </div>
+                            <section className="">
+                                <div className='h-96 flex justify-around' >
+                                    <img
+                                        className='h-96 w-full border border-gray-300 rounded-lg object-contain p-4'
+                                        src={activeImg} alt={product.title} />
+                                </div>
+
+                                {/*ThumbNail Section */}
+                                <div className='w-full flex justify-between gap-2 py-2 overflow-scroll '>
+                                    {product.images.map((img, i) => (
+                                        <img className="h-20 w-20 border border-gray-300 rounded-lg hover:cursor-pointer" key={i} src={img} alt={`thumb-${i}`} onClick={() => setActiveImg(img)} />
+                                    ))}
+                                </div>
+                            </section>
+                            <section className="w-full">
+                                <div className="flex justify-between items-center gap-2">
+
+                                    <button className="w-[50%] py-3 px-4 bg-red-400 rounded-lg text-white flex gap-2 hover:cursor-pointer hover:bg-red-500 shadow-xl text-sm font-light cursor-pointer active:scale-95 transition-all duration-200 items-center justify-center" >
+                                        <ShoppingCart />
+                                        <span>Add To Cart</span>
+                                    </button>
+
+                                    <button className=" w-[50%] py-3 px-4 bg-orange-400 rounded-lg text-white flex gap-2 hover:cursor-pointer hover:bg-orange-500 shadow-xl text-sm font-light cursor-pointer active:scale-95 transition-all duration-200 items-center justify-center" >
+                                        <Zap />
+                                        <span>Buy Now</span>
+                                    </button>
+
+                                </div>
+                            </section>
+
                         </section>
 
-                        <section className="col-span-3">
+                        <section className="col-span-3 flex flex-col justify-between">
 
-                            <div className="flex flex-col gap-2">
+                            <div className="h-[50%] flex flex-col gap-2 ">
                                 <div className={`flex ${product.inStock ? 'text-lime-500' : 'text-red-400'}`}>
                                     {product.inStock ? <Check /> : <X />}
                                     <h1>{product.inStock ? 'In Stock' : 'Not Available'}</h1>
@@ -67,37 +86,35 @@ const ProductImg = () => {
                                     </div>
 
                                 </div>
-                                <div className="flex gap-5 px-6 py-4 bg-orange-100 mb-2 ">
 
+                                <div className="py-">
                                     {/* Sale Price/Current price */}
-                                    <div className="flex gap-5">
-                                        <div className="flex flex-col items-center">
-                                            <h1 className="font-bold text-xl">₹{product.pricing.retail.salePrice}</h1>
-                                            <h2 className="text-gray-600 font-light text-xs">For 1Pcs</h2>
+                                    <div className="flex  items-end gap-2">
+                                        <div className="flex items-end gap-2">
+                                            <h1 className="font-bold text-3xl">₹{product.pricing.retail.salePrice}</h1>
+                                            <h2 className="text-gray-400 text-lg line-through">₹{product.pricing.retail.originalPrice}</h2>
                                         </div>
-                                        <div className="border-r-2 border-gray-500" />
+                                        <h2 className="text-lime-500 text-lg font-semibold">{product.pricing.retail.discountPercentage}% off</h2>
                                     </div>
-
-                                    {/* Bulk price  */}
-                                    {product.pricing.bulk.map((item, i) => (
-                                        <div key={i} className="flex gap-5">
-                                            <div>
-                                                <h1 className={`font-bold text-xl ${i === 0 ? 'text-red-500' : ''}`}>₹{item.price}</h1>
-                                                <h2 className="text-gray-600 text-xs font-light">{item.range}</h2>
-                                            </div>
-                                            {i !== product.pricing.bulk.length - 1 && (
-                                                <div className="border-r-2 border-gray-500" />
-                                            )}
-                                        </div>
-                                    ))}
-
                                 </div>
+
+                                {/*Multiple Color Section */}
+                                <div className="flex-1 flex flex-col py-3">
+                                    <div className="text-gray-500">
+                                        <h1>Colours:</h1>
+                                    </div>
+                                    <div>
+                                        <div className='w-full flex gap-2 py-2 overflow-scroll '>
+                                            {product.images.map((img, i) => (
+                                                <img className="h-16 w-16 border border-gray-300 rounded-lg hover:cursor-pointer" key={i} src={img} alt={`thumb-${i}`} onClick={() => setActiveImg(img)} />
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
 
-
-
-
-                            <div className=" flex flex-col gap-2">
+                            <div className=" flex-1 flex flex-col gap-2 justify-end ">
                                 <div className="grid grid-cols-[180px_1fr] gap-y-3 text-gray-600 font-light">
                                     <h1 className="text-gray-400">Price:</h1>
                                     <h2>{product.details.priceType}</h2>
@@ -110,9 +127,10 @@ const ProductImg = () => {
 
                                     <h1 className="text-gray-400">Design:</h1>
                                     <h2>{product.details.design}</h2>
+
                                 </div>
 
-                                <hr className="text-gray-300 mt-2 pt-2" />
+                                <hr className="text-gray-300" />
 
                                 <div className="grid grid-cols-[180px_1fr] gap-y-3 text-gray-600 font-light">
                                     <h1 className="text-gray-400">Customization: :</h1>
@@ -124,7 +142,7 @@ const ProductImg = () => {
                                     <h1 className="text-gray-400">Warranty:</h1>
                                     <h2>{product.details.warranty}</h2>
                                 </div>
-                                <hr className="text-gray-300 mt-2 pt-2" />
+                                <hr className="text-gray-300 " />
                             </div>
 
                         </section>
@@ -161,12 +179,6 @@ const ProductImg = () => {
                                     <button className="p-2 bg-blue-600 rounded-lg text-white cursor-pointer active:scale-95 transition-all duration-200">Send inquiry</button>
                                     <button className="p-2 text-blue-600 rounded-lg bg-white border border-gray-300 cursor-pointer active:scale-95 transition-all duration-200">Seller’s profile</button>
                                 </div>
-                            </div>
-                            <div className="bg-gray-50 border border-gray-300 rounded-lg flex justify-center items-center p-10">
-                                <button className="py-3 px-4 bg-red-500 rounded-lg text-white flex gap-2 hover:cursor-pointer hover:bg-red-600 shadow-xl text-sm border border-gray-300 font-light cursor-pointer active:scale-95 transition-all duration-200" >
-                                    <ShoppingCart />
-                                    <span>Add To Cart</span>
-                                </button>
                             </div>
                         </section>
                     </section>

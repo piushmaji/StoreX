@@ -27,7 +27,7 @@ const RelatedProduct = () => {
                 <div className='flex gap-4 justify-between overflow-x-scroll'>
                     {featured.map((item) => (
 
-                        <div key={item.id} className="relative w-48 py-4 flex flex-col gap-2 ">
+                        <div key={item.id} className="relative lg:w-48 py-4 flex flex-col gap-2 bg-amber-500 ">
                             <Link key={item.id} to={`/product/${item.id}`} target="_blank" >
                                 <div className='h-48 w-full rounded-lg bg-gray-50 p-4 border border-gray-300'>
                                     <img className='h-full w-full rounded-lg object-contain' src={item.images[0]} alt="" />
