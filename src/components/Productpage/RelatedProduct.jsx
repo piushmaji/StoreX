@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react"
 import products from "../../data/Products"
 import { Link, useParams } from 'react-router-dom'
-
+import { ShoppingCart } from 'lucide-react'
+import WishListIcon from "../common/Filter/WishListIcon/WishListIcon"
 const RelatedProduct = () => {
 
     const { id } = useParams()
@@ -25,16 +26,28 @@ const RelatedProduct = () => {
                 </div>
                 <div className='flex gap-4 justify-between overflow-x-scroll'>
                     {featured.map((item) => (
-                        <Link key={item.id} to={`/product/${item.id}`} target="_blank" > <div key={item.id} className="w-44 py-4 flex flex-col gap-2 ">
-                            <div className='h-48 w-44 rounded-lg bg-gray-50 p-2 border border-gray-300'>
-                                <img className='h-full w-full rounded-lg object-contain' src={item.images[0]} alt="" />
+
+                        <div key={item.id} className="relative w-48 py-4 flex flex-col gap-2 ">
+                            <Link key={item.id} to={`/product/${item.id}`} target="_blank" >
+                                <div className='h-48 w-full rounded-lg bg-gray-50 p-4 border border-gray-300'>
+                                    <img className='h-full w-full rounded-lg object-contain' src={item.images[0]} alt="" />
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <div className="font-light"><h1>{item.title}</h1></div>
+                                    <div className='text-gray-400'><h1>₹{item.pricing.retail.salePrice}</h1></div>
+                                </div>
+                            </Link>
+
+                            <div className="absolute -right-1 top-3">
+                                <WishListIcon />
                             </div>
-                            <div className="flex flex-col gap-2">
-                                <div className="font-light"><h1>{item.title}</h1></div>
-                                <div className='text-gray-400'><h1>₹{item.pricing.retail.salePrice}</h1></div>
-                            </div>
+
+                            <button className='py-2 flex gap-2 items-center justify-center bg-gray-50 border border-gray-300 rounded-lg font-light text-blue-500 shadow-md cursor-pointer active:scale-95 transition-all duration-200'>
+                                <ShoppingCart />
+                                <h1> Add to Cart</h1>
+                            </button>
                         </div>
-                        </Link>
+
                     ))}
                 </div>
             </div>

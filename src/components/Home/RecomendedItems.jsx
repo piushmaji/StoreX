@@ -1,4 +1,5 @@
-import {bag,blezzer,headphone,cattle,jacket,pant,tshirt,wallet,pot} from '../../assets/images/items-img/index'
+import { bag, blezzer, headphone, cattle, jacket, pant, tshirt, wallet, pot } from '../../assets/images/items-img/index'
+import WishListIcon from '../common/Filter/WishListIcon/WishListIcon';
 const RecomendedItems = () => {
 
     const products = [
@@ -7,14 +8,14 @@ const RecomendedItems = () => {
             title: "Men's T-Shirt",
             price: 10.30,
             description: "T-shirts with multiple colors, comfortable cotton fabric for daily wear.",
-            img:tshirt
+            img: tshirt
         },
         {
             id: 2,
             title: "Winter Jacket",
             price: 10.30,
             description: "Brown winter jacket with warm inner lining and hood.",
-            img:jacket
+            img: jacket
         },
         {
             id: 3,
@@ -84,11 +85,14 @@ const RecomendedItems = () => {
                     {products.map((product) => [
                         <div
                             key={product.id}
-                            className='border bg-white border-gray-300 rounded-lg pb-4'>
-                            <div className='flex flex-col pt-4 items-center'>
+                            className='relative border bg-white border-gray-300 rounded-lg py-2'>
+                            <div className='flex flex-col pt-6 items-center'>
                                 <img
                                     className='h-40 w-40 '
                                     src={product.img} alt={product.title} />
+                            </div>
+                            <div className="absolute top-0 right-2">
+                                <WishListIcon />
                             </div>
                             <div className='pl-3 pt-2 w-[70%]'>
                                 <h2>₹{product.price}</h2>
