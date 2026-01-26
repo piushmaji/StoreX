@@ -2,7 +2,7 @@ import { ChevronLeft, ChevronRight, Heart, LayoutGrid, Menu } from 'lucide-react
 import products from '../../data/Products'
 import { Link } from 'react-router-dom'
 import { Rating } from '@mui/material'
-
+import WishListIcon from '../common/WishListIcon/WishListIcon'
 const ProductCategory = () => {
   const productArray = Object.values(products)
 
@@ -45,58 +45,61 @@ const ProductCategory = () => {
 
         {/* Each Product Category section  */}
         {productArray.map((product) => [
-          <Link
-            key={product.id}
-            to={`${product.id}`}
-            target="_blank"
-          >
-            <div key={product.id} className='w-full flex bg-white border border-gray-300 rounded-lg p-4 hover:cursor-pointer group transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg '>
 
-              {/* image  */}
-              <div className='w-1/4'>
-                <img className='h-64 w-full object-contain' src={product.images[0]} alt={product.title} />
-              </div>
-              <div className='flex w-full justify-between'>
+          <div key={product.id} className='w-full flex bg-white border border-gray-300 rounded-lg p-4 hover:cursor-pointer group transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg '>
+            <Link
+              key={product.id}
+              to={`${product.id}`}
+              target="_blank"
+            >
+              <div className='w-full flex'>
+                {/* image  */}
+                <div className='w-1/4'>
+                  <img className='h-64 w-full object-contain' src={product.images[0]} alt={product.title} />
+                </div>
 
-                {/* Name  */}
-                <div className='flex flex-col justify-evenly px-4'>
-                  <section>
-                    <h1>{product.title}</h1>
-                  </section>
+                <div className='flex w-full justify-between'>
 
-                  {/* price,old price and ratings  */}
-                  <section>
-                    <div className='flex gap-2 items-center'>
-                      <h2 className='font-extrabold text-lg'>₹{product.pricing.retail.salePrice}</h2>
-                      <h2 className='line-through text-gray-500 text-sm'>₹{product.pricing.retail.originalPrice}</h2>
-                    </div>
-                    <div className='flex gap-6'>
-                      <div className='flex gap-2'>
-                        <Rating value={product.rating.stars} precision={0.5} readOnly size="small" />
-                        <h1 className='text-yellow-500'>{product.rating.score}</h1>
+                  {/* Name  */}
+                  <div className='flex flex-col justify-evenly px-4'>
+                    <section>
+                      <h1>{product.title}</h1>
+                    </section>
+
+                    {/* price,old price and ratings  */}
+                    <section>
+                      <div className='flex gap-2 items-center'>
+                        <h2 className='font-extrabold text-lg'>₹{product.pricing.retail.salePrice}</h2>
+                        <h2 className='line-through text-gray-500 text-sm'>₹{product.pricing.retail.originalPrice}</h2>
                       </div>
-                      <li className='text-gray-400'>{product.rating.sold} Sold</li>
-                      <li className='text-lime-600'>{product.shipping.type}</li>
-                    </div>
-                  </section>
+                      <div className='flex gap-6'>
+                        <div className='flex gap-2 items-center'>
+                          <Rating value={product.rating.stars} precision={0.5} readOnly size="small" />
+                          <h1 className='text-yellow-500'>{product.rating.score}</h1>
+                        </div>
+                        <li className='text-gray-400'>{product.rating.sold} Sold</li>
+                        <li className='text-lime-600'>{product.shipping.type}</li>
+                      </div>
+                    </section>
 
-                  {/* Description section and view more details   */}
-                  <section className='w-4/5 font-light flex flex-col gap-2'>
-                    <p>{product.description}{product.features[0]}.{product.features[1]}.{product.features[2]}</p>
-                    <ul>
-                      <li className="text-blue-500 font-semibold  hover:text-blue-800 hover:cursor-pointer ">View details</li>
-                    </ul>
-                  </section>
+                    {/* Description section and view more details   */}
+                    <section className='w-4/5 font-light flex flex-col gap-2'>
+                      <p>{product.description}{product.features[0]}.{product.features[1]}.{product.features[2]}</p>
+                      <ul>
+                        <li className="text-blue-500 font-semibold  hover:text-blue-800 hover:cursor-pointer ">View details</li>
+                      </ul>
+                    </section>
+                  </div>
                 </div>
-
-                {/* Love React or wishlist section */}
-                <div className='h-10 p-2 flex items-center bg-white rounded-lg shadow-lg border border-gray-400 text-blue-600'>
-                  <Heart />
-                </div>
-
               </div>
+            </Link>
+
+            {/* Love React or wishlist section */}
+            <div className='h-10 w-10 p-2 flex items-center justify-center bg-white rounded-lg shadow-lg border border-gray-400 text-blue-600'>
+              <WishListIcon />
             </div>
-          </Link>
+
+          </div>
         ])}
 
 

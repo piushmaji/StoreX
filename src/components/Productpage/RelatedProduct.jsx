@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import products from "../../data/Products"
 import { Link, useParams } from 'react-router-dom'
 import { ShoppingCart } from 'lucide-react'
-import WishListIcon from "../common/Filter/WishListIcon/WishListIcon"
+import WishListIcon from "../common/WishListIcon/WishListIcon"
 const RelatedProduct = () => {
 
     const { id } = useParams()

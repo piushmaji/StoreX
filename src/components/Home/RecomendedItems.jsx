@@ -1,5 +1,5 @@
 import { bag, blezzer, headphone, cattle, jacket, pant, tshirt, wallet, pot } from '../../assets/images/items-img/index'
-import WishListIcon from '../common/Filter/WishListIcon/WishListIcon';
+import WishListIcon from '../common/WishListIcon/WishListIcon';
 const RecomendedItems = () => {
 
     const products = [
