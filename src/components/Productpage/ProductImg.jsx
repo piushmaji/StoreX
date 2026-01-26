@@ -59,7 +59,7 @@ const ProductImg = () => {
 
                         </section>
 
-                        <section className="col-span-3 flex flex-col justify-between">
+                        <section className="col-span-3 flex flex-col justify-between lg:p-0 py-4">
 
                             <div className="h-[50%] flex flex-col gap-2 ">
                                 <div className={`flex ${product.inStock ? 'text-lime-500' : 'text-red-400'}`}>
@@ -76,11 +76,11 @@ const ProductImg = () => {
                                         <h2>{product.rating.score}</h2>
                                     </div>
 
-                                    <div className="flex gap-2 text-gray-400">
+                                    <div className="flex gap-2 text-gray-400 text-xs lg:text-base">
                                         <MessageSquareText />
                                         <h2>{product.rating.reviews} reviews</h2>
                                     </div>
-                                    <div className="flex gap-2  text-gray-400">
+                                    <div className="flex gap-2  text-gray-400 text-xs lg:text-base ">
                                         <Crown />
                                         <h2>{product.rating.sold} sold</h2>
                                     </div>
