@@ -14,7 +14,7 @@ const NewSletter = () => {
                     <div className='relative flex gap-2'>
                         <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                         <input
-                            className='pl-10 w-72 bg-gray-50 border rounded-lg border-gray-400 '
+                            className='pl-10 lg:w-72 bg-gray-50 border rounded-lg border-gray-400 '
                             type="text"
                             placeholder='Email' />
                         <button

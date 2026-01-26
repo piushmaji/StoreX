@@ -27,12 +27,12 @@ const RelatedProduct = () => {
                 <div className='flex gap-4 flex-nowrap scroll-smooth snap-x snap-mandatory px-2 overflow-x-auto'>
                     {featured.map((item) => (
 
-                        <div key={item.id} className="relative min-w-40 sm:min-w-45 md:min-w-50 py-4 flex flex-col gap-2 snap-start ">
+                        <div key={item.id} className="relative min-w-40 sm:min-w-45 md:min-w-50 py-4 flex flex-col gap-2 snap-start  justify-between">
                             <Link key={item.id} to={`/product/${item.id}`} target="_blank" >
                                 <div className='h-48 w-full rounded-lg bg-gray-50 p-4 border border-gray-300'>
                                     <img className='h-full w-full rounded-lg object-contain' src={item.images[0]} alt="" />
                                 </div>
-                                <div className="flex flex-col gap-2">
+                                <div className="h-20 flex flex-col gap-2 justify-between">
                                     <div className="font-light"><h1>{item.title}</h1></div>
                                     <div className='text-gray-400'><h1>₹{item.pricing.retail.salePrice}</h1></div>
                                 </div>
