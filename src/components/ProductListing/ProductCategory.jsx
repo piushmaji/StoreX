@@ -1,6 +1,7 @@
 import { ChevronLeft, ChevronRight, Heart, LayoutGrid, Menu } from 'lucide-react'
 import products from '../../data/Products'
 import { Link } from 'react-router-dom'
+import { Rating } from '@mui/material'
 
 const ProductCategory = () => {
   const productArray = Object.values(products)
@@ -71,7 +72,7 @@ const ProductCategory = () => {
                     </div>
                     <div className='flex gap-6'>
                       <div className='flex gap-2'>
-                        <p>{'⭐️'.repeat(Math.floor(product.rating.stars))}</p>
+                        <Rating value={product.rating.stars} precision={0.5} readOnly size="small" />
                         <h1 className='text-yellow-500'>{product.rating.score}</h1>
                       </div>
                       <li className='text-gray-400'>{product.rating.sold} Sold</li>

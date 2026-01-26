@@ -96,8 +96,8 @@ const products = {
         images: [bag1, bag2, bag3, bag4, bag5],
         category: "bag",
         rating: {
-            stars: 4.6,
-            score: 9.2,
+            stars: 4.5,
+            score: 4.7,
             reviews: 45,
             sold: 178
         },
@@ -158,8 +158,8 @@ const products = {
         images: [camera1, camera2, camera3, camera4],
         category: "camera",
         rating: {
-            stars: 3.8,
-            score: 8.6,
+            stars: 3.5,
+            score: 3.5,
             reviews: 89,
             sold: 234
         },
@@ -221,7 +221,7 @@ const products = {
         category: "earphone",
         rating: {
             stars: 4.0,
-            score: 9.0,
+            score: 4.0,
             reviews: 156,
             sold: 567
         },
@@ -283,8 +283,8 @@ const products = {
         images: [iphone1, iphone2, iphone3, iphone4, iphone5],
         category: "iphone",
         rating: {
-            stars: 4.9,
-            score: 9.8,
+            stars: 4.5,
+            score: 4.5,
             reviews: 342,
             sold: 891
         },
@@ -346,8 +346,8 @@ const products = {
         images: [jacket1, jacket2, jacket3, jacket4, jacket5],
         category: "jacket",
         rating: {
-            stars: 3.7,
-            score: 8.4,
+            stars: 3.0,
+            score: 3.0,
             reviews: 67,
             sold: 245
         },
@@ -409,8 +409,8 @@ const products = {
         images: [laptop1, laptop2, laptop3, laptop4],
         category: "laptop",
         rating: {
-            stars: 4.6,
-            score: 9.2,
+            stars: 4.5,
+            score: 4.6,
             reviews: 128,
             sold: 456
         },
@@ -472,8 +472,8 @@ const products = {
         images: [shirt1, shirt2, shirt3, shirt4, shirt5],
         category: "shirt",
         rating: {
-            stars: 4.4,
-            score: 8.8,
+            stars: 4.0,
+            score: 4.0,
             reviews: 93,
             sold: 312
         },
@@ -536,7 +536,7 @@ const products = {
         category: "smartWatch",
         rating: {
             stars: 4.5,
-            score: 9.0,
+            score: 4.5,
             reviews: 234,
             sold: 789
         },
@@ -599,8 +599,8 @@ const products = {
         images: [sweatshirt1, sweatshirt2, sweatshirt3, sweatshirt4],
         category: "sweatshirt",
         rating: {
-            stars: 4.6,
-            score: 9.2,
+            stars: 5.0,
+            score: 5.0,
             reviews: 87,
             sold: 298
         },
@@ -662,8 +662,8 @@ const products = {
         images: [tshirt1, tshirt2, tshirt3, tshirt4],
         category: "tshirt",
         rating: {
-            stars: 4.3,
-            score: 8.6,
+            stars: 2.5,
+            score: 2.5,
             reviews: 156,
             sold: 623
         },
@@ -725,8 +725,8 @@ const products = {
         images: [hoodie1, hoodie2, hoodie3, hoodie4],
         category: "hoodie",
         rating: {
-            stars: 4.6,
-            score: 9.2,
+            stars: 4.5,
+            score: 4.6,
             reviews: 112,
             sold: 345
         },
@@ -790,7 +790,7 @@ const products = {
         category: "tv",
         rating: {
             stars: 4.5,
-            score: 9.0,
+            score: 4.5,
             reviews: 287,
             sold: 834
         },

@@ -2,6 +2,7 @@ import { Check, Crown, Globe, MessageSquareText, ShieldCheck, ShoppingCart, X, Z
 import { useEffect, useState } from "react"
 import products from "../../data/Products"
 import { useParams } from 'react-router-dom'
+import StarRating from "../common/Rating/StarRating"
 
 const ProductImg = () => {
 
@@ -71,8 +72,8 @@ const ProductImg = () => {
                                 </div>
                                 <div className="flex gap-7">
 
-                                    <div className="flex gap-2 text-yellow-500">
-                                        <span>{'⭐️'.repeat(Math.floor(product.rating.stars))}</span>
+                                    <div className="flex items-center gap-2 text-yellow-500">
+                                        <StarRating value={product.rating.stars} precision={0.5} readOnly size="small" />
                                         <h2>{product.rating.score}</h2>
                                     </div>
 

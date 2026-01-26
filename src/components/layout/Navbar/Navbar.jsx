@@ -13,7 +13,7 @@ const Navbar = () => {
 
                 {/* BrandName section */}
                 <div className='flex h-full lg:col-span-2 col-span-6 items-center gap-2'>
-                    <div className='lg:hidden'>
+                    <div className='hidden'>
                         <SideDrawer />
                     </div>
                     <Link to='/'> <img className='h-10 w-10 drop-shadow-lg bg-gray-50 border-2 border-blue-500 rounded-2xl p-1' src={storex} /></Link>
