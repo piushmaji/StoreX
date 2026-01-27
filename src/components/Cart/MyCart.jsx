@@ -1,12 +1,17 @@
 import { ArrowLeft } from 'lucide-react'
+import { useCart } from '../../context/CartContext/CartContext'
+import { Link } from 'react-router-dom'
 
 const MyCart = () => {
+
+
+    const { cartItem, setCartItem, updateQty, totalPrice, removeItem } = useCart()
 
     return (
         <div className='flex flex-col gap-4 '>
             <div className='text-2xl '>
                 <h1>My Cart
-                    <span>(4)</span>
+                    <span>({cartItem.length})</span>
                 </h1>
             </div>
 
@@ -19,67 +24,77 @@ const MyCart = () => {
                     <div className='lg:w-[75%]'>
                         <div className='flex flex-col rounded-lg border border-gray-300 gap-4 p-4 justify-between'>
 
-                            <div className='w-full flex justify-between border-b border-gray-300'>
+                            {cartItem.map((item) => (
+                                <div className='w-full flex justify-between border-b border-gray-300'>
 
-                                <div className='flex gap-4 pb-4'>
-                                    <div className='lg:h-32 lg:w-32 h-24 w-24 bg-gray-200 border border-gray-300 rounded-lg flex items-center justify-center p-2'>
-                                        <img
-                                            className='lg:h-28 lg:w-28 h-20 w-20 object-fill'
-                                            src="https://rukminim2.flixcart.com/image/832/832/xif0q/mobile/y/l/1/-original-imahbfd4cgh53kmh.jpeg?q=70&crop=false" alt="phone" />
-                                    </div>
-                                    <div className='flex flex-col font-light text-gray-400 gap-2 '>
-                                        <div className='text-lg font-semibold text-black'>
-                                            <h1>T-shirts with multiple colors, for men and lady</h1>
+                                    <div className='flex gap-4 pb-4'>
+                                        <div className='lg:h-40 lg:w-32 h-24 w-24 bg-gray-200 border border-gray-300 rounded-lg flex items-center justify-center p-2'>
+                                            <img
+                                                className='lg:h-full lg:w-full h-20 w-20 object-contain'
+                                                src={item.images[0]} alt={item.title} />
                                         </div>
-                                        <div className='flex flex-col '>
-                                            <div className='flex flex-col lg:flex-row lg:gap-2'>
-                                                <div className='flex'>
-                                                    <p>Size:</p>
-                                                    <h1>Medium,</h1>
-                                                </div>
-                                                <div className='flex'>
-                                                    <p>Colour:</p>
-                                                    <h1>Black,</h1>
-                                                </div>
-                                                <div className='flex'>
-                                                    <p>Material:</p>
-                                                    <h1>Glass,</h1>
-                                                </div>
+                                        <div className='h-40 w-[80%] flex flex-col font-light text-gray-400 gap-2 justify-between'>
+                                            <div className='text-lg font-semibold text-black'>
+                                                <h1>{item.title} </h1>
                                             </div>
-                                            <p>Seller: <span>Artel Market</span></p>
-                                        </div>
-                                        <div className='flex gap-2'>
-                                            <button className='lg:px-4 lg:py-2 p-2 bg-gray-50 text-sm border border-gray-300 rounded-lg font-light text-red-500 shadow-md cursor-pointer active:scale-95 transition-all duration-200'>Remove</button>
-                                            <button className='lg:px-4 lg:py-2 p-2 bg-gray-50 text-sm border border-gray-300 rounded-lg font-light text-blue-500 shadow-md cursor-pointer active:scale-95 transition-all duration-200'>Save to later</button>
+                                            <div className=' flex flex-col '>
+                                                <div className='flex'>
+                                                    <p>
+                                                        Size: {item.specs.size},
+                                                        Material: {item.details.material},
+                                                        Colour: {item.specs.color}
+                                                    </p>
+                                                </div>
+                                                <p>Seller: {item.seller.name}</p>
+                                            </div>
+                                            <div className='flex gap-2'>
+                                                <button
+                                                    onClick={() => removeItem(item.id)}
+                                                    className='lg:px-4 lg:py-2 p-2 bg-gray-50 text-sm border border-gray-300 rounded-lg font-light text-red-500 shadow-md cursor-pointer active:scale-95 transition-all duration-200'>Remove</button>
+                                                <button className='lg:px-4 lg:py-2 p-2 bg-gray-50 text-sm border border-gray-300 rounded-lg font-light text-blue-500 shadow-md cursor-pointer active:scale-95 transition-all duration-200'>Save to later</button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div className='flex flex-col items-end gap-2'>
-                                    <div>
-                                        <h1>$78.99</h1>
-                                    </div>
-                                    <div>
-                                        <select className='px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg font-light shadow-md focus:outline-0 cursor-pointer'>
-                                            <option value="Quantity">Quantity</option>
-                                            <option value="Qty:1">Qty:1</option>
-                                            <option value="Qty:2">Qty:2</option>
-                                            <option value="Qty:3">Qty:3</option>
-                                            <option value="Qty:4">Qty:4</option>
-                                        </select>
+                                    <div className='flex flex-col items-end gap-2'>
+
+                                        <div>
+                                            <h1>₹{item.pricing.retail.salePrice}</h1>
+                                        </div>
+                                        <div>
+                                            <select
+                                                value={item.quantity}
+                                                onChange={(e) => updateQty(item.id, Number(e.target.value))}
+                                                className='px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg font-light shadow-md focus:outline-0 cursor-pointer'
+                                            >
+                                                {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
+                                                    <option key={n} value={n}>
+                                                        Qty: {n}
+                                                    </option>
+                                                ))}
+                                            </select>
+
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            ))}
+
 
                             <div className='flex justify-between'>
-                                <button className='px-4 py-2 bg-blue-600 rounded-lg font-light text-white shadow-md cursor-pointer active:scale-95 transition-all duration-200'>
-                                    <div className='flex gap-1'>
-                                        <ArrowLeft />
-                                        <h1>Back to shop</h1>
-                                    </div>
-                                </button>
+                                <Link to={'/product'}>
+                                    <button className='px-4 py-2 bg-blue-600 rounded-lg font-light text-white shadow-md cursor-pointer active:scale-95 transition-all duration-200'>
+                                        <div className='flex gap-1'>
+                                            <ArrowLeft />
+                                            <h1>Back to shop</h1>
+                                        </div>
+                                    </button>
+                                </Link>
 
-                                <button className='px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg font-light text-blue-500 shadow-md cursor-pointer active:scale-95 transition-all duration-200'>Remove All</button>
+                                <button
+                                    onClick={() => {
+                                        setCartItem([])
+                                    }}
+                                    className='px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg font-light text-blue-500 shadow-md cursor-pointer active:scale-95 transition-all duration-200'>Remove All</button>
                             </div>
                         </div>
                     </div>
@@ -108,7 +123,7 @@ const MyCart = () => {
                                     <div className='flex flex-col gap-2'>
                                         <div className='flex justify-between'>
                                             <h1>Subtotal:</h1>
-                                            <h2>$1407.00</h2>
+                                            <h2>₹{totalPrice}</h2>
                                         </div>
                                         <div className='flex justify-between'>
                                             <h1>Discount:</h1>

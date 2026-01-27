@@ -320,7 +320,7 @@ const products = {
             style: "Flagship Smartphone",
             certificate: "BIS, FCC, CE",
             size: "6.7 inch display",
-            color: "Natural Titanium, Blue Titanium, White Titanium, Black Titanium"
+            color: "Natural Titanium, Blue Titanium"
         },
         features: [
             "A17 Pro chip",

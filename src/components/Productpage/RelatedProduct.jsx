@@ -12,8 +12,6 @@ const RelatedProduct = () => {
     const [featured, setFeatured] = useState([])
     const { addToCart, cartItem } = useCart()
 
-    console.log(cartItem);
-
 
     useEffect(() => {
 

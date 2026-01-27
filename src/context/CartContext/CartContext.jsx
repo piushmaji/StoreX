@@ -7,10 +7,46 @@ export const CartProvider = ({ children }) => {
     const [cartItem, setCartItem] = useState([])
 
     const addToCart = (product) => {
-        setCartItem([...cartItem, product])
+        setCartItem((prev) => {
+            const exist = prev.find((item) => item.id === product.id)
+
+            if (exist) {
+                return prev.map((item) =>
+                    item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+                )
+            }
+
+            return [
+                ...prev,
+                {
+                    ...product,
+                    quantity: 1,
+                }
+            ]
+        })
     }
 
-    return <CartContext.Provider value={{ cartItem, setCartItem, addToCart }}>
+    const totalPrice = cartItem.reduce(
+        (total, item) => total + item.pricing.retail.salePrice * item.quantity, 0
+    )
+
+    const updateQty = (id, qty) => {
+
+        setCartItem((prev) =>
+            prev.map((item) =>
+                item.id === id ? { ...item, quantity: qty } : item)
+        )
+    }
+
+    const removeItem = (id) => {
+
+        setCartItem((prev) =>
+            prev.filter((item) => item.id !== id)
+        )
+    }
+
+
+    return <CartContext.Provider value={{ cartItem, setCartItem, addToCart, updateQty, totalPrice, removeItem }}>
         {children}
     </CartContext.Provider>
 }
