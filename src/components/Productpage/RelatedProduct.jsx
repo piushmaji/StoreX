@@ -3,12 +3,17 @@ import products from "../../data/Products"
 import { Link, useParams } from 'react-router-dom'
 import { ShoppingCart } from 'lucide-react'
 import WishListIcon from "../common/WishListIcon/WishListIcon"
+import { useCart } from "../../context/CartContext/CartContext"
 const RelatedProduct = () => {
 
     const { id } = useParams()
     const product = products[id]
     const relatedProduct = Object.values(products)
     const [featured, setFeatured] = useState([])
+    const { addToCart, cartItem } = useCart()
+
+    console.log(cartItem);
+
 
     useEffect(() => {
 
@@ -42,7 +47,7 @@ const RelatedProduct = () => {
                                 <WishListIcon />
                             </div>
 
-                            <button className='py-2 flex gap-2 items-center justify-center bg-gray-50 border border-gray-300 rounded-lg font-light text-blue-500 shadow-md cursor-pointer active:scale-95 transition-all duration-200'>
+                            <button onClick={() => addToCart(item)} className='py-2 flex gap-2 items-center justify-center bg-gray-50 border border-gray-300 rounded-lg font-light text-blue-500 shadow-md cursor-pointer active:scale-95 transition-all duration-200'>
                                 <ShoppingCart />
                                 <h1> Add to Cart</h1>
                             </button>
