@@ -63,7 +63,17 @@ const Home = () => {
             },
         ],
     }
-
+    const slides = [
+        {
+            image: "https://rukminim2.flixcart.com/fk-p-flap/3240/540/image/2ec5357fa1787447.jpg?q=60",
+        },
+        {
+            image: "https://rukminim2.flixcart.com/fk-p-flap/3240/540/image/cfde6a9e800a107a.png?q=60",
+        },
+        {
+            image: "https://rukminim2.flixcart.com/fk-p-flap/3240/540/image/265951683409e311.png?q=60",
+        },
+    ];
     const electronicsGadgets = {
         id: 102,
         title: "Electronics and gadgets",
@@ -122,10 +132,10 @@ const Home = () => {
     }
     return (
         <div className='w-full bg-gray-50 overflow-x-hidden '>
-            
+
             <div className='lg:p-18 lg:pt-8 lg:pb-0'>
                 {/* image slider page */}
-                <ImgSlider />
+                <ImgSlider slides={slides} />
 
                 {/* Deal section page */}
                 <Deal />
