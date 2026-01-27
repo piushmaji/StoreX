@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { useState, useEffect } from "react";
 
 const ImgSlider = ({ slides }) => {
     const [index, setIndex] = useState(0);
@@ -7,7 +8,7 @@ const ImgSlider = ({ slides }) => {
     useEffect(() => {
         const timer = setInterval(() => {
             nextSlide();
-        }, 4000);
+        }, 3000);
 
         return () => clearInterval(timer);
     }, [index]);
@@ -24,7 +25,7 @@ const ImgSlider = ({ slides }) => {
 
     return (
         <div className="px-2">
-            <div className="relative w-full lg:h-100 h-40 overflow-hidden bg-amber-500">
+            <div className="relative w-full lg:h-100 h-40 overflow-hidden">
 
                 {/* Image */}
                 <img
@@ -38,7 +39,7 @@ const ImgSlider = ({ slides }) => {
                     onClick={prevSlide}
                     className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white px-3 py-1 rounded"
                 >
-                    ◀
+                    <ArrowLeft />
                 </button>
 
                 {/* Right Button */}
@@ -46,7 +47,7 @@ const ImgSlider = ({ slides }) => {
                     onClick={nextSlide}
                     className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 text-white px-3 py-1 rounded"
                 >
-                    ▶
+                    <ArrowRight />
                 </button>
             </div>
         </div>
