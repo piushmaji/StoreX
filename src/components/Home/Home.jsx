@@ -133,7 +133,7 @@ const Home = () => {
     return (
         <div className='w-full bg-gray-50 overflow-x-hidden '>
 
-            <div className='lg:p-18 lg:pt-8 lg:pb-0'>
+            <div className='lg:px-18 lg:pt-8 py-4'>
                 {/* image slider page */}
                 <ImgSlider slides={slides} />
 

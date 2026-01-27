@@ -24,13 +24,13 @@ const ImgSlider = ({ slides }) => {
 
     return (
         <div className="px-2">
-            <div className="relative w-full h-100 overflow-hidden">
+            <div className="relative w-full lg:h-100 h-40 overflow-hidden bg-amber-500">
 
                 {/* Image */}
                 <img
                     src={slides[index].image}
                     alt=""
-                    className="w-full h-full object-cover"
+                    className="lg:w-full lg:h-full h-full w-full object-cover"
                 />
 
                 {/* Left Button */}

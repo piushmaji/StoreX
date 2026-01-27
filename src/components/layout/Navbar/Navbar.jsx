@@ -21,7 +21,7 @@ const Navbar = () => {
                 </div>
 
                 {/* Profile section */}
-                <div className='flex lg:justify-end justify-evenly lg:col-span-3 col-span-6 lg:gap-4 text-gray-500 lg:order-3'>
+                <div className='flex justify-end lg:col-span-3 col-span-6 gap-4 text-gray-500 lg:order-3'>
                     <div className='flex flex-col items-center justify-center'>
                         <UserRound />
                         <h2>Profile</h2>
