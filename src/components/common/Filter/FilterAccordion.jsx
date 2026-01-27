@@ -19,7 +19,7 @@ export default function FilterAccordion({ title, options }) {
           bgcolor: '#F9FAFB'
         }}
       >
-        <Typography font_tfWeight="600">{title}</Typography>
+        <Typography sx={{ fontWeight: 600 }}>{title}</Typography>
       </AccordionSummary>
 
       <AccordionDetails sx={{ px: 0, bgcolor: '#F9FAFB' }}>
