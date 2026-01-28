@@ -19,7 +19,8 @@ const SaveForLater = () => {
                             <h2 className='font-light text-gray-400'>GoPro HERO6 4K Action Camera - Black</h2>
                         </div>
                         <div>
-                            <button className='flex px-6 py-2 gap-2 bg-gray-50 border border-gray-300 rounded-lg font-light text-blue-500 shadow-md cursor-pointer active:scale-95 transition-all duration-200'>
+                            <button 
+                            className='flex px-6 py-2 gap-2 bg-gray-50 border border-gray-300 rounded-lg font-light text-blue-500 shadow-md cursor-pointer active:scale-95 transition-all duration-200'>
                                 <ShoppingCart />
                                 <h1> Add to Cart</h1>
                             </button>

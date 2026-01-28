@@ -11,7 +11,7 @@ const WishList = () => {
             <section className="flex flex-col gap-4">
                 {/* WishList name Section */}
                 <div className="text-2xl">
-                    <h1>My Wishlist (336 items)</h1>
+                    <h1>My Wishlist ({wishList.length})</h1>
                 </div>
 
                 {/* WishList Cards Section */}

@@ -1,7 +1,7 @@
-import { Check, Crown, Globe, MessageSquareText, ShieldCheck, ShoppingCart, X, Zap } from "lucide-react"
+import { Check, Crown, Globe, Link, MessageSquareText, ShieldCheck, ShoppingCart, X, Zap } from "lucide-react"
 import { useEffect, useState } from "react"
 import products from "../../data/Products"
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import StarRating from "../common/Rating/StarRating"
 import { useCart } from "../../context/CartContext/CartContext"
 
@@ -10,9 +10,9 @@ const ProductImg = () => {
 
     const { id } = useParams()
     const product = products[id]
-    const { addToCart } = useCart()
+    const { addToCart, isInCart } = useCart()
     const [activeImg, setActiveImg] = useState(product.images[0])
-
+    const navigate = useNavigate();
     useEffect(() => {
 
         if (product?.images?.length) {
@@ -20,6 +20,15 @@ const ProductImg = () => {
         }
     }, [product])
 
+    const handleClick = (product) => {
+
+        if (isInCart(product.id)) {
+            navigate('/cart')
+        }
+        else {
+            addToCart(product)
+        }
+    }
     return (
         <div>
             <div key={product.id} >
@@ -48,10 +57,10 @@ const ProductImg = () => {
                                 <div className="flex justify-between items-center gap-2">
 
                                     <button
-                                        onClick={() => addToCart(product)}
+                                        onClick={() => handleClick(product)}
                                         className="w-[50%] py-3 px-4 bg-red-400 rounded-lg text-white flex gap-2 hover:cursor-pointer hover:bg-red-500 shadow-xl text-sm font-light cursor-pointer active:scale-95 transition-all duration-200 items-center justify-center" >
                                         <ShoppingCart />
-                                        <span>Add To Cart</span>
+                                        <span>{isInCart(product.id) ? 'Move To Cart' : 'Add To Cart'}</span>
                                     </button>
 
                                     <button className=" w-[50%] py-3 px-4 bg-orange-400 rounded-lg text-white flex gap-2 hover:cursor-pointer hover:bg-orange-500 shadow-xl text-sm font-light cursor-pointer active:scale-95 transition-all duration-200 items-center justify-center" >
