@@ -42,7 +42,7 @@ const RelatedProduct = () => {
                             </Link>
 
                             <div className="absolute lg:right-0 lg:top-4 -right-1 top-3">
-                                <WishListIcon />
+                                <WishListIcon product={item} />
                             </div>
 
                             <button onClick={() => addToCart(item)} className='py-2 flex gap-2 items-center justify-center bg-gray-50 border border-gray-300 rounded-lg font-light text-blue-500 shadow-md cursor-pointer active:scale-95 transition-all duration-200'>

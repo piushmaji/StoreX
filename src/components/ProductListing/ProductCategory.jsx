@@ -96,7 +96,7 @@ const ProductCategory = () => {
 
             {/* Love React or wishlist section */}
             <div className='h-10 w-10 p-2 flex items-center justify-center bg-white rounded-lg shadow-lg border border-gray-400 text-blue-600'>
-              <WishListIcon />
+              <WishListIcon product={product} />
             </div>
 
           </div>

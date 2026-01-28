@@ -25,7 +25,7 @@ const MyCart = () => {
                         <div className='flex flex-col rounded-lg border border-gray-300 gap-4 p-4 justify-between'>
 
                             {cartItem.map((item) => (
-                                <div className='w-full flex justify-between border-b border-gray-300'>
+                                <div key={item.id} className='w-full flex justify-between border-b border-gray-300'>
 
                                     <div className='flex gap-4 pb-4'>
                                         <div className='lg:h-40 lg:w-32 h-24 w-24 bg-gray-200 border border-gray-300 rounded-lg flex items-center justify-center p-2'>

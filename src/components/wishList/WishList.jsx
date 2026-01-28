@@ -1,10 +1,11 @@
 import { ShoppingCart, Trash2 } from "lucide-react"
-import products from "../../data/Products"
-
+import { useWishList } from "../../context/WishListContext/WishListContext"
+import { useCart } from '../../context/CartContext/CartContext'
 const WishList = () => {
 
-    const product = Object.values(products)
-
+    const { wishList } = useWishList()
+    const { addToCart } = useCart()
+    const { removeWishListItem } = useWishList()
     return (
         <div className='lg:px-20 lg:pt-8 py-4'>
             <section className="flex flex-col gap-4">
@@ -18,14 +19,14 @@ const WishList = () => {
                     <div className="grid grid-cols-5 gap-4">
 
                         {/* Each Card Section */}
-                        {product.map((item) => (
+                        {wishList.map((item) => (
                             <div key={item.id} className="h-100 border border-gray-300 cursor-pointer">
 
                                 {/* image Section */}
                                 <div className="h-[65%] w-full bg-white flex items-center justify-center object-contain p-2 ">
                                     <img
                                         className="h-full w-full object-contain "
-                                        src="http://localhost:5175/src/assets/images/products/iphone/1.jpeg" alt="" />
+                                        src={item.images[0]} alt="" />
                                 </div>
 
                                 {/* Description Section */}
@@ -42,7 +43,12 @@ const WishList = () => {
 
                                 {/* Move To Cart Section */}
                                 <div className="h-[15%] ">
-                                    <button className='h-full w-full flex justify-center items-center gap-2 bg-gray-50 font-light text-blue-500 cursor-pointer active:scale-95 transition-all duration-200'>
+                                    <button
+                                        onClick={() => {
+                                            addToCart(item);
+                                            removeWishListItem(item.id);
+                                        }}
+                                        className='h-full w-full flex justify-center items-center gap-2 bg-gray-50 font-light text-blue-500 cursor-pointer'>
                                         <Trash2 />
                                         <h1> Move to Cart</h1>
                                     </button>

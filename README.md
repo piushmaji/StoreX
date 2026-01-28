@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![StoreX Logo](public/img/mainLogo.png)
+![StoreX Logo](./src/assets/images/Logo/storex.png)
 
 **A modern, responsive e-commerce platform built with React and Tailwind CSS**
 

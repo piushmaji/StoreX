@@ -3,12 +3,14 @@ import { useEffect, useState } from "react"
 import products from "../../data/Products"
 import { useParams } from 'react-router-dom'
 import StarRating from "../common/Rating/StarRating"
+import { useCart } from "../../context/CartContext/CartContext"
+
 
 const ProductImg = () => {
 
     const { id } = useParams()
     const product = products[id]
-
+    const { addToCart } = useCart()
     const [activeImg, setActiveImg] = useState(product.images[0])
 
     useEffect(() => {
@@ -45,7 +47,9 @@ const ProductImg = () => {
                             <section className="w-full">
                                 <div className="flex justify-between items-center gap-2">
 
-                                    <button className="w-[50%] py-3 px-4 bg-red-400 rounded-lg text-white flex gap-2 hover:cursor-pointer hover:bg-red-500 shadow-xl text-sm font-light cursor-pointer active:scale-95 transition-all duration-200 items-center justify-center" >
+                                    <button
+                                        onClick={() => addToCart(product)}
+                                        className="w-[50%] py-3 px-4 bg-red-400 rounded-lg text-white flex gap-2 hover:cursor-pointer hover:bg-red-500 shadow-xl text-sm font-light cursor-pointer active:scale-95 transition-all duration-200 items-center justify-center" >
                                         <ShoppingCart />
                                         <span>Add To Cart</span>
                                     </button>
