@@ -4,6 +4,7 @@ import ProductListingPage from "./pages/ProductListingPage"
 import NotFound from "./pages/NotFound"
 import ProductDetails from "./pages/ProductDetails"
 import CartPage from "./pages/CartPage"
+import WishListPage from "./pages/WishListPage"
 
 
 const router = createBrowserRouter([
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
   {
     path: '/cart',
     element: <CartPage />
+  },
+  {
+    path: '/wishList',
+    element: <WishListPage />
   }
 ])
 const App = () => {

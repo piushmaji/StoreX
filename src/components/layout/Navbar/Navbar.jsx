@@ -33,10 +33,13 @@ const Navbar = () => {
                             <h2>Store</h2>
                         </div>
                     </Link>
-                    <div className='lg:flex flex-col items-center justify-center hidden '>
-                        <Heart />
-                        <h2>Wishlist</h2>
-                    </div>
+
+                    <Link to={'/wishlist'}>
+                        <div className='lg:flex flex-col items-center justify-center hidden '>
+                            <Heart />
+                            <h2>Wishlist</h2>
+                        </div>
+                    </Link>
                     <div className='flex flex-col items-center justify-center'>
                         <Link to='/cart'>
 
