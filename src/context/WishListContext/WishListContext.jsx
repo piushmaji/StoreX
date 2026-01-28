@@ -2,13 +2,13 @@ import { createContext, useContext, useState } from "react";
 
 export const WishListContext = createContext(null)
 
-const [wishList, setWishList] = useState([])
+
 
 export const WishListProvider = ({ children }) => {
 
 
 
-    return <WishListContext.Provider value={{ wishList, setWishList }}>
+    return <WishListContext.Provider value={{}}>
         {children}
     </WishListContext.Provider>
 }
