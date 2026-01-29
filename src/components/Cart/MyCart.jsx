@@ -126,19 +126,19 @@ const MyCart = () => {
                                             <h2>₹{totalPrice}</h2>
                                         </div>
                                         <div className='flex justify-between'>
-                                            <h1>Discount:</h1>
-                                            <h2 className='text-red-500'>-$60.00</h2>
+                                            <h1>Platform fee:</h1>
+                                            <h2 className='text-red-500'>+0.00</h2>
                                         </div>
                                         <div className='flex justify-between'>
-                                            <h1>Tax:</h1>
-                                            <h2 className='text-green-500'>+$47.00</h2>
+                                            <h1>Discount:</h1>
+                                            <h2 className='text-green-500'>-0.00</h2>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div className='flex justify-between text-xl font-bold'>
                                     <h1>Total:</h1>
-                                    <h2>$1357.00</h2>
+                                    <h2>₹{totalPrice}</h2>
                                 </div>
 
                                 <div className='flex justify-center items-center'>
