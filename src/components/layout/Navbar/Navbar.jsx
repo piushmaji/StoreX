@@ -23,10 +23,14 @@ const Navbar = () => {
 
                 {/* Profile section */}
                 <div className='flex justify-end lg:col-span-3 col-span-6 gap-4 text-gray-500 lg:order-3'>
-                    <div className='flex flex-col items-center justify-center'>
-                        <UserRound />
-                        <h2>Profile</h2>
-                    </div>
+
+                    <Link to={'/profile'}>
+                        <div className='flex flex-col items-center justify-center'>
+                            <UserRound />
+                            <h2>Profile</h2>
+                        </div>
+                    </Link>
+
                     <Link to={'/product'}>
                         <div className='flex flex-col items-center justify-center'>
                             <Store />
@@ -41,8 +45,8 @@ const Navbar = () => {
                         </div>
                     </Link>
                     <div className='flex flex-col items-center justify-center'>
-                        <Link to='/cart'>
 
+                        <Link to='/cart'>
                             <div className='relative'>
                                 <div className='h-5 w-5 absolute bg-red-400 rounded-full left-4 -top-2 items-center justify-center flex p-1 border-2 border-gray-50'>
                                     <span className='text-white text-xs'>{cartItem.length}</span>
@@ -51,6 +55,7 @@ const Navbar = () => {
                             </div>
                             <h2>Cart</h2>
                         </Link>
+
                     </div>
                 </div>
 
