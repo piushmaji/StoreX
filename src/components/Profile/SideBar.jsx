@@ -2,8 +2,8 @@ import { ClipboardList, CreditCard, MapPin, Pencil } from 'lucide-react'
 
 const SideBar = () => {
     return (
-        <div className=' w-[25%] '>
-            <section className='border rounded-lg bg-gray-50 border-gray-300 p-4'>
+        <div className=' lg:w-[25%]'>
+            <section className='hidden lg:block border rounded-lg bg-gray-50 border-gray-300 p-4'>
                 <div className='text-2xl py-2'>
                     <h1>Profile</h1>
                 </div>

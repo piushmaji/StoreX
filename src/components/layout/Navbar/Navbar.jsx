@@ -60,7 +60,7 @@ const Navbar = () => {
                 </div>
 
                 {/* Search bar section */}
-                <form className='relative flex justify-center items-center col-span-12 lg:col-span-7 lg:order-2 '>
+                <div className='relative flex justify-center items-center col-span-12 lg:col-span-7 lg:order-2 '>
                     <Search className="absolute lg:left-6 left-5 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                     <input
                         className='border-2 border-r w-full h-10 rounded-l-xl px-12 focus:outline-none focus:ring-0 border-blue-500 '
@@ -74,8 +74,8 @@ const Navbar = () => {
                         <option value="Cloths">Cloths</option>
                     </select>
 
-                    <button className='h-10 w-32 border-l-0 rounded-r-xl p-2 focus:outline-none focus:ring-0 bg-blue-500 text-white'>Submit</button>
-                </form>
+                    <button className='h-10 w-32 border-l-0 rounded-r-xl p-2 focus:outline-none focus:ring-0 bg-blue-500 text-white cursor-pointer'>Submit</button>
+                </div>
 
             </div>
         </div >
