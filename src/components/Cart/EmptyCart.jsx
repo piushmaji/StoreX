@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom"
+
 const EmptyCart = () => {
     return (
         <div className="flex flex-col items-center justify-center py-20">
@@ -16,11 +18,13 @@ const EmptyCart = () => {
                 Add items to it now.
             </p>
 
-            <button
-                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
-            >
-                Shop Now
-            </button>
+            <Link to={'/product'}>
+                <button
+                    className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition cursor-pointer"
+                >
+                    Shop Now
+                </button>
+            </Link>
         </div>
     );
 };
