@@ -14,32 +14,32 @@ const Navbar = () => {
 
                 {/* BrandName section */}
                 <div className='flex h-full lg:col-span-2 col-span-6 items-center gap-2'>
-                    <div className='hidden'>
+                    <div className='md:hidden'>
                         <SideDrawer />
                     </div>
-                    <Link to='/'> <img className='h-10 w-10 drop-shadow-lg bg-gray-50 border-2 border-blue-500 rounded-2xl p-1' src={storex} /></Link>
-                    <Link to='/'><h1 className='text-3xl text-blue-500'>StoreX</h1></Link>
+                    <Link to='/'> <img className='md:h-10 md:w-10 h-7 w-7 drop-shadow-lg bg-gray-50 border-2 border-blue-500 md:rounded-2xl rounded-xl p-1' src={storex} /></Link>
+                    <Link to='/'><h1 className='md:text-3xl text-2xl text-blue-500'>StoreX</h1></Link>
                 </div>
 
                 {/* Profile section */}
                 <div className='flex justify-end lg:col-span-3 col-span-6 gap-4 text-gray-500 lg:order-3'>
 
                     <Link to={'/profile'}>
-                        <div className='flex flex-col items-center justify-center'>
+                        <div className='md:flex flex-col items-center justify-center hidden '>
                             <UserRound />
                             <h2>Profile</h2>
                         </div>
                     </Link>
 
                     <Link to={'/product'}>
-                        <div className='flex flex-col items-center justify-center'>
-                            <Store />
+                        <div className='md:flex flex-col items-center justify-center hidden'>
+                            <Store/>
                             <h2>Store</h2>
                         </div>
                     </Link>
 
                     <Link to={'/wishlist'}>
-                        <div className='lg:flex flex-col items-center justify-center hidden '>
+                        <div className='md:flex flex-col items-center justify-center hidden '>
                             <Heart />
                             <h2>Wishlist</h2>
                         </div>
@@ -51,7 +51,7 @@ const Navbar = () => {
                                 <div className='h-5 w-5 absolute bg-red-400 rounded-full left-4 -top-2 items-center justify-center flex p-1 border-2 border-gray-50'>
                                     <span className='text-white text-xs'>{cartItem.length}</span>
                                 </div>
-                                <ShoppingCart />
+                                <ShoppingCart/>
                             </div>
                             <h2>Cart</h2>
                         </Link>
