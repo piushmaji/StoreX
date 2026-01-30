@@ -28,7 +28,7 @@ const MyCart = () => {
                                 <div key={item.id} className='w-full flex flex-col sm:flex-row justify-between border-b border-gray-300 pb-4 gap-3 sm:gap-0'>
 
                                     <div className='flex gap-2 sm:gap-4'>
-                                        <div className='h-24 w-24 sm:h-32 sm:w-28 lg:h-40 lg:w-32 bg-gray-200 border border-gray-300 rounded-lg flex items-center justify-center p-2 flex-shrink-0'>
+                                        <div className='h-24 w-24 sm:h-32 sm:w-28 lg:h-40 lg:w-32 bg-gray-200 border border-gray-300 rounded-lg flex items-center justify-center p-2 shrink-0'>
                                             <img
                                                 className='h-full w-full object-contain'
                                                 src={item.images[0]} alt={item.title} />
