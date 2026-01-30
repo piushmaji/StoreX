@@ -3,7 +3,7 @@ import ProductCategory from './ProductCategory'
 
 const ProductListingPage = () => {
     return (
-        <div className='flex w-full min-h-screen lg:p-20 lg:pt-8 lg:pb-0 overflow-x-hidden gap-4 bg-gray-50'>
+        <div className='flex w-full min-h-screen lg:p-20 lg:pt-8 lg:pb-0 p-2 overflow-x-hidden gap-4 bg-gray-50'>
 
             {/* FilteredCategory/Side bar 20% width  */}
             <div className=' hidden lg:block w-1/5 '>
