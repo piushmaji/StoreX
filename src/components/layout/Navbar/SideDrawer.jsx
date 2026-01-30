@@ -41,7 +41,7 @@ export default function SideDrawer() {
         {
             text: "Store",
             icon: <StoreIcon />,
-            path: "/store",
+            path: "/product",
         },
     ];
 

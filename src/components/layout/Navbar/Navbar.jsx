@@ -33,7 +33,7 @@ const Navbar = () => {
 
                     <Link to={'/product'}>
                         <div className='md:flex flex-col items-center justify-center hidden'>
-                            <Store/>
+                            <Store />
                             <h2>Store</h2>
                         </div>
                     </Link>
@@ -44,14 +44,14 @@ const Navbar = () => {
                             <h2>Wishlist</h2>
                         </div>
                     </Link>
-                    <div className='flex flex-col items-center justify-center'>
+                    <div className='flex flex-col items-center justify-center hover:text-blue-400  '>
 
                         <Link to='/cart'>
                             <div className='relative'>
                                 <div className='h-5 w-5 absolute bg-red-400 rounded-full left-4 -top-2 items-center justify-center flex p-1 border-2 border-gray-50'>
                                     <span className='text-white text-xs'>{cartItem.length}</span>
                                 </div>
-                                <ShoppingCart/>
+                                <ShoppingCart />
                             </div>
                             <h2>Cart</h2>
                         </Link>
