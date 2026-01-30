@@ -8,7 +8,7 @@ export default function WishListIcon({ product }) {
 
     const { isInWishList, toggleWishList } = useWishList()
     if (!product) {
-        console.error("WishListIcon: product is missing");
+
         return null;
     }
     return (
