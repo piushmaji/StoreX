@@ -27,7 +27,7 @@ const myDashboard =
 
 const ProfileDashboard = () => {
     return (
-        <div className=' h-screen lg:w-[75%] w-full flex flex-col gap-4'>
+        <div className=' lg:h-screen lg:w-[75%] w-full flex flex-col gap-4'>
 
             <div className='bg-gray-50 border rounded-lg border-gray-300 pb-3'>
                 <section className=' py-3 lg:px-6  '>
@@ -97,12 +97,12 @@ const ProfileDashboard = () => {
                     <h1>My Dashboard</h1>
                 </div>
 
-                <div className='flex gap-4 justify-between'>
+                <div className='flex md:flex-row flex-col  gap-4 justify-between'>
                     {myDashboard.map((items) => {
 
                         const Icon = items.icon
                         return (
-                            <div div key={items.id} className='w-1/3 flex flex-col border border-gray-300 rounded-lg p-4 gap-1' >
+                            <div div key={items.id} className='w-full md:w-1/3 flex flex-col border border-gray-300 rounded-lg p-4 gap-1' >
                                 <div className='h-8 w-8 flex items-center justify-center rounded-lg text-blue-500 bg-blue-200'>
                                     <Icon />
                                 </div>
