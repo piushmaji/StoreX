@@ -1,8 +1,33 @@
-import React from 'react'
+import { Heart, Map, ShoppingBag } from 'lucide-react'
+
+const myDashboard =
+    [
+        {
+            id: "D1",
+            icon: ShoppingBag,
+            title: "Total Orders",
+            value: 32,
+            info: 3,
+        },
+        {
+            id: "D2",
+            icon: Heart,
+            title: "My Wishlist",
+            value: 14,
+            info: "Item Saved",
+        },
+        {
+            id: "D3",
+            icon: Map,
+            title: "Saved Addresses",
+            value: 3,
+            info: "Home",
+        },
+    ]
 
 const ProfileDashboard = () => {
     return (
-        <div className='lg:w-[75%] w-full '>
+        <div className=' h-screen lg:w-[75%] w-full flex flex-col gap-4'>
 
             <div className='bg-gray-50 border rounded-lg border-gray-300 pb-3'>
                 <section className=' py-3 lg:px-6  '>
@@ -67,12 +92,36 @@ const ProfileDashboard = () => {
 
 
             {/* Dashboard Section */}
-            <section>
-                <div>
-                    My Dashboard
+            <section className='bg-gray-50 border rounded-lg border-gray-300 p-6 flex flex-col gap-4'>
+                <div className='text-2xl'>
+                    <h1>My Dashboard</h1>
                 </div>
-            </section>
-        </div>
+
+                <div className='flex gap-4 justify-between'>
+                    {myDashboard.map((items) => {
+
+                        const Icon = items.icon
+                        return (
+                            <div div key={items.id} className='w-1/3 flex flex-col border border-gray-300 rounded-lg p-4 gap-1' >
+                                <div className='h-8 w-8 flex items-center justify-center rounded-lg text-blue-500 bg-blue-200'>
+                                    <Icon />
+                                </div>
+                                <div className='font-semibold'>
+                                    <h1>{items.title}</h1>
+                                </div>
+                                <div className='text-2xl font-bold'>
+                                    <p>{items.value}</p>
+                                </div>
+                                <div>
+                                    <p>{items.info}</p>
+                                </div>
+                            </div>
+                        )
+
+                    })}
+                </div>
+            </section >
+        </div >
     )
 }
 
