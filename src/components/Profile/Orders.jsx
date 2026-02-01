@@ -14,7 +14,7 @@ const Orders = () => {
                     <div className='text-xl'>
                         <h1>Order #9822</h1>
                     </div>
-                    <div className='flex py-4 gap-4 w-full'>
+                    <div className='flex flex-col lg:flex-row py-4 gap-4 w-full'>
                         <div className='h-36 w-36 border rounded-lg border-gray-300 p-2'>
                             <img
                                 className='h-full w-full object-contain'
@@ -31,7 +31,7 @@ const Orders = () => {
                                 <h1>Price</h1>
                             </div>
                         </div>
-                        <div className='flex-1 flex flex-col justify-between'>
+                        <div className='flex-1 flex flex-col justify-center gap-4'>
                             <button className='bg-blue-600 rounded-lg text-white flex justify-center items-center py-4 cursor-pointer'>Track Package</button>
                             <button className='bg-white rounded-lg text-blue-600 flex justify-center items-center py-4 cursor-pointer border border-blue-600'>View Details</button>
                         </div>
