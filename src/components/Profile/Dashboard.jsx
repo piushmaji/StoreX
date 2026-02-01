@@ -25,9 +25,9 @@ const myDashboard =
         },
     ]
 
-const ProfileDashboard = () => {
+const Dashboard = () => {
     return (
-        <div className=' lg:h-screen lg:w-[75%] w-full flex flex-col gap-4'>
+        <div className='flex flex-col gap-4'>
 
             <div className='bg-gray-50 border rounded-lg border-gray-300 pb-3'>
                 <section className=' py-3 lg:px-6  '>
@@ -125,4 +125,4 @@ const ProfileDashboard = () => {
     )
 }
 
-export default ProfileDashboard
+export default Dashboard
