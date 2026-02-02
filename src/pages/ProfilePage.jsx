@@ -3,7 +3,7 @@ import Footer from '../components/layout/Footer/Footer'
 import Profile from '../components/Profile/Profile'
 const ProfilePage = () => {
     return (
-        <div>
+        <div className='overflow-x-hidden'>
             {/* navbar */}
             <Navbar />
 

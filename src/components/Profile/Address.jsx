@@ -7,7 +7,7 @@ const Address = () => {
             <div className='bg-gray-50 border rounded-lg border-gray-300 py-3 lg:px-6 '>
 
                 {/* Naming section and add to new address button section */}
-                <section className='flex justify-between items-center'>
+                <section className='flex justify-between items-center px-2 lg:px-0'>
                     <div className='text-2xl py-2 px-4 lg:px-0'>
                         <h1>Addresses</h1>
                     </div>
@@ -21,7 +21,7 @@ const Address = () => {
                 </section>
 
                 {/* Saved address section */}
-                <section className='grid grid-cols-2 gap-4 py-6'>
+                <section className='grid lg:grid-cols-2 gap-4 lg:py-6 px-2 py-6'>
 
                     {/* each address section */}
                     {[1, 2, 3, 4].map(() => (

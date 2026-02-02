@@ -1,5 +1,12 @@
 import { ClipboardList, CreditCard, MapPin, Pencil } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { NavLink } from "react-router-dom";
+
+const linkClass = ({ isActive }) => `flex gap-2 items-center p-4 rounded-lg  cursor-pointer  transition-all duration-200 ease-in-out
+
+ ${isActive
+        ? "bg-blue-500 text-white "
+        : "text-gray-700 hover:bg-gray-200 "
+    }}`
 
 const SideBar = () => {
 
@@ -10,39 +17,35 @@ const SideBar = () => {
                     <h1>Profile</h1>
                 </div>
 
-                <div className='flex flex-col cursor-pointer '>
+                <div className='flex flex-col cursor-pointer gap-2'>
 
                     {/* Edit Profile Section */}
-                    <Link to="" end>
-                        <div className='flex gap-2 items-center p-4 rounded-lg hover:bg-blue-500 hover:text-white transition-all duration-200 ease-in-out cursor-pointer'>
-                            <Pencil size={16} />
-                            <h1>Edit Profile</h1>
-                        </div>
-                    </Link>
+
+                    <NavLink to='' end className={linkClass}>
+                        <Pencil size={16} />
+                        <h1>Edit Profile</h1>
+                    </NavLink>
+
 
                     {/* Orders Section */}
-                    <Link to='orders'>
-                        <div className='flex gap-2 items-center p-4 rounded-lg hover:bg-blue-500 hover:text-white transition-all duration-200 ease-in-out cursor-pointer'>
-                            <ClipboardList size={16} />
-                            <h1>Orders</h1>
-                        </div>
-                    </Link>
+
+                    <NavLink to='orders' className={linkClass}>
+                        <ClipboardList size={16} />
+                        <h1>Orders</h1>
+                    </NavLink>
+
 
                     {/* Address Section */}
-                    <Link to="address">
-                        <div className='flex gap-2 items-center p-4 rounded-lg hover:bg-blue-500 hover:text-white transition-all duration-200 ease-in-out cursor-pointer'>
-                            <MapPin size={16} />
-                            <h1>Address</h1>
-                        </div>
-                    </Link>
+                    <NavLink to="address" className={linkClass}>
+                        <MapPin size={16} />
+                        <h1>Address</h1>
+                    </NavLink>
 
                     {/* Payment Section */}
-                    <Link to="payment">
-                        <div className='flex gap-2 items-center p-4 rounded-lg hover:bg-blue-500 hover:text-white transition-all duration-200 ease-in-out cursor-pointer'>
-                            <CreditCard size={16} />
-                            <h1>Payment Method</h1>
-                        </div>
-                    </Link>
+                    <NavLink to="payment" className={linkClass}>
+                        <CreditCard size={16} />
+                        <h1>Payment Method</h1>
+                    </NavLink>
 
                 </div>
 
