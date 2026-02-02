@@ -11,7 +11,7 @@ const linkClass = ({ isActive }) => `flex gap-2 items-center p-4 rounded-lg  cur
 const SideBar = () => {
 
     return (
-        <div className=' lg:w-[25%]'>
+        <div className=''>
             <section className='hidden lg:block border rounded-lg bg-gray-50 border-gray-300 p-4'>
                 <div className='text-2xl py-2'>
                     <h1>Profile</h1>
