@@ -19,7 +19,7 @@ const Orders = () => {
                         <div className='h-36 w-36 border rounded-lg border-gray-300 p-2'>
                             <img
                                 className='h-full w-full object-contain'
-                                src="http://localhost:5173/src/assets/images/products/iphone/1.jpeg" alt="" />
+                                src="https://rukminim2.flixcart.com/image/832/832/xif0q/mobile/o/l/2/-original-imahgfmzvanpgncf.jpeg?q=70&crop=false" alt="" />
                         </div>
                         <div className='w-[55%] p-2 flex flex-col gap-4'>
                             <div className='bg-green-400 w-32 rounded-full flex items-center gap-2 px-2 py-1 text-white shadow-lg'>
