@@ -49,7 +49,7 @@ const SideBar = () => {
 
                 </div>
 
-                <div className='bg-blue-600 rounded-lg text-white flex justify-center items-center py-4 cursor-pointer my-2'>
+                <div className='bg-blue-600 rounded-lg text-white flex justify-center items-center py-4 cursor-pointer my-2 transition-all duration-150 ease-in-out hover:shadow-lg active:scale-95 active:shadow-md'>
                     <h1>Log Out</h1>
                 </div>
             </section>
