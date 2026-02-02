@@ -1,8 +1,9 @@
+import { CircleCheck } from 'lucide-react'
 import React from 'react'
 
 const Orders = () => {
     return (
-        <section className='flex flex-col px-4 py-6 bg-gray-50 border rounded-lg border-gray-300'>
+        <section className='flex flex-col px-4 py-6'>
 
             <div className='text-2xl'>
                 <h1>My Orders</h1>
@@ -14,21 +15,22 @@ const Orders = () => {
                     <div className='text-xl'>
                         <h1>Order #9822</h1>
                     </div>
-                    <div className='flex flex-col lg:flex-row py-4 gap-4 w-full'>
+                    <div className='flex flex-col lg:flex-row py-4 gap-6 w-full'>
                         <div className='h-36 w-36 border rounded-lg border-gray-300 p-2'>
                             <img
                                 className='h-full w-full object-contain'
                                 src="http://localhost:5173/src/assets/images/products/iphone/1.jpeg" alt="" />
                         </div>
-                        <div className='w-[55%] p-2 py-4'>
-                            <div className='bg-green-500 w-40 rounded-full flex justify-center'>
+                        <div className='w-[55%] p-2 flex flex-col gap-4'>
+                            <div className='bg-green-400 w-32 rounded-full flex items-center gap-2 px-2 py-1 text-white shadow-lg'>
+                                <CircleCheck />
                                 <h1>Delivered</h1>
                             </div>
                             <div>
-                                <h1>Title</h1>
+                                <h1>Gaming Laptop</h1>
                             </div>
-                            <div>
-                                <h1>Price</h1>
+                            <div className='text-2xl font-bold'>
+                                <h1>₹890000</h1>
                             </div>
                         </div>
                         <div className='flex-1 flex flex-col justify-center gap-4'>
