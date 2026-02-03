@@ -16,7 +16,7 @@ const FilteredCategory = () => {
 
 
                 {/* Brands section */}
-                <div className="border-t border-gray-400 flex flex-col gap-4 py-4">
+                <div className="flex flex-col gap-4 py-4">
                     <div className="flex justify-between">
                         <FilterAccordion
                             title="Brands"
@@ -26,7 +26,7 @@ const FilteredCategory = () => {
 
 
                 {/* Features section */}
-                <div className="border-t border-gray-400 flex flex-col gap-4 py-2">
+                <div className="flex flex-col gap-4 py-2">
                     <FilterAccordion
                         title="Features"
                         options={[
@@ -40,18 +40,15 @@ const FilteredCategory = () => {
 
 
                 {/* Price Range section */}
-                <div className="border-t border-gray-400 flex flex-col gap-4 py-2">
+                <div className=" flex flex-col py-2">
                     <PriceFilter />
-                    <div className="w-full flex gap-4">
+                    <div className="w-full">
                         <PriceInputFilter />
-                    </div>
-                    <div className="">
-                        <button className="w-full border border-gray-300 p-2 rounded-lg text-blue-600 bg-gray-50">Apply</button>
                     </div>
                 </div>
 
                 {/* Condition section */}
-                <div className="border-t border-gray-400 flex flex-col gap-4 py-2">
+                <div className=" flex flex-col gap-4 py-2">
                     <div className="flex justify-between">
                         <h1>Condition</h1>
                         <ChevronUp />
@@ -84,7 +81,7 @@ const FilteredCategory = () => {
                     </div>
                 </div>
                 {/* Condition section */}
-                <div className="border-t border-gray-400 flex flex-col gap-4 py-2">
+                <div className="flex flex-col gap-4 py-2">
                     <div className="flex justify-between">
                         <h1>Condition</h1>
                         <ChevronUp />

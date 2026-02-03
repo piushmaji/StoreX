@@ -29,7 +29,7 @@ const Dashboard = () => {
     return (
         <div className='flex flex-col gap-4'>
 
-            <div className='bg-gray-50 border rounded-lg border-gray-300 pb-3'>
+            <div className='bg-gray-50 border rounded-lg border-gray-300 pb-5'>
                 <section className=' py-3 lg:px-6  '>
                     <div className='text-2xl py-2 px-4 lg:px-0'>
                         <h1>Edit Profile</h1>
@@ -92,7 +92,7 @@ const Dashboard = () => {
 
 
             {/* Dashboard Section */}
-            <section className='bg-gray-50 border rounded-lg border-gray-300 p-6 flex flex-col gap-4'>
+            <section className='hidden bg-gray-50 border rounded-lg border-gray-300 p-6 flex-col gap-4'>
                 <div className='text-2xl'>
                     <h1>My Dashboard</h1>
                 </div>

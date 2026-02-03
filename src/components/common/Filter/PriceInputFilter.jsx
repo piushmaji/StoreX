@@ -26,6 +26,7 @@ export default function PriceInputFilter({ onApply }) {
                     display: "flex",
                     gap: 1,
                     alignItems: "center",
+                    padding: '10px'
                 }}
             >
                 {/* Min */}
@@ -38,7 +39,9 @@ export default function PriceInputFilter({ onApply }) {
                     InputProps={{
                         startAdornment: "₹",
                     }}
-                    sx={{ width: "100px" }}
+                    sx={{
+                        width: "100px",
+                    }}
                 />
 
                 {/* Max */}
@@ -55,10 +58,13 @@ export default function PriceInputFilter({ onApply }) {
                 />
             </Box>
             {/* Apply */}
-            <Box>
+            <Box
+                sx={{ width: "100px" }}
+            >
                 <Button
+                    sx={{ width: "100px" }}
                     variant="contained"
-                    size="small"
+                    size="medium"
                     onClick={handleApply}
                 >
                     Apply

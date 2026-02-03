@@ -24,22 +24,16 @@ const Navbar = () => {
                 {/* Profile section */}
                 <div className='flex justify-end lg:col-span-3 col-span-6 gap-4 text-gray-500 lg:order-3'>
 
-                    <Link to={'/profile'}>
-                        <div className='md:flex flex-col items-center justify-center hidden '>
-                            <UserRound />
-                            <h2>Profile</h2>
-                        </div>
-                    </Link>
 
                     <Link to={'/product'}>
-                        <div className='md:flex flex-col items-center justify-center hidden'>
+                        <div className='md:flex flex-col items-center justify-center hidden hover:text-blue-400'>
                             <Store />
                             <h2>Store</h2>
                         </div>
                     </Link>
 
                     <Link to={'/wishlist'}>
-                        <div className='md:flex flex-col items-center justify-center hidden '>
+                        <div className='md:flex flex-col items-center justify-center hidden hover:text-blue-400 '>
                             <Heart />
                             <h2>Wishlist</h2>
                         </div>
@@ -57,6 +51,14 @@ const Navbar = () => {
                         </Link>
 
                     </div>
+
+
+                    <Link to={'/profile'}>
+                        <div className='md:flex flex-col items-center justify-center hidden hover:text-blue-400'>
+                            <UserRound />
+                            <h2>Profile</h2>
+                        </div>
+                    </Link>
                 </div>
 
                 {/* Search bar section */}

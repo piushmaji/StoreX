@@ -4,7 +4,7 @@ import React from 'react'
 const Address = () => {
     return (
         <div>
-            <div className='bg-gray-50 border rounded-lg border-gray-300 py-3 lg:px-6 '>
+            <div className=' py-3 lg:px-6 '>
 
                 {/* Naming section and add to new address button section */}
                 <section className='flex justify-between items-center px-2 lg:px-0'>
@@ -21,7 +21,7 @@ const Address = () => {
                 </section>
 
                 {/* Saved address section */}
-                <section className='grid lg:grid-cols-2 gap-4 lg:py-6 px-2 py-6'>
+                <section className='grid lg:grid-cols-2 gap-4 lg:py-6 py-6'>
 
                     {/* each address section */}
                     {[1, 2, 3, 4].map(() => (

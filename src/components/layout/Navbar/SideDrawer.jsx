@@ -24,9 +24,9 @@ export default function SideDrawer() {
 
     const menuItems = [
         {
-            text: "Profile",
-            icon: <PersonIcon />,
-            path: "/profile",
+            text: "Store",
+            icon: <StoreIcon />,
+            path: "/product",
         },
         {
             text: "Wishlist",
@@ -38,10 +38,11 @@ export default function SideDrawer() {
             icon: <ShoppingCartIcon />,
             path: "/cart",
         },
+
         {
-            text: "Store",
-            icon: <StoreIcon />,
-            path: "/product",
+            text: "Profile",
+            icon: <PersonIcon />,
+            path: "/profile",
         },
     ];
 

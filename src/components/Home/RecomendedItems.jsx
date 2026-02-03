@@ -1,5 +1,9 @@
+import { ShoppingCart } from 'lucide-react';
 import { bag, blezzer, headphone, cattle, jacket, pant, tshirt, wallet, pot } from '../../assets/images/items-img/index'
 import WishListIcon from '../common/WishListIcon/WishListIcon';
+import { useCart } from "../../context/CartContext/CartContext"
+
+
 const RecomendedItems = () => {
 
     const products = [
@@ -74,7 +78,7 @@ const RecomendedItems = () => {
             img: cattle
         }
     ];
-
+    const { addToCart } = useCart()
     return (
         <>
             <div className='p-2'>
@@ -85,18 +89,31 @@ const RecomendedItems = () => {
                     {products.map((product) => [
                         <div
                             key={product.id}
-                            className='relative border bg-white border-gray-300 rounded-lg py-2'>
-                            <div className='flex flex-col pt-6 items-center'>
-                                <img
-                                    className='h-40 w-40 '
-                                    src={product.img} alt={product.title} />
+                            className='relative flex flex-col gap-2 items-center justify-between border bg-white border-gray-300 rounded-lg py-4'>
+                            <div>
+                                <div className='flex flex-col pt-6 items-center'>
+                                    <img
+                                        className='h-40 w-40 '
+                                        src={product.img} alt={product.title} />
+                                </div>
+
+                                <div className='absolute top-0 right-2'>
+                                    <WishListIcon product={product} />
+                                </div>
+
+                                <div className='pl-3 pt-2 w-[70%]'>
+                                    <h2>₹{product.price}</h2>
+                                    <p className='text-gray-400'>{product.description}</p>
+                                </div>
                             </div>
-                            <div className="absolute top-0 right-2">
-                                <WishListIcon />
-                            </div>
-                            <div className='pl-3 pt-2 w-[70%]'>
-                                <h2>₹{product.price}</h2>
-                                <p className='text-gray-400'>{product.description}</p>
+
+                            <div>
+                                <button
+                                    // onClick={() => addToCart(product)}
+                                    className='w-full px-4 py-2 flex gap-2 items-center justify-center text-gray-50 rounded-lg font-light bg-blue-500 shadow-md cursor-pointer active:scale-95 transition-all duration-200'>
+                                    <ShoppingCart />
+                                    <h1> Add to Cart</h1>
+                                </button>
                             </div>
                         </div>
                     ])}

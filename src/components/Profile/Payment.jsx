@@ -3,7 +3,7 @@ import { CircleCheck, Home, MapPin, Pencil, Phone, Plus, Trash2 } from 'lucide-r
 const PaymentMethod = () => {
     return (
         <div>
-            <div className='bg-gray-50 border rounded-lg border-gray-300 py-3 lg:px-6 '>
+            <div className='py-3 lg:px-6 '>
 
                 {/* Naming section and add to new address button section */}
                 <section className='flex justify-between items-center px-2 lg:px-0'>
