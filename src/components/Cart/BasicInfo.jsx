@@ -1,4 +1,7 @@
-import { LockKeyhole, MessageSquareText, Van } from 'lucide-react'
+import { LockKeyhole } from 'lucide-react'
+import { MessageSquareText } from 'lucide-react'
+import { Van } from 'lucide-react'
+
 
 export const features = [
     {

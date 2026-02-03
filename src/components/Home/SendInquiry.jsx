@@ -1,4 +1,6 @@
 import factory from '../../assets/images/quiry/factory.svg'
+
+
 const SendInquiry = () => {
   return (
     <section className="p-2">

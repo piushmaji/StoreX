@@ -1,4 +1,9 @@
-import { Heart, Menu, Search, ShoppingCart, Store, UserRound } from 'lucide-react'
+import { Heart } from 'lucide-react'
+import { Search } from 'lucide-react'
+import { ShoppingCart } from 'lucide-react'
+import { Store } from 'lucide-react'
+import { UserRound } from 'lucide-react'
+
 import storex from "../../../assets/images/Logo/storex.png"
 import { Link } from 'react-router-dom'
 import SideDrawer from './SideDrawer'
@@ -8,7 +13,7 @@ const Navbar = () => {
     const { cartItem } = useCart()
     return (
         <div>
-            <div className='fixed top-0 left-0 z-50 grid grid-cols-12 w-full lg:px-20 lg:py-4 p-2 bg-gray-50 overflow-x-hidden gap-4 border-b border-gray-300'>
+            <div className='grid grid-cols-12 w-full lg:px-20 lg:py-4 p-2 bg-gray-50 overflow-x-hidden gap-4 border-b border-gray-300'>
 
 
 

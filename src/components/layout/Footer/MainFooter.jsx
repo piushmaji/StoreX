@@ -1,4 +1,10 @@
-import { ChevronUp, Facebook, Instagram, Linkedin, Twitter, Youtube } from 'lucide-react'
+import { Facebook } from 'lucide-react'
+import { Instagram } from 'lucide-react'
+import { Linkedin } from 'lucide-react'
+import { Twitter } from 'lucide-react'
+import { Youtube } from 'lucide-react'
+
+
 import storex from '../../../assets/images/Logo/storex.png'
 import appleApp from '../../../assets/images/Footer/appleApp.svg'
 import playStore from '../../../assets/images/Footer/playStore.svg'

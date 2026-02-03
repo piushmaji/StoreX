@@ -1,5 +1,10 @@
-import { Search, Sliders, Send, ShieldCheck } from "lucide-react"
-import { customize, factory, inspection, shipping }from '../../assets/images/extraService/index'
+import { Search } from "lucide-react"
+import { Sliders } from "lucide-react"
+import { Send } from "lucide-react"
+import { ShieldCheck } from "lucide-react"
+
+
+import { customize, factory, inspection, shipping } from '../../assets/images/extraService/index'
 const ExtraService = () => {
     const extraServices = [
         {
@@ -10,19 +15,19 @@ const ExtraService = () => {
         },
         {
             id: 2,
-            img:customize,
+            img: customize,
             icon: Sliders,
             title: "Customize Your Products",
         },
         {
             id: 3,
-            img:shipping,
+            img: shipping,
             icon: Send,
             title: "Fast, reliable shipping by ocean or air",
         },
         {
             id: 4,
-            img:inspection,
+            img: inspection,
             icon: ShieldCheck,
             title: "Product monitoring and inspection",
         }
