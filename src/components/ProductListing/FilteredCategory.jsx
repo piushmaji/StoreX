@@ -86,7 +86,7 @@ const FilteredCategory = () => {
                         <h1>Condition</h1>
                         <ChevronUp />
                     </div>
-                    <div className="flex flex-col gap-2 font-light">
+                    {/* <div className="flex flex-col gap-2 font-light">
 
                         <div className="flex items-center gap-2">
                             <input
@@ -108,7 +108,7 @@ const FilteredCategory = () => {
                                 className="h-4 w-4"
                                 type="checkbox" /><label>⭐️⭐️</label>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
 
             </div>
