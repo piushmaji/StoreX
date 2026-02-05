@@ -51,12 +51,12 @@ StoreX is a full-featured e-commerce platform designed to provide an excellent s
 *Homepage with hero slider and featured deals*
 
 ### Mobile View
-<img src="./screenshots/mobile-home.png" alt="Mobile Homepage" width="300"/>
+<img src="./public/screenshots/mobilehome.png" alt="Mobile Homepage" width="300"/>
 
 *Responsive mobile interface*
 
 ### Product Listing
-![Product Listing](.public/screenshots/listing.png)
+![Product Listing](./public/screenshots/listing.png)
 *Browse products*
 
 ### Product Section
@@ -76,12 +76,6 @@ StoreX is a full-featured e-commerce platform designed to provide an excellent s
 *Edit My profile section*
 
 </div>
-
-> **Note:** To add screenshots to your repository:
-> 1. Create a `screenshots/` folder in your project root
-> 2. Take screenshots of your application at different breakpoints
-> 3. Save them with descriptive names (e.g., `desktop-home.png`, `mobile-home.png`)
-> 4. Recommended screenshot sizes: Desktop (1920x1080), Tablet (768x1024), Mobile (375x667)
 
 ---
 
