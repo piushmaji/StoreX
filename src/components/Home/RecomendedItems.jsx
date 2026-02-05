@@ -1,4 +1,4 @@
-import { ShoppingCart } from 'lucide-react';
+import { Heart, ShoppingCart } from 'lucide-react';
 import { bag, blezzer, headphone, cattle, jacket, pant, tshirt, wallet, pot } from '../../assets/images/items-img/index'
 import WishListIcon from '../common/WishListIcon/WishListIcon';
 import { useCart } from "../../context/CartContext/CartContext"
@@ -97,8 +97,10 @@ const RecomendedItems = () => {
                                         src={product.img} alt={product.title} />
                                 </div>
 
-                                <div className='absolute top-0 right-2'>
-                                    <WishListIcon product={product} />
+                                {/* top-0 right-2*/}
+                                <div className='absolute top-2 right-4'>
+                                    <Heart />
+                                    {/* <WishListIcon product={product} /> */}
                                 </div>
 
                                 <div className='pl-3 pt-2 w-[70%]'>
