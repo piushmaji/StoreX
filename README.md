@@ -2,11 +2,11 @@
 
 <div align="center">
 
-![StoreX Logo](./src/assets/images/Logo/storex.png)
+<img src="./src/assets/images/Logo/storex.png" alt="StoreX Logo" width="200"/>
 
 **A modern, responsive e-commerce platform built with React and Tailwind CSS**
 
-[Live Demo](https://storexpi.vercel.app/) | [Report Bug](https://github.com/yourusername/storex/issues) | [Request Feature](https://github.com/yourusername/storex/issues)
+[Live Demo](https://storexpi.vercel.app/) | [Report Bug](https://github.com/piushmaji/storex/issues) | [Request Feature](https://github.com/piushmaji/storex/issues)
 
 [![React](https://img.shields.io/badge/React-18.x-blue.svg)](https://reactjs.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-3.x-38B2AC.svg)](https://tailwindcss.com/)
@@ -20,11 +20,11 @@
 ## 📋 Table of Contents
 
 - [Overview](#-overview)
+- [Screenshots](#-screenshots)
 - [Features](#-features)
 - [Tech Stack](#-tech-stack)
 - [Project Structure](#-project-structure)
 - [Getting Started](#-getting-started)
-- [Critical Fix - Image Path Issue](#-critical-fix---image-path-issue)
 - [Components Documentation](#-components-documentation)
 - [Deployment](#-deployment)
 - [Troubleshooting](#-troubleshooting)
@@ -39,6 +39,49 @@ StoreX is a full-featured e-commerce platform designed to provide an excellent s
 
 ### 🔗 Live Application
 **Production URL**: [https://storexpi.vercel.app/](https://storexpi.vercel.app/)
+
+---
+
+## 📸 Screenshots
+
+<div align="center">
+
+### Desktop View
+![Desktop Homepage](./screenshots/desktop-home.png)
+*Homepage with hero slider and featured deals*
+
+### Mobile View
+<img src="./screenshots/mobile-home.png" alt="Mobile Homepage" width="300"/>
+
+*Responsive mobile interface*
+
+### Product Listing
+![Product Listing](./screenshots/listing.png)
+*Browse products*
+
+### Product Section
+![Product Section](./screenshots/product.png)
+*Product Section*
+
+### Add To Cart Section
+![Add To Cart](./screenshots/cart.png)
+*Add to cart section*
+
+### Wishlist Section
+![Wishlist](./screenshots/Wishlist.png)
+*Add Your Wishlist from product listing pages*
+
+### My Profile Section
+![Profile](./screenshots/profile.png)
+*Edit My profile section*
+
+</div>
+
+> **Note:** To add screenshots to your repository:
+> 1. Create a `screenshots/` folder in your project root
+> 2. Take screenshots of your application at different breakpoints
+> 3. Save them with descriptive names (e.g., `desktop-home.png`, `mobile-home.png`)
+> 4. Recommended screenshot sizes: Desktop (1920x1080), Tablet (768x1024), Mobile (375x667)
 
 ---
 
@@ -129,6 +172,13 @@ storex/
 │   ├── main.jsx                   # Entry point
 │   └── index.css                  # Global styles (Tailwind imports)
 │
+├── screenshots/                   # Application screenshots
+│   ├── desktop-home.png
+│   ├── mobile-home.png
+│   ├── categories.png
+│   ├── deals.png
+│   └── suppliers.png
+│
 ├── index.html                     # HTML template
 ├── package.json                   # Dependencies and scripts
 ├── tailwind.config.js             # Tailwind configuration
@@ -150,7 +200,7 @@ Ensure you have the following installed:
 
 #### 1️⃣ Clone the Repository
 ```bash
-git clone https://github.com/yourusername/storex.git
+git clone https://github.com/piushmaji/storex.git
 cd storex
 ```
 
@@ -205,7 +255,92 @@ yarn preview
 
 ---
 
+## 📚 Components Documentation
+
+### Navigation
+- **Navbar** - Main navigation with logo, search, cart, and menu
+
+### Home Page Sections
+- **ImgSlider** - Hero carousel with featured products
+- **Deal** - Time-sensitive offers with countdown
+- **CategoryCards** - Product category navigation
+- **RecomendedItems** - Curated product suggestions
+- **ExtraService** - Additional business services
+- **SendInquiry** - Quote request form
+- **Suppliers** - Regional supplier directory
+
+---
+
+## 🚢 Deployment
+
+### Deploy to Vercel (Recommended)
+
+1. Push your code to GitHub
+2. Visit [Vercel](https://vercel.com/)
+3. Import your repository
+4. Vercel will auto-detect Vite and configure build settings
+5. Deploy!
+
+### Manual Deployment
+
+```bash
+# Build the project
+npm run build
+
+# The dist/ folder contains your production-ready files
+# Upload to your hosting provider
+```
+
+---
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**Issue: Images not loading**
+- Check image paths in `public/img/` folder
+- Ensure correct import paths in components
+
+**Issue: Build fails**
+- Clear `node_modules` and reinstall: `rm -rf node_modules && npm install`
+- Clear Vite cache: `rm -rf .vite`
+
+**Issue: Styles not applying**
+- Verify Tailwind CSS is properly configured
+- Check `tailwind.config.js` content paths
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please follow these steps:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🙏 Acknowledgments
+
+- Icons by [Lucide React](https://lucide.dev/)
+- Design inspiration from modern e-commerce platforms
+- Built with ❤️ using React and Tailwind CSS
+
+---
+
+<div align="center">
+
+**Made with ☕ by Piush Maji**
+
+[⬆ back to top](#️-storex---e-commerce-platform)
+
+</div>

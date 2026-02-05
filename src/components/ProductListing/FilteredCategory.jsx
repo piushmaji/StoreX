@@ -82,10 +82,10 @@ const FilteredCategory = () => {
                 </div>
                 {/* Condition section */}
                 <div className="flex flex-col gap-4 py-2">
-                    <div className="flex justify-between">
+                    {/* <div className="flex justify-between">
                         <h1>Condition</h1>
                         <ChevronUp />
-                    </div>
+                    </div> */}
                     {/* <div className="flex flex-col gap-2 font-light">
 
                         <div className="flex items-center gap-2">
