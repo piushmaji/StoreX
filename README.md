@@ -47,7 +47,7 @@ StoreX is a full-featured e-commerce platform designed to provide an excellent s
 <div align="center">
 
 ### Desktop View
-![Desktop Homepage](./screenshots/desktop-home.png)
+![Desktop Homepage](./public/screenshots/desktop-home.png)
 *Homepage with hero slider and featured deals*
 
 ### Mobile View
@@ -56,23 +56,23 @@ StoreX is a full-featured e-commerce platform designed to provide an excellent s
 *Responsive mobile interface*
 
 ### Product Listing
-![Product Listing](./screenshots/listing.png)
+![Product Listing](.public/screenshots/listing.png)
 *Browse products*
 
 ### Product Section
-![Product Section](./screenshots/product.png)
+![Product Section](./public/screenshots/product.png)
 *Product Section*
 
 ### Add To Cart Section
-![Add To Cart](./screenshots/cart.png)
+![Add To Cart](./public/screenshots/cart.png)
 *Add to cart section*
 
 ### Wishlist Section
-![Wishlist](./screenshots/Wishlist.png)
+![Wishlist](./public/screenshots/Wishlist.png)
 *Add Your Wishlist from product listing pages*
 
 ### My Profile Section
-![Profile](./screenshots/profile.png)
+![Profile](./public/screenshots/profile.png)
 *Edit My profile section*
 
 </div>
