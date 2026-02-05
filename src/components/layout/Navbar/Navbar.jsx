@@ -8,9 +8,21 @@ import storex from "../../../assets/images/Logo/storex.png"
 import { Link } from 'react-router-dom'
 import SideDrawer from './SideDrawer'
 import { useCart } from '../../../context/CartContext/CartContext'
+import { useEffect, useState } from 'react'
+import products from '../../../data/Products'
+import Dropdown from '../SearchBar/Dropdown'
 
 const Navbar = () => {
+
+    const items = Object.values(products)
     const { cartItem } = useCart()
+
+    const [query, setQuery] = useState('')
+    const [show, setShow] = useState(false)
+
+    const filtered = items.filter(p => p.title.toLowerCase().includes(query.toLowerCase()))
+
+
     return (
         <div>
             <div className='grid grid-cols-12 w-full lg:px-20 lg:py-4 p-2 bg-gray-50 overflow-x-hidden gap-4 border-b border-gray-300 '>
@@ -70,8 +82,24 @@ const Navbar = () => {
                 <div className='relative flex justify-center items-center col-span-12 lg:col-span-7 lg:order-2 '>
                     <Search className="absolute lg:left-6 left-5 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                     <input
+                        value={query}
+                        onChange={(e) => {
+                            setQuery(e.target.value)
+                            setShow(true)
+                        }}
+                        onFocus={() => setShow(true)}
+                        onBlur={() => {
+                            setTimeout(() => setShow(false), 200);
+                        }}
+
                         className='border-2 border-r w-full h-10 rounded-l-xl px-12 focus:outline-none focus:ring-0 border-blue-500 '
                         type="text" placeholder='Search' />
+
+                    <div className='absolute top-4 z-50'>
+                        {show && query &&
+                            (<Dropdown data={filtered} close={() => setShow(false)} />
+                            )}
+                    </div>
 
                     <select className='flex-1 border-2 h-10 border-l-0 p-2 focus:outline-none focus:ring-0 border-blue-500 hidden sm:block'>
                         <option value="Category">Category</option>
@@ -81,7 +109,7 @@ const Navbar = () => {
                         <option value="Cloths">Cloths</option>
                     </select>
 
-                    <button className='h-10 w-32 border-l-0 rounded-r-xl p-2 focus:outline-none focus:ring-0 bg-blue-500 text-white cursor-pointer'>Submit</button>
+                    <button className='h-10 w-32 border-l-0 rounded-r-xl p-2 focus:outline-none focus:ring-0 bg-blue-500 text-white cursor-pointer'>Search</button>
                 </div>
 
             </div>
