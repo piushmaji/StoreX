@@ -4,7 +4,7 @@ const Dropdown = ({ data, close }) => {
     return (
         <div>
 
-            <div className="bg-white border shadow rounded">
+            <div className="z-50 bg-white border shadow rounded">
 
                 {data.map((item) => (
                     <div
