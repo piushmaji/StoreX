@@ -24,9 +24,8 @@ const Navbar = () => {
 
 
     return (
-        <div className='sticky left-0 top-0 z-999 '>
-            <div className='grid grid-cols-12 w-full lg:px-20 lg:py-4 p-2 bg-gray-50 overflow-x-hidden gap-4 border-b border-gray-300 '>
-
+        <div>
+            <div className='grid grid-cols-12 w-full lg:px-20 lg:py-4 p-2 bg-gray-50 gap-4 border-b border-gray-300 '>
 
 
                 {/* BrandName section */}
@@ -95,7 +94,7 @@ const Navbar = () => {
                         className='border-2 border-r w-full h-10 rounded-l-xl px-12 focus:outline-none focus:ring-0 border-blue-500 '
                         type="text" placeholder='Search' />
 
-                    <div className='absolute top-4 z-50'>
+                    <div className='absolute left-0 top-14 z-50'>
                         {show && query &&
                             (<Dropdown data={filtered} close={() => setShow(false)} />
                             )}
