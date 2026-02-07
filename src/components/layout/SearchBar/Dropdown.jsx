@@ -2,9 +2,9 @@ import React from 'react'
 
 const Dropdown = ({ data, close }) => {
     return (
-        <div>
+        <div className=''>
 
-            <div className="z-50 bg-white border shadow rounded">
+            <div className="min-h-60 absolute  z-50 bg-white border shadow rounded">
 
                 {data.map((item) => (
                     <div
