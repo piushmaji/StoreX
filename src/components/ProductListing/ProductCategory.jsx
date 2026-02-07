@@ -12,7 +12,7 @@ const ProductCategory = () => {
       {/* Featured section  */}
       <div className='flex flex-col md:flex-row items-start md:items-center justify-between p-3 md:p-4 border border-gray-300 rounded-lg gap-3 md:gap-0'>
         <div className='font-thin text-sm md:text-base'>
-          <h1>12,911 product in <span className='font-semibold'>Mobile accessory</span></h1>
+          <h1>{productArray.length} product in <span className='font-semibold'>Mobile accessory</span></h1>
         </div>
 
         <div className='flex flex-wrap gap-3 md:gap-6 w-full md:w-auto'>

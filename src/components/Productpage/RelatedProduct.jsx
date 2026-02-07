@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router-dom'
 import { ShoppingCart } from 'lucide-react'
 import WishListIcon from "../common/WishListIcon/WishListIcon"
 import { useCart } from "../../context/CartContext/CartContext"
+import toast from "react-hot-toast"
 const RelatedProduct = () => {
 
     const { id } = useParams()
@@ -12,7 +13,13 @@ const RelatedProduct = () => {
     const [featured, setFeatured] = useState([])
     const { addToCart, cartItem } = useCart()
 
-
+    const handleCart = (product) => {
+        addToCart(product)
+        toast.success("Added to cart 🛒")
+    }
+    const handleList = () => {
+        toast.success("Added to WishList ❤️")
+    }
     useEffect(() => {
 
         const shuffled = [...relatedProduct].sort(() => Math.random() - 0.5).slice(0, 6)
@@ -41,11 +48,13 @@ const RelatedProduct = () => {
                                 </div>
                             </Link>
 
-                            <div className="absolute lg:right-0 lg:top-4 -right-1 top-3">
+                            <div
+                                onClick={() => handleList()}
+                                className="absolute lg:right-0 lg:top-4 -right-1 top-3">
                                 <WishListIcon product={item} />
                             </div>
 
-                            <button onClick={() => addToCart(item)} className='p-2 flex gap-2 items-center justify-center text-gray-50 border border-gray-300 rounded-lg font-light bg-blue-500 shadow-md cursor-pointer active:scale-95 transition-all duration-200'>
+                            <button onClick={() => handleCart(item)} className='p-2 flex gap-2 items-center justify-center text-gray-50 border border-gray-300 rounded-lg font-light bg-blue-500 shadow-md cursor-pointer active:scale-95 transition-all duration-200'>
                                 <ShoppingCart />
                                 <h1> Add to Cart</h1>
                             </button>

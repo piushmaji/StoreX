@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 
 export const WishListContext = createContext(null)
@@ -27,7 +28,6 @@ export const WishListProvider = ({ children }) => {
             if (exist) {
                 return prev.filter((item) => item.id !== product.id)
             }
-
             return [...prev, product];
         })
     })

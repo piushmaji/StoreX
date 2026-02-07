@@ -4,6 +4,7 @@ import products from "../../data/Products"
 import { useNavigate, useParams } from 'react-router-dom'
 import StarRating from "../common/Rating/StarRating"
 import { useCart } from "../../context/CartContext/CartContext"
+import toast from "react-hot-toast"
 
 
 const ProductImg = () => {
@@ -27,6 +28,7 @@ const ProductImg = () => {
         }
         else {
             addToCart(product)
+            toast.success("Added to cart 🛒")
         }
     }
     return (

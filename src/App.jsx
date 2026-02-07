@@ -11,6 +11,7 @@ import Dashboard from "./components/Profile/Dashboard"
 import Orders from "./components/Profile/Orders"
 import Address from './components/Profile/Address'
 import Payment from './components/Profile/Payment'
+import { Toaster } from "react-hot-toast"
 
 const router = createBrowserRouter([
   {
@@ -60,7 +61,15 @@ const router = createBrowserRouter([
 const App = () => {
 
   return (
-    <RouterProvider router={router} />
+    <>
+      <RouterProvider router={router} />
+      <Toaster position="top-center"
+        toastOptions={{
+          style: {
+            marginTop: "60px",
+          },
+        }} />
+    </>
   )
 }
 
