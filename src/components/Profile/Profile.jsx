@@ -1,6 +1,7 @@
 import SideBar from './SideBar'
 import { Outlet } from 'react-router-dom'
 import Topbar from './Topbar'
+import AnimatedOutlet from '../../pages/AnimatedOutlet'
 
 const Profile = () => {
 
@@ -19,7 +20,7 @@ const Profile = () => {
                 </div>
                 {/* Main Profile dashboard Section */}
                 <div >
-                    <Outlet />
+                    <AnimatedOutlet />
                 </div>
             </main>
         </div>

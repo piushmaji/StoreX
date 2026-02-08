@@ -1,5 +1,6 @@
 import React from 'react'
 import { laptop, phone, headphone, camera, watch } from '../../assets/images/DealsandOffers'
+import Timer from './Timer';
 const Deal = () => {
     const products = [
         { name: "Laptop", img: laptop, discount: "10%" },
@@ -8,45 +9,21 @@ const Deal = () => {
         { name: "Camera", img: camera, discount: "12%" },
         { name: "Watch", img: watch, discount: "18%" }
     ];
-    const timeData = [
-        {
-            id: 1,
-            value: 4,
-            label: "Days",
-        },
-        {
-            id: 2,
-            value: 12,
-            label: "Hour",
-        },
-        {
-            id: 3,
-            value: 32,
-            label: "Min",
-        },
-        {
-            id: 4,
-            value: 53,
-            label: "Sec",
-        },
-    ];
+
+    const offerEndDate = new Date()
+    offerEndDate.setDate(offerEndDate.getDate() + 7)
 
     return (
         <div className='m-2 grid grid-cols-12 lg:col-span-1'>
 
             {/* Deal and offers section */}
-            <div className='col-span-12 lg:col-span-3 bg-gray-50 border border-gray-300 flex lg:flex-col justify-between items-center p-5 gap-4'>
+            <div className='col-span-12 lg:col-span-3 bg-gray-50 border border-gray-300 flex lg:flex-col justify-around items-center p-4 '>
                 <div className='flex flex-col '>
                     <h1 className=' text-xl lg:text-2xl '>Deals and Offers</h1>
                     <h2 className='text-md text-gray-400'>Hygiene Equipments</h2>
                 </div>
-                <div className='grid grid-cols-4 items-center justify-items-center gap-4'>
-                    {timeData.map((items) => [
-                        <div key={items.id} className='lg:h-13 lg:w-13 h-12 w-12 bg-gray-300 flex flex-col items-center rounded-lg'>
-                            <h2>{items.value}</h2>
-                            <h3>{items.label}</h3>
-                        </div>
-                    ])}
+                <div className='flex tems-center justify-items-center gap-4'>
+                    <Timer endDate={offerEndDate} />
                 </div>
             </div>
             <div className='grid grid-cols-2 col-span-12 lg:grid-cols-5  lg:col-span-9'>
