@@ -12,51 +12,31 @@ import Orders from "./components/Profile/Orders"
 import Address from './components/Profile/Address'
 import Payment from './components/Profile/Payment'
 import { Toaster } from "react-hot-toast"
+import Layout from "./components/layout/Layout/Layout"
 
 const router = createBrowserRouter([
   {
-    path: '/',
-    element: <HomePage />,
-    errorElement: <NotFound />
-  },
-  {
-    path: '/product',
-    element: <ProductListingPage />
-  },
-  {
-    path: '/product/:id',
-    element: <ProductDetails />
-  },
-  {
-    path: '/cart',
-    element: <CartPage />
-  },
-  {
-    path: '/wishList',
-    element: <WishListPage />
-  },
-  {
-    path: '/profile',
-    element: <ProfilePage />,
+    path: "/",
+    element: <Layout />,
+    errorElement: <NotFound />,
     children: [
+      { index: true, element: <HomePage /> },
+      { path: "product", element: <ProductListingPage /> },
+      { path: "product/:id", element: <ProductDetails /> },
+      { path: "cart", element: <CartPage /> },
+      { path: "wishList", element: <WishListPage /> },
       {
-        index: true,
-        element: <Dashboard />
+        path: "profile",
+        element: <ProfilePage />,
+        children: [
+          { index: true, element: <Dashboard /> },
+          { path: "orders", element: <Orders /> },
+          { path: "address", element: <Address /> },
+          { path: "payment", element: <Payment /> },
+        ],
       },
-      {
-        path: 'orders',
-        element: <Orders />
-      },
-      {
-        path: 'address',
-        element: <Address />
-      },
-      {
-        path: 'payment',
-        element: <Payment />
-      },
-    ]
-  }
+    ],
+  },
 ])
 const App = () => {
 
