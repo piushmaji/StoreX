@@ -28,7 +28,6 @@ const ProductImg = () => {
         }
         else {
             addToCart(product)
-            toast.success("Added to cart 🛒")
         }
     }
     return (

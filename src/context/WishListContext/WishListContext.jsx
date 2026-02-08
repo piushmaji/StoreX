@@ -26,9 +26,14 @@ export const WishListProvider = ({ children }) => {
             const exist = prev.find((item) => item.id === product.id);
 
             if (exist) {
+                toast.error('Removed from Wishlist 💔')
                 return prev.filter((item) => item.id !== product.id)
             }
-            return [...prev, product];
+            else {
+                toast.success("Added to Wishlist ❤️");
+                return [...prev, product];
+            }
+
         })
     })
 

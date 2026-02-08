@@ -15,10 +15,6 @@ const RelatedProduct = () => {
 
     const handleCart = (product) => {
         addToCart(product)
-        toast.success("Added to cart 🛒")
-    }
-    const handleList = () => {
-        toast.success("Added to WishList ❤️")
     }
     useEffect(() => {
 
@@ -48,9 +44,7 @@ const RelatedProduct = () => {
                                 </div>
                             </Link>
 
-                            <div
-                                onClick={() => handleList()}
-                                className="absolute lg:right-0 lg:top-4 -right-1 top-3">
+                            <div className="absolute lg:right-0 lg:top-4 -right-1 top-3">
                                 <WishListIcon product={item} />
                             </div>
 

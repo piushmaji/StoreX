@@ -6,6 +6,7 @@ const WishList = () => {
     const { wishList } = useWishList()
     const { addToCart } = useCart()
     const { removeWishListItem } = useWishList()
+
     return (
         <div className='px-4 py-4 sm:px-8 sm:pt-6 lg:px-20 lg:pt-8'>
             <section className="flex flex-col gap-4">
@@ -26,7 +27,7 @@ const WishList = () => {
                                 <div className="h-[65%] w-full bg-white flex items-center justify-center object-contain p-2 ">
                                     <img
                                         className="h-full w-full object-contain "
-                                        src={item.images[0]} alt="" />
+                                        src={item.images?.[0]} alt={item.title} />
                                 </div>
 
                                 {/* Description Section */}
@@ -35,9 +36,9 @@ const WishList = () => {
                                         <h1 className="truncate text-sm sm:text-base">{item.title}</h1>
                                     </div>
                                     <div className="flex gap-1 sm:gap-2 items-end justify-center flex-wrap text-xs sm:text-sm lg:text-base">
-                                        <h1 className="font-bold">₹{item.pricing.retail.salePrice}</h1>
-                                        <h1 className="text-gray-400 line-through">₹{item.pricing.retail.originalPrice}</h1>
-                                        <h1 className="text-orange-400">({item.pricing.retail.discountPercentage}% OFF)</h1>
+                                        <h1 className="font-bold">₹{item.pricing?.retail.salePrice}</h1>
+                                        <h1 className="text-gray-400 line-through">₹{item.pricing?.retail.originalPrice}</h1>
+                                        <h1 className="text-orange-400">({item.pricing?.retail.discountPercentage}% OFF)</h1>
                                     </div>
                                 </div>
 
