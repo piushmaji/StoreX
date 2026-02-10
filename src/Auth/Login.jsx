@@ -1,18 +1,40 @@
 import { useState } from 'react'
 import { Mail, Lock, User, Eye, EyeOff, ArrowLeft } from 'lucide-react'
 import storex from '../assets/images/Logo/storex.png'
+import { auth } from '../Config/FireBase'
+import { createUserWithEmailAndPassword } from 'firebase/auth'
 
 
 const Auth = () => {
     const [activeTab, setActiveTab] = useState('login') // 'login', 'signup', 'forgot'
     const [showPassword, setShowPassword] = useState(false)
+    const [errors, setErrors] = useState({})
 
-    const [formData, setFormData] = useState({
+
+    const initialFormData = {
         name: '',
         email: '',
         password: '',
         confirmPassword: ''
-    })
+    }
+
+    const [formData, setFormData] = useState(initialFormData)
+
+
+    const validate = () => {
+        const errors = {}
+
+        if (formData.password.length < 6) {
+            errors.password = "Password must be at least 6 characters"
+        }
+
+        if (formData.password !== formData.confirmPassword) {
+            errors.confirmPassword = "Passwords do not match"
+        }
+
+        return errors
+    }
+
 
     const handleChange = (e) => {
         setFormData({
@@ -21,11 +43,26 @@ const Auth = () => {
         })
     }
 
-    const handleSubmit = (e) => {
+
+    const handleSubmit = async (e) => {
         e.preventDefault()
-        // Handle form submission logic here
-        console.log('Form submitted:', formData)
+
+        const validationErrors = validate()
+
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors)
+            return   // 🚫 Firebase call NEVER happens
+        }
+
+        try {
+            await SignIn(formData.email, formData.password)
+            setFormData(initialFormData)
+        } catch (error) {
+            setErrors({ firebase: error.message })
+        }
     }
+
+
 
     const handleGoogleLogin = () => {
         // Handle Google login logic here
@@ -133,6 +170,11 @@ const Auth = () => {
                                         placeholder='Enter your email'
                                     />
                                 </div>
+                                {errors.firebase && (
+                                    <p className="text-red-500 text-sm">
+                                        {errors.firebase}
+                                    </p>
+                                )}
                             </div>
 
                             {/* Password Field - Not for Forgot Password */}

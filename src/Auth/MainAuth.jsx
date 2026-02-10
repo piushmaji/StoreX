@@ -5,23 +5,24 @@ import { ArrowLeft } from 'lucide-react'
 
 const Authlayout = () => {
     return (
-        <div className='h-screen flex'>
+        <div className='relative flex'>
+            {/* Back to Home */}
+
+            <div className='z-50 absolute top-6 left-4'>
+                <div className='flex justify-start mb-6'>
+                    <Link to='/'>
+                        <div className='flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors'>
+                            <ArrowLeft className='w-8 h-8 bg-blue-200  md:bg-gray-100 rounded-full p-1' />
+                        </div>
+                    </Link>
+                </div>
+            </div>
 
             <div className='lg:w-2/5'>
                 <Content />
             </div>
-            <div className='relative lg:flex-1 w-full'>
-                {/* Back to Home */}
 
-                <div className='absolute top-7 left-4 '>
-                    <div className='flex justify-start mb-6'>
-                        <Link to='/'> <div className='flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors'>
-                            <ArrowLeft className='w-5 h-5' />
-                            <span className='text-sm'>Back to Home</span>
-                        </div>
-                        </Link>
-                    </div>
-                </div>
+            <div className=' lg:flex-1 w-full'>
                 <div>
                     <Login />
                 </div>
