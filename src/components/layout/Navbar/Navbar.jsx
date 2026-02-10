@@ -68,7 +68,7 @@ const Navbar = () => {
 
                     </div>
 
-
+                   
                     <Link to={'/profile'}>
                         <div className='md:flex flex-col items-center justify-center hidden hover:text-blue-400'>
                             <UserRound />

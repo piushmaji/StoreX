@@ -1,12 +1,11 @@
 import { useState } from 'react'
-import { Mail, Lock, User, Eye, EyeOff, ArrowLeft} from 'lucide-react'
+import { Mail, Lock, User, Eye, EyeOff, ArrowLeft } from 'lucide-react'
 import storex from '../assets/images/Logo/storex.png'
 
 
 const Auth = () => {
     const [activeTab, setActiveTab] = useState('login') // 'login', 'signup', 'forgot'
     const [showPassword, setShowPassword] = useState(false)
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
     const [formData, setFormData] = useState({
         name: '',

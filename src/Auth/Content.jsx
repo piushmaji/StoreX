@@ -35,7 +35,7 @@ const Content = () => {
                     <div className='mb-8'>
                         <div className='relative w-96 h-96'>
                             <img
-                                src='https://cdn.dribbble.com/userupload/16974819/file/original-e9cfbee4f58a34c961849cdd0660944f.png?resize=2048x1536&vertical=center'
+                                src='https://webnox.in/wp-content/uploads/2022/09/E-commerce-Shopping-Cart-Software-Development.png'
                                 alt='Shopping Illustration'
                                 className='w-full h-full object-contain drop-shadow-2xl'
                             />
