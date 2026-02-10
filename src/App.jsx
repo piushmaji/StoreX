@@ -12,13 +12,14 @@ import Orders from "./components/Profile/Orders"
 import Address from './components/Profile/Address'
 import Payment from './components/Profile/Payment'
 import { Toaster } from "react-hot-toast"
-import Layout from "./components/layout/Layout/Layout"
-import LogIn from "./Auth/Login"
+import MainLayout from "./components/layout/MainLayout/MainLayout"
+import MainAuth from "./Auth/MainAuth"
+import AuthLayout from "./components/layout/AuthLayout/AuthLayout"
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />,
+    element: <MainLayout />,
     errorElement: <NotFound />,
     children: [
       { index: true, element: <HomePage /> },
@@ -26,7 +27,6 @@ const router = createBrowserRouter([
       { path: "product/:id", element: <ProductDetails /> },
       { path: "cart", element: <CartPage /> },
       { path: "wishList", element: <WishListPage /> },
-      { path: "login", element: <LogIn /> },
       {
         path: "profile",
         element: <ProfilePage />,
@@ -39,6 +39,15 @@ const router = createBrowserRouter([
       },
     ],
   },
+
+  {
+    path: "/",
+    element: <AuthLayout />,
+    children: [
+      { path: "login", element: <MainAuth /> },
+    ],
+  }
+
 ])
 const App = () => {
 

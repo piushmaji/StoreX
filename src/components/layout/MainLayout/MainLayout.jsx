@@ -4,7 +4,7 @@ import { AnimatePresence } from "motion/react";
 import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer/Footer";
 
-const Layout = () => {
+const MainLayout = () => {
     const location = useLocation();
 
     return (
@@ -21,4 +21,4 @@ const Layout = () => {
     );
 };
 
-export default Layout;
+export default MainLayout;
