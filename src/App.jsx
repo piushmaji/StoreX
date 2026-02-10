@@ -13,6 +13,7 @@ import Address from './components/Profile/Address'
 import Payment from './components/Profile/Payment'
 import { Toaster } from "react-hot-toast"
 import Layout from "./components/layout/Layout/Layout"
+import LogIn from "./Auth/Login"
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,7 @@ const router = createBrowserRouter([
       { path: "product/:id", element: <ProductDetails /> },
       { path: "cart", element: <CartPage /> },
       { path: "wishList", element: <WishListPage /> },
+      { path: "login", element: <LogIn /> },
       {
         path: "profile",
         element: <ProfilePage />,
