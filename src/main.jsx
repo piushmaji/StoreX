@@ -4,11 +4,14 @@ import './index.css'
 import App from './App.jsx'
 import { CartProvider } from './context/CartContext/CartContext.jsx'
 import { WishListProvider } from './context/WishListContext/WishListContext.jsx'
+import { AuthProvider } from './context/AuthContext/AuthContext.jsx'
 
 createRoot(document.getElementById('root')).render(
-  <CartProvider>
-    <WishListProvider>
-      <App />
-    </WishListProvider>
-  </CartProvider>
+  <AuthProvider>
+    <CartProvider>
+      <WishListProvider>
+        <App />
+      </WishListProvider>
+    </CartProvider>
+  </AuthProvider>
 )

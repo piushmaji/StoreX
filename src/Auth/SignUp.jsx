@@ -4,8 +4,11 @@ import storex from '../assets/images/Logo/storex.png'
 import { auth, googleProvider } from "../Firebase/MainFirebase"
 import { createUserWithEmailAndPassword, signInWithPopup, } from 'firebase/auth'
 import { Link } from 'react-router-dom'
+import { useNavigate } from "react-router-dom"
+import toast from 'react-hot-toast'
 
 const Signup = () => {
+    const navigate = useNavigate()
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
     const [errors, setErrors] = useState({})
@@ -74,6 +77,8 @@ const Signup = () => {
             )
 
             setFormData(initialFormData)
+            navigate("/")
+            toast.success("Sign In SuccessFully")
 
         } catch (err) {
 
@@ -98,6 +103,7 @@ const Signup = () => {
         try {
             await signInWithPopup(auth, googleProvider)
             setFormData(initialFormData)
+            navigate("/")
         } catch (err) {
             console.log(err)
             setErrors({ fieldName: "message" })

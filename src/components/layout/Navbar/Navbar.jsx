@@ -1,4 +1,4 @@
-import { Heart } from 'lucide-react'
+import { Heart, User } from 'lucide-react'
 import { Search } from 'lucide-react'
 import { ShoppingCart } from 'lucide-react'
 import { Store } from 'lucide-react'
@@ -12,7 +12,14 @@ import { useEffect, useState } from 'react'
 import products from '../../../data/Products'
 import Dropdown from '../SearchBar/Dropdown'
 
+import { AuthContext } from '../../../context/AuthContext/AuthContext'
+import { useContext } from "react"
+import { useNavigate } from "react-router-dom"
+
 const Navbar = () => {
+
+    const { user } = useContext(AuthContext)
+    const navigate = useNavigate()
 
     const items = Object.values(products)
     const { cartItem } = useCart()
@@ -38,7 +45,7 @@ const Navbar = () => {
                 </div>
 
                 {/* Profile section */}
-                <div className='flex justify-end lg:col-span-3 col-span-6 gap-4 text-gray-500 lg:order-3'>
+                <div className='flex items-center justify-end lg:col-span-3 col-span-6 gap-4 text-gray-500 lg:order-3'>
 
 
                     <Link to={'/product'}>
@@ -68,13 +75,29 @@ const Navbar = () => {
 
                     </div>
 
-                   
-                    <Link to={'/profile'}>
-                        <div className='md:flex flex-col items-center justify-center hidden hover:text-blue-400'>
-                            <UserRound />
-                            <h2>Profile</h2>
-                        </div>
-                    </Link>
+                    {user ? (
+                        <button onClick={() => navigate("/profile")}>
+                            <div className='md:flex flex-col items-center justify-center hidden hover:text-blue-400 '>
+                                <img
+                                    src='https://i.pinimg.com/736x/b2/66/f7/b266f7c8ecb53960c5eaa19d2a40dc41.jpg'
+                                    className="h-7 w-7 rounded-full" />
+                                <h1>{user.displayName}</h1>
+                            </div>
+                        </button>
+                    ) : (
+                        <button
+                            onClick={() => navigate("/login")}
+                        >
+                            <div className='md:flex flex-col items-center justify-center hidden hover:text-blue-400 '>
+                                <img
+                                    src='https://i.pinimg.com/1200x/cd/4b/d9/cd4bd9b0ea2807611ba3a67c331bff0b.jpg'
+                                    className="h-7 w-7 rounded-full" />
+                                <h2>Profile</h2>
+                            </div>
+                        </button>
+                    )}
+
+
                 </div>
 
                 {/* Search bar section */}
