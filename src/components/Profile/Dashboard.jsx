@@ -1,4 +1,8 @@
 import { Heart, Map, ShoppingBag } from 'lucide-react'
+import { useContext, useState } from 'react'
+import { AuthContext } from '../../context/AuthContext/AuthContext'
+import { updateProfile } from 'firebase/auth'
+import { auth } from '../../Firebase/MainFirebase'
 
 const myDashboard =
     [
@@ -26,6 +30,22 @@ const myDashboard =
     ]
 
 const Dashboard = () => {
+
+
+    const { user } = useContext(AuthContext)
+    const [name, setName] = useState(user?.displayName || "")
+    const [changeName, setChangeName] = useState('')
+
+    const handlechange = async () => {
+        if (!changeName.trim()) return
+
+        await updateProfile(auth.currentUser, {
+            displayName: changeName
+        })
+        setName(changeName)
+        setChangeName('')
+    }
+
     return (
         <div className='flex flex-col gap-4'>
 
@@ -44,8 +64,8 @@ const Dashboard = () => {
                                     className='h-full w-full rounded-full object-cover'
                                     src="https://i.pinimg.com/1200x/d9/e1/4c/d9e14c251d468cc476c0ec33f969b5da.jpg" alt="dp" />
                             </div>
-                            <div className='flex flex-col items-center'>
-                                <h1 className='text-xl font-bold'>Piush Maji</h1>
+                            <div className='flex flex-col items-center overflow-hidden'>
+                                <h1 className='text-xl font-bold'>{name}</h1>
                                 <a className='text-blue-700 cursor-pointer hover:text-blue-900'>Change Photo</a>
                             </div>
                         </div>
@@ -54,6 +74,10 @@ const Dashboard = () => {
                             <div className='flex flex-col gap-2 col-span-2 lg:col-span-1'>
                                 <h1>Full name</h1>
                                 <input
+                                    onChange={(e) => {
+                                        setChangeName(e.target.value)
+                                    }}
+                                    value={changeName}
                                     className='p-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-0'
                                     type="text"
                                     placeholder='Full Name' />
@@ -79,7 +103,9 @@ const Dashboard = () => {
                                     type="Password"
                                     placeholder='Password' />
                             </div>
-                            <div className='col-span-2 py-4 bg-green-500 rounded-lg font-light text-white hover:bg-green-600 cursor-pointer active:scale-95 transition-all duration-200 flex items-center justify-center'>
+                            <div
+                                onClick={handlechange}
+                                className='col-span-2 py-4 bg-green-500 rounded-lg font-light text-white hover:bg-green-600 cursor-pointer active:scale-95 transition-all duration-200 flex items-center justify-center'>
 
                                 <h1>Save Changes</h1>
 

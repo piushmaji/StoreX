@@ -61,7 +61,7 @@ const Navbar = () => {
                             <h2>Wishlist</h2>
                         </div>
                     </Link>
-                    <div className='flex flex-col items-center justify-center hover:text-blue-400  '>
+                    <div className='flex flex-col items-center justify-center hover:text-blue-400 '>
 
                         <Link to='/cart'>
                             <div className='relative'>
@@ -75,27 +75,29 @@ const Navbar = () => {
 
                     </div>
 
-                    {user ? (
-                        <button onClick={() => navigate("/profile")}>
-                            <div className='md:flex flex-col items-center justify-center hidden hover:text-blue-400 '>
-                                <img
-                                    src='https://i.pinimg.com/736x/b2/66/f7/b266f7c8ecb53960c5eaa19d2a40dc41.jpg'
-                                    className="h-7 w-7 rounded-full" />
-                                <h1>{user.displayName}</h1>
-                            </div>
-                        </button>
-                    ) : (
-                        <button
-                            onClick={() => navigate("/login")}
-                        >
-                            <div className='md:flex flex-col items-center justify-center hidden hover:text-blue-400 '>
-                                <img
-                                    src='https://i.pinimg.com/1200x/cd/4b/d9/cd4bd9b0ea2807611ba3a67c331bff0b.jpg'
-                                    className="h-7 w-7 rounded-full" />
-                                <h2>Profile</h2>
-                            </div>
-                        </button>
-                    )}
+                    <div>
+                        {user ? (
+                            <button onClick={() => navigate("/profile")}>
+                                <div className='md:flex flex-col items-center justify-center hidden hover:text-blue-400'>
+                                    <img
+                                        src='https://i.pinimg.com/736x/b2/66/f7/b266f7c8ecb53960c5eaa19d2a40dc41.jpg'
+                                        className="h-6 w-6 rounded-full" />
+                                    <h1>Profile</h1>
+                                </div>
+                            </button>
+                        ) : (
+                            <button
+                                onClick={() => navigate("/login")}
+                            >
+                                <div className='md:flex flex-col items-center justify-center hidden hover:text-blue-400 '>
+                                    <img
+                                        src='https://i.pinimg.com/1200x/cd/4b/d9/cd4bd9b0ea2807611ba3a67c331bff0b.jpg'
+                                        className="h-6 w-6 rounded-full" />
+                                    <h2>Profile</h2>
+                                </div>
+                            </button>
+                        )}
+                    </div>
 
 
                 </div>
