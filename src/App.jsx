@@ -15,6 +15,8 @@ import { Toaster } from "react-hot-toast"
 import MainLayout from "./components/layout/MainLayout/MainLayout"
 import MainAuth from "./Auth/MainAuth"
 import AuthLayout from "./components/layout/AuthLayout/AuthLayout"
+import Signup from "./Auth/SignUp"
+import Login from "./Auth/Login"
 
 const router = createBrowserRouter([
   {
@@ -41,12 +43,16 @@ const router = createBrowserRouter([
   },
 
   {
-    path: "/",
     element: <AuthLayout />,
     children: [
-      { path: "login", element: <MainAuth /> },
-      { path: "signup", element: <MainAuth /> },
-    ],
+      {
+        element: <MainAuth />,
+        children: [
+          { path: "login", element: <Login /> },
+          { path: "signup", element: <Signup /> },
+        ],
+      }
+    ]
   }
 
 ])

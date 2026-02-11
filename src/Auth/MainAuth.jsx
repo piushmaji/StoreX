@@ -1,9 +1,17 @@
-import { Link } from 'react-router-dom'
+import { Link, Outlet } from 'react-router-dom'
 import Content from './Content'
 import Login from './Login'
 import { ArrowLeft } from 'lucide-react'
+import Signup from './SignUp'
+import { useState } from 'react'
 
 const Authlayout = () => {
+
+    const toggle = () => {
+        const [active, setActive] = useState(<Login />)
+        setActive(<Signup />)
+    }
+
     return (
         <div className='relative flex'>
             {/* Back to Home */}
@@ -23,9 +31,7 @@ const Authlayout = () => {
             </div>
 
             <div className=' lg:flex-1 w-full'>
-                <div>
-                    <Login />
-                </div>
+                <Outlet />
             </div>
         </div>
     )
