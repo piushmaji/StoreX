@@ -1,5 +1,8 @@
 import { ClipboardList, CreditCard, MapPin, Pencil } from 'lucide-react'
 import { NavLink } from "react-router-dom";
+import { auth } from '../../Firebase/MainFirebase'
+import { signOut } from "firebase/auth"
+import { Navigate, useNavigate } from 'react-router-dom'
 
 const linkClass = ({ isActive }) => `flex gap-2 items-center p-4 rounded-lg  cursor-pointer  transition-all duration-200 ease-in-out
 
@@ -9,6 +12,17 @@ const linkClass = ({ isActive }) => `flex gap-2 items-center p-4 rounded-lg  cur
     }}`
 
 const SideBar = () => {
+
+    const navigate = useNavigate()
+    const handleSignOut = async () => {
+        try {
+            await signOut(auth)
+            navigate('/')
+
+        } catch (error) {
+            console.log("Logout error:", error)
+        }
+    }
 
     return (
         <div className=''>
@@ -49,7 +63,9 @@ const SideBar = () => {
 
                 </div>
 
-                <div className='text-red-500 flex  items-center p-4 cursor-pointer'>
+                <div
+                    onClick={handleSignOut}
+                    className='text-red-500 flex  items-center p-4 cursor-pointer'>
                     <h1>Log Out</h1>
                 </div>
             </section>

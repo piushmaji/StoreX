@@ -80,14 +80,14 @@ const Dashboard = () => {
                                     value={changeName}
                                     className='p-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-0'
                                     type="text"
-                                    placeholder='Full Name' />
+                                    placeholder={user.displayName} />
                             </div>
                             <div className='flex flex-col gap-2 col-span-2 lg:col-span-1'>
                                 <h1>Email Address</h1>
                                 <input
                                     className='p-2 bg-gray-50 border border-gray-300 rounded-lg w- focus:outline-0'
                                     type="email"
-                                    placeholder='Email Address' />
+                                    placeholder={user.email} />
                             </div>
                             <div className='flex flex-col gap-2 col-span-2 lg:col-span-1'>
                                 <h1>Phone Number</h1>
