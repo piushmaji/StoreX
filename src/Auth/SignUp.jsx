@@ -5,7 +5,7 @@ import { auth, googleProvider } from "../Firebase/MainFirebase"
 import { createUserWithEmailAndPassword, signInWithPopup } from 'firebase/auth'
 
 
-const Login = () => {
+const SignUp = () => {
     const [activeTab, setActiveTab] = useState('login')
     const [showPassword, setShowPassword] = useState(false)
     const [errors, setErrors] = useState('')
@@ -75,10 +75,12 @@ const Login = () => {
                     <div className='mb-8'>
                         <h2 className='text-3xl font-bold text-gray-900'>
                             {activeTab === 'login' && 'Welcome Back!'}
+                            {activeTab === 'signup' && 'Create Account'}
                             {activeTab === 'forgot' && 'Reset Password'}
                         </h2>
                         <p className='mt-2 text-sm text-gray-600'>
                             {activeTab === 'login' && 'Sign in to continue shopping'}
+                            {activeTab === 'signup' && 'Join StoreX today and start shopping'}
                             {activeTab === 'forgot' && 'Enter your email to reset password'}
                         </p>
                     </div>
@@ -99,6 +101,7 @@ const Login = () => {
                                     Login
                                 </button>
                                 <button
+                                    onClick={() => setActiveTab('signup')}
                                     className={`flex-1 py-2.5 px-4 rounded-md text-sm font-medium transition-all ${activeTab === 'signup'
                                         ? 'bg-blue-600 text-white shadow-md'
                                         : 'text-gray-600 hover:text-gray-900'
@@ -315,4 +318,4 @@ const Login = () => {
     )
 }
 
-export default Login
+export default SignUp
