@@ -1,8 +1,7 @@
 import { Heart, Map, ShoppingBag } from 'lucide-react'
 import { useContext, useState } from 'react'
 import { updateProfile } from 'firebase/auth'
-import { auth } from '../../Firebase/MainFirebase'
-import { FirebaseContext } from '../../context/AuthContext/Firebase'
+import { auth, FirebaseContext } from '../../context/Firebase/Firebase'
 
 const myDashboard =
     [

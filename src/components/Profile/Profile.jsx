@@ -1,5 +1,4 @@
 import SideBar from './SideBar'
-import { Outlet } from 'react-router-dom'
 import Topbar from './Topbar'
 import AnimatedOutlet from '../../pages/AnimatedOutlet'
 

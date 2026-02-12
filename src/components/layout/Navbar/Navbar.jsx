@@ -15,7 +15,7 @@ import Dropdown from '../SearchBar/Dropdown'
 
 import { useContext } from "react"
 import { useNavigate } from "react-router-dom"
-import { FirebaseContext } from '../../../context/AuthContext/Firebase'
+import { FirebaseContext } from '../../../context/Firebase/Firebase'
 
 const Navbar = () => {
 

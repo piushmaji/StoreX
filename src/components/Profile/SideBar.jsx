@@ -1,8 +1,8 @@
 import { ClipboardList, CreditCard, MapPin, Pencil } from 'lucide-react'
 import { NavLink } from "react-router-dom";
-import { auth } from '../../Firebase/MainFirebase'
 import { signOut } from "firebase/auth"
 import { Navigate, useNavigate } from 'react-router-dom'
+import { auth } from '../../context/Firebase/Firebase';
 
 const linkClass = ({ isActive }) => `flex gap-2 items-center p-4 rounded-lg  cursor-pointer  transition-all duration-200 ease-in-out
 

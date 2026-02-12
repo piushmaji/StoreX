@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react'
 import storex from '../assets/images/Logo/storex.png'
-import { auth, googleProvider } from "../Firebase/MainFirebase"
+import { auth, googleProvider } from '../context/Firebase/Firebase'
 import { createUserWithEmailAndPassword, signInWithPopup } from 'firebase/auth'
 import { Link } from 'react-router-dom'
 import { useNavigate } from "react-router-dom"
