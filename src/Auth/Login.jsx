@@ -3,12 +3,13 @@ import { Mail, Lock, Eye, EyeOff } from 'lucide-react'
 import storex from '../assets/images/Logo/storex.png'
 import { auth, googleProvider } from "../Firebase/MainFirebase"
 import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth'
-import { Link, Navigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { useNavigate } from "react-router-dom"
 
 const Login = () => {
     const navigate = useNavigate()
+
     const [showPassword, setShowPassword] = useState(false)
     const [errors, setErrors] = useState('')
     const [loading, setLoading] = useState(false)
@@ -62,6 +63,9 @@ const Login = () => {
         try {
             await signInWithPopup(auth, googleProvider)
             setFormData(initialFormData)
+            navigate("/")
+            toast.success("Sign In SuccessFully")
+
         } catch (err) {
             console.log(err)
             setErrors('Failed to sign in with Google. Please try again.')

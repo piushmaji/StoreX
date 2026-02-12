@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Mail, Lock, User, Eye, EyeOff } from 'lucide-react'
 import storex from '../assets/images/Logo/storex.png'
 import { auth, googleProvider } from "../Firebase/MainFirebase"
-import { createUserWithEmailAndPassword, signInWithPopup, } from 'firebase/auth'
+import { createUserWithEmailAndPassword, signInWithPopup } from 'firebase/auth'
 import { Link } from 'react-router-dom'
 import { useNavigate } from "react-router-dom"
 import toast from 'react-hot-toast'
@@ -104,6 +104,8 @@ const Signup = () => {
             await signInWithPopup(auth, googleProvider)
             setFormData(initialFormData)
             navigate("/")
+            toast.success("Sign In SuccessFully")
+
         } catch (err) {
             console.log(err)
             setErrors({ fieldName: "message" })
