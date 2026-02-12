@@ -1,8 +1,8 @@
 import { Heart, Map, ShoppingBag } from 'lucide-react'
 import { useContext, useState } from 'react'
-import { AuthContext } from '../../context/AuthContext/AuthContext'
 import { updateProfile } from 'firebase/auth'
 import { auth } from '../../Firebase/MainFirebase'
+import { FirebaseContext } from '../../context/AuthContext/Firebase'
 
 const myDashboard =
     [
@@ -32,7 +32,7 @@ const myDashboard =
 const Dashboard = () => {
 
 
-    const { user } = useContext(AuthContext)
+    const { user } = useContext(FirebaseContext)
     const [name, setName] = useState(user?.displayName || "")
     const [changeName, setChangeName] = useState('')
 

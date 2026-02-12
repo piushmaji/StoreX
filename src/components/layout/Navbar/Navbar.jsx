@@ -12,13 +12,14 @@ import { useEffect, useState } from 'react'
 import products from '../../../data/Products'
 import Dropdown from '../SearchBar/Dropdown'
 
-import { AuthContext } from '../../../context/AuthContext/AuthContext'
+
 import { useContext } from "react"
 import { useNavigate } from "react-router-dom"
+import { FirebaseContext } from '../../../context/AuthContext/Firebase'
 
 const Navbar = () => {
 
-    const { user } = useContext(AuthContext)
+    const { user } = useContext(FirebaseContext)
     const navigate = useNavigate()
 
     const items = Object.values(products)
