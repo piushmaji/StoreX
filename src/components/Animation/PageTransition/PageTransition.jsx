@@ -3,12 +3,12 @@ import { motion } from "framer-motion"
 const PageTransition = ({ children }) => {
     return (
         <motion.div
-            initial={{ opacity: 0, x: 4 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -4 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
             transition={{
-                duration: 0.18,
-                ease: "easeInOut"
+                duration: 0.8,
+                ease: [0.22, 1, 0.36, 1] 
             }}
         >
             {children}

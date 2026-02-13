@@ -7,7 +7,7 @@ const AnimatedOutlet = () => {
     const location = useLocation()
 
     return (
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait" >
             <PageTransition key={location.pathname}>
                 <Outlet />
             </PageTransition>
