@@ -10,7 +10,7 @@ const ProductCategory = () => {
   return (
     <div className='h-full flex flex-col justify-between gap-5'>
       {/* Featured section  */}
-      <div className='flex flex-col md:flex-row items-start md:items-center justify-between p-3 md:p-4 border border-gray-300 rounded-lg gap-3 md:gap-0'>
+      <div className='flex flex-col md:flex-row items-start md:items-center justify-between p-3 md:p-4 rounded-lg gap-3 md:gap-0 bg-zinc-200'>
         <div className='font-thin text-sm md:text-base'>
           <h1>{productArray.length} product in <span className='font-semibold'>Mobile accessory</span></h1>
         </div>

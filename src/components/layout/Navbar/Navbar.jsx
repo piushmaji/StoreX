@@ -117,24 +117,24 @@ const Navbar = () => {
                             setTimeout(() => setShow(false), 200);
                         }}
 
-                        className='border-2 border-r w-full h-10 rounded-l-xl px-12 focus:outline-none focus:ring-0 border-blue-500 '
+                        className='w-full h-10 rounded-l-2xl px-12 focus:outline-none focus:ring-0 bg-zinc-200 '
                         type="text" placeholder='Search' />
 
-                    <div className='absolute left-0 top-14 z-50'>
+                    <div className='absolute left-0 right-0 top-12 z-50'>
                         {show && query &&
                             (<Dropdown data={filtered} close={() => setShow(false)} />
                             )}
                     </div>
 
-                    <select className='flex-1 border-2 h-10 border-l-0 p-2 focus:outline-none focus:ring-0 border-blue-500 hidden sm:block'>
+                    {/* <select className='flex-1 h-10 border-l-0 p-2 focus:outline-none focus:ring-0 hidden sm:block bg-zinc-300'>
                         <option value="Category">Category</option>
                         <option value="Phone">Phone</option>
                         <option value="Laptop">Laptop</option>
                         <option value="Gadgets">Gadgets</option>
                         <option value="Cloths">Cloths</option>
-                    </select>
+                    </select> */}
 
-                    <button className='h-10 w-32 border-l-0 rounded-r-xl p-2 focus:outline-none focus:ring-0 bg-blue-500 text-white cursor-pointer'>Search</button>
+                    <button className='h-10 w-32 border-l-0 rounded-r-2xl p-2 focus:outline-none focus:ring-0 bg-blue-500 text-white cursor-pointer'>Search</button>
                 </div>
 
             </div>

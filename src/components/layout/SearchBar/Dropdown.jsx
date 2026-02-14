@@ -1,15 +1,14 @@
-import React from 'react'
 import { Link } from 'react-router-dom'
 
 const Dropdown = ({ data, close }) => {
     return (
-        <div className="w-full  bg-white border border-gray-300 shadow-lg rounded overflow-y-auto">
+        <div className="min-w-full bg-slate-100  border-gray-300 rounded-lg shadow-lg overflow-y-auto">
             {data.map((item) => (
                 <Link to={`product/${item.id}`}>
                     <div
                         key={item.id}
                         onClick={close}
-                        className="p-2 hover:bg-gray-100 cursor-pointer border-b border-gray-200 last:border-b-0"
+                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b border-gray-200 last:border-b-0"
                     >
                         {item.title}
                     </div>

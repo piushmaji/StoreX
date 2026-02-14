@@ -26,7 +26,7 @@ const SideBar = () => {
 
     return (
         <div className=''>
-            <section className='hidden lg:block border rounded-lg bg-gray-50 border-gray-300 p-4'>
+            <section className='hidden lg:block bg-zinc-200 p-4 rounded-lg shadow-md'>
                 <div className='text-2xl py-2'>
                     <h1>Profile</h1>
                 </div>
