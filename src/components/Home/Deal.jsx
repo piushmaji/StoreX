@@ -14,10 +14,10 @@ const Deal = () => {
     offerEndDate.setDate(offerEndDate.getDate() + 7)
 
     return (
-        <div className='m-2 grid grid-cols-12 lg:col-span-1'>
+        <div className='m-2 grid grid-cols-12 lg:col-span-1 bg-white rounded-lg shadow-sm hover:shadow-md transition duration-300'>
 
             {/* Deal and offers section */}
-            <div className='col-span-12 lg:col-span-3 bg-gray-50 border border-gray-300 flex lg:flex-col justify-around items-center p-4 '>
+            <div className='col-span-12 lg:col-span-3 flex lg:flex-col justify-around items-center p-4'>
                 <div className='flex flex-col '>
                     <h1 className=' text-xl lg:text-2xl '>Deals and Offers</h1>
                     <h2 className='text-md text-gray-400'>Hygiene Equipments</h2>
@@ -26,14 +26,14 @@ const Deal = () => {
                     <Timer endDate={offerEndDate} />
                 </div>
             </div>
-            <div className='grid grid-cols-2 col-span-12 lg:grid-cols-5  lg:col-span-9'>
+            <div className='grid grid-cols-2 col-span-12 lg:grid-cols-5 lg:col-span-9 '>
 
                 {/* Deal Card section */}
 
                 {products.map((product) => (
                     <div
                         key={product.name}
-                        className="h-full bg-gray-50 flex flex-col items-center gap-4 pb-2 border border-t-0 lg:border-t lg:border-l-0 border-gray-300"
+                        className="h-full flex flex-col items-center gap-4  border-l border-gray-200 p-6"
                     >
                         <div className="flex flex-col items-center pt-4">
                             <img
@@ -47,7 +47,7 @@ const Deal = () => {
                             <h1>{product.name}</h1>
                         </div>
 
-                        <div className="w-15 flex justify-center rounded-4xl bg-green-200 p-2 text-green-500">
+                        <div className="w-15 flex justify-center text-xs bg-blue-50 text-blue-600 rounded-full px-2 py-1 font-medium">
                             <div>{product.discount}</div>
                         </div>
                     </div>

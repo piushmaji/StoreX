@@ -82,18 +82,18 @@ const RecomendedItems = () => {
     return (
         <>
             <div className='p-2'>
-                <div className='text-2xl p-2'>
-                    <h1>Recommended items</h1>
+                <div className='p-2'>
+                    <h1 className='text-2xl font-semibold text-gray-900 tracking-tight'>Recommended items</h1>
                 </div>
                 <div className='grid lg:grid-cols-5 grid-cols-2 gap-2'>
                     {products.map((product) => [
                         <div
                             key={product.id}
-                            className='relative flex flex-col gap-2 items-center justify-between border bg-white border-gray-300 rounded-lg py-4'>
+                            className='relative flex flex-col gap-2 items-center justify-between bg-white p-4 rounded-2xl shadow-sm hover:shadow-lg transition duration-300'>
                             <div>
-                                <div className='flex flex-col pt-6 items-center'>
+                                <div className='flex flex-col pt-6 items-center rounded-xl p-6 group'>
                                     <img
-                                        className='h-40 w-40 '
+                                        className='h-40 w-40 transition duration-300 group-hover:scale-105'
                                         src={product.img} alt={product.title} />
                                 </div>
 
@@ -104,15 +104,15 @@ const RecomendedItems = () => {
                                 </div>
 
                                 <div className='pl-3 pt-2 w-[70%]'>
-                                    <h2>₹{product.price}</h2>
-                                    <p className='text-gray-400'>{product.description}</p>
+                                    <h2 className='text-lg font-semibold text-gray-900' >₹{product.price}</h2>
+                                    <p className='text-sm text-gray-500 leading-relaxed mt-2'>{product.description}</p>
                                 </div>
                             </div>
 
                             <div>
                                 <button
                                     // onClick={() => addToCart(product)}
-                                    className='w-full px-4 py-2 flex gap-2 items-center justify-center text-gray-50 rounded-lg font-light bg-blue-500 shadow-md cursor-pointer active:scale-95 transition-all duration-200'>
+                                    className='w-full flex gap-2 items-center justify-center bg-blue-50 text-blue-600 hover:bg-blue-100 text-sm font-medium rounded-full px-5 py-2 transition duration-200'>
                                     <ShoppingCart />
                                     <h1> Add to Cart</h1>
                                 </button>

@@ -30,7 +30,7 @@ const RelatedProduct = () => {
                 <div className="text-xl p-2">
                     <h1>Related products</h1>
                 </div>
-                <div className='flex gap-4 flex-nowrap scroll-smooth snap-x snap-mandatory px-2 overflow-x-auto'>
+                <div className='flex gap-4 flex-nowrap scroll-smooth snap-x snap-mandatory'>
                     {featured.map((item) => (
 
                         <div key={item.id} className="relative min-w-40 sm:min-w-45 md:min-w-50 py-4 flex flex-col gap-2 snap-start justify-between">
@@ -48,7 +48,7 @@ const RelatedProduct = () => {
                                 <WishListIcon product={item} />
                             </div>
 
-                            <button onClick={() => handleCart(item)} className='p-2 flex gap-2 items-center justify-center text-gray-50 border border-gray-300 rounded-lg font-light bg-blue-500 shadow-md cursor-pointer active:scale-95 transition-all duration-200'>
+                            <button onClick={() => handleCart(item)} className='flex gap-2 items-center justify-center bg-blue-50 text-blue-600 hover:bg-blue-100 text-sm font-medium rounded-full px-5 py-2 transition duration-200'>
                                 <ShoppingCart />
                                 <h1> Add to Cart</h1>
                             </button>

@@ -3,7 +3,8 @@ import { Search } from 'lucide-react'
 import { ShoppingCart } from 'lucide-react'
 import { Store } from 'lucide-react'
 import { UserRound } from 'lucide-react'
-
+import { motion } from "framer-motion"
+import { useLocation } from "react-router-dom"
 import storex from "../../../assets/images/Logo/storex.png"
 import { Link } from 'react-router-dom'
 import SideDrawer from './SideDrawer'
@@ -23,6 +24,7 @@ const Navbar = () => {
     const navigate = useNavigate()
 
     const items = Object.values(products)
+
     const { cartItem } = useCart()
 
     const [query, setQuery] = useState('')
@@ -30,10 +32,11 @@ const Navbar = () => {
 
     const filtered = items.filter(p => p.title.toLowerCase().includes(query.toLowerCase()))
 
+    const location = useLocation()
 
     return (
         <div>
-            <div className='grid grid-cols-12 w-full lg:px-20 lg:py-4 p-2 bg-gray-50 gap-4 border-b border-gray-300 '>
+            <div className='grid grid-cols-12 w-full lg:px-20 lg:py-4 p-2 gap-4 border-b bg-white/80 border-blue-500/10'>
 
 
                 {/* BrandName section */}
@@ -42,62 +45,151 @@ const Navbar = () => {
                         <SideDrawer />
                     </div>
                     <Link to='/'> <img className='md:h-10 md:w-10 h-7 w-7 drop-shadow-lg bg-gray-50 border-2 border-blue-500 md:rounded-2xl rounded-xl p-1' src={storex} /></Link>
-                    <Link to='/'><h1 className='md:text-3xl text-2xl text-blue-500'>StoreX</h1></Link>
+                    <Link to='/'><h1 className='md:text-3xl text-2xl text-blue-600 font-semibold tracking-tight'>StoreX</h1></Link>
                 </div>
 
                 {/* Profile section */}
                 <div className='flex items-center justify-end lg:col-span-3 col-span-6 gap-4 text-gray-500 lg:order-3'>
 
 
-                    <Link to={'/product'}>
-                        <div className='md:flex flex-col items-center justify-center hidden hover:text-blue-400'>
-                            <Store />
-                            <h2>Store</h2>
-                        </div>
-                    </Link>
+                    <div className="relative flex items-center gap-8 ">
 
-                    <Link to={'/wishlist'}>
-                        <div className='md:flex flex-col items-center justify-center hidden hover:text-blue-400 '>
-                            <Heart />
-                            <h2>Wishlist</h2>
-                        </div>
-                    </Link>
-                    <div className='flex flex-col items-center justify-center hover:text-blue-400 '>
+                        {/* STORE */}
+                        <Link to="/product">
+                            <div className="relative flex flex-col items-center cursor-pointer">
 
-                        <Link to='/cart'>
-                            <div className='relative'>
+                                <Store
+                                    strokeWidth={location.pathname === "/product" ? 2 : 1}
+                                    className={`transition-all duration-300 ${location.pathname === "/product"
+                                        ? "text-blue-500 scale-110"
+                                        : "text-gray-500 hover:text-blue-400"
+                                        }`}
+                                />
+
+                                <span
+                                    className={`text-sm transition-colors duration-300 ${location.pathname === "/product"
+                                        ? "text-blue-500"
+                                        : "text-gray-500"
+                                        }`}
+                                >
+                                    Store
+                                </span>
+
+                                {location.pathname === "/product" && (
+                                    <motion.div
+                                        layoutId="navbar-underline"
+                                        transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                                        className="absolute -bottom-1 h-0.5 w-full bg-blue-500 rounded"
+                                    />
+                                )}
+                            </div>
+                        </Link>
+
+                        {/* WISHLIST */}
+                        <Link to="/wishlist">
+                            <div className="relative flex flex-col items-center cursor-pointer">
+
+                                <Heart
+                                    strokeWidth={location.pathname === "/wishlist" ? 2 : 1}
+                                    className={`transition-all duration-300 ${location.pathname === "/wishlist"
+                                        ? "text-blue-500 scale-110"
+                                        : "text-gray-500 hover:text-blue-400"
+                                        }`}
+                                />
+
+                                <span
+                                    className={`text-sm transition-colors duration-300 ${location.pathname === "/wishlist"
+                                        ? "text-blue-500"
+                                        : "text-gray-500"
+                                        }`}
+                                >
+                                    Wishlist
+                                </span>
+
+                                {location.pathname === "/wishlist" && (
+                                    <motion.div
+                                        layoutId="navbar-underline"
+                                        transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                                        className="absolute -bottom-1 h-0.5 w-full bg-blue-500 rounded"
+                                    />
+                                )}
+                            </div>
+                        </Link>
+
+                        <Link to="/cart">
+                            <div className="relative flex flex-col items-center cursor-pointer">
+
+                                <ShoppingCart
+                                    strokeWidth={location.pathname === "/cart" ? 2 : 1}
+                                    className={`transition-all duration-300 ${location.pathname === "/cart"
+                                        ? "text-blue-500 scale-110"
+                                        : "text-gray-500 hover:text-blue-400"
+                                        }`}
+                                />
                                 <div className='h-5 w-5 absolute bg-red-400 rounded-full left-4 -top-2 items-center justify-center flex p-1 border-2 border-gray-50'>
                                     <span className='text-white text-xs'>{cartItem.length}</span>
                                 </div>
-                                <ShoppingCart />
+                                <span
+                                    className={`text-sm transition-colors duration-300 ${location.pathname === "/cart"
+                                        ? "text-blue-500"
+                                        : "text-gray-500"
+                                        }`}
+                                >
+                                    Cart
+                                </span>
+
+                                {location.pathname === "/cart" && (
+                                    <motion.div
+                                        layoutId="navbar-underline"
+                                        transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                                        className="absolute -bottom-1 h-0.5 w-full bg-blue-500 rounded"
+                                    />
+                                )}
                             </div>
-                            <h2>Cart</h2>
                         </Link>
 
-                    </div>
+                        <div>
+                            {user ? (
+                                <Link to="/profile">  <div className="relative flex flex-col items-center cursor-pointer">
 
-                    <div>
-                        {user ? (
-                            <button onClick={() => navigate("/profile")}>
-                                <div className='md:flex flex-col items-center justify-center hidden hover:text-blue-400'>
-                                    <img
-                                        src='https://i.pinimg.com/736x/b2/66/f7/b266f7c8ecb53960c5eaa19d2a40dc41.jpg'
-                                        className="h-6 w-6 rounded-full" />
-                                    <h1>Profile</h1>
-                                </div>
-                            </button>
-                        ) : (
-                            <button
-                                onClick={() => navigate("/login")}
-                            >
-                                <div className='md:flex flex-col items-center justify-center hidden hover:text-blue-400 '>
-                                    <img
-                                        src='https://i.pinimg.com/1200x/cd/4b/d9/cd4bd9b0ea2807611ba3a67c331bff0b.jpg'
-                                        className="h-6 w-6 rounded-full" />
-                                    <h2>Profile</h2>
-                                </div>
-                            </button>
-                        )}
+                                    <UserRound
+                                        strokeWidth={location.pathname === "/profile" ? 2 : 1}
+                                        className={`transition-all duration-300 ${location.pathname === "/profile"
+                                            ? "text-blue-500 scale-110"
+                                            : "text-gray-500 hover:text-blue-400"
+                                            }`}
+                                    />
+
+                                    <span
+                                        className={`text-sm transition-colors duration-300 ${location.pathname === "/profile"
+                                            ? "text-blue-500"
+                                            : "text-gray-500"
+                                            }`}
+                                    >
+                                        Profile
+                                    </span>
+
+                                    {location.pathname === "/profile" && (
+                                        <motion.div
+                                            layoutId="navbar-underline"
+                                            transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                                            className="absolute -bottom-1 h-0.5 w-full bg-blue-500 rounded"
+                                        />
+                                    )}
+                                </div></Link>
+                            ) : (
+                                <button
+                                    onClick={() => navigate("/login")}
+                                >
+                                    <div className='md:flex flex-col items-center justify-center hidden hover:text-blue-400 '>
+                                        <img
+                                            src='https://i.pinimg.com/1200x/cd/4b/d9/cd4bd9b0ea2807611ba3a67c331bff0b.jpg'
+                                            className="h-6 w-6 rounded-full" />
+                                        <h2>Profile</h2>
+                                    </div>
+                                </button>
+                            )}
+                        </div>
                     </div>
 
 
@@ -117,7 +209,11 @@ const Navbar = () => {
                             setTimeout(() => setShow(false), 200);
                         }}
 
-                        className='w-full h-10 rounded-l-2xl px-12 focus:outline-none focus:ring-0 bg-zinc-200 '
+                        className='w-full h-10 rounded-l-full px-12 focus:outline-none
+bg-white
+border border-blue-200
+shadow-sm
+transition'
                         type="text" placeholder='Search' />
 
                     <div className='absolute left-0 right-0 top-12 z-50'>
@@ -134,7 +230,18 @@ const Navbar = () => {
                         <option value="Cloths">Cloths</option>
                     </select> */}
 
-                    <button className='h-10 w-32 border-l-0 rounded-r-2xl p-2 focus:outline-none focus:ring-0 bg-blue-500 text-white cursor-pointer'>Search</button>
+                    <button className='h-10 w-32 rounded-r-full p-2 focus:outline-none focus:ring-0 bg-blue-600
+hover:bg-blue-700
+text-white
+px-5
+py-2
+text-sm
+font-medium
+shadow-sm
+hover:shadow-md
+transition-all
+duration-200
+active:scale-95'>Search</button>
                 </div>
 
             </div>
