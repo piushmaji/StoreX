@@ -13,8 +13,6 @@ const FilteredCategory = () => {
             <div>
                 {/* Category section */}
 
-
-
                 {/* Brands section */}
                 <div className="flex flex-col gap-4 py-4">
                     <div className="flex justify-between">

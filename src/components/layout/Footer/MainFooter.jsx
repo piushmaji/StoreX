@@ -90,7 +90,7 @@ const MainFooter = () => {
                     <li>
                       <ul className='text-gray-500 space-y-1.5 text-xs sm:text-sm'>
                         {section.links.map((link, index) => (
-                          <li className='hover:text-gray-700 cursor-pointer transition' key={index}>{link}</li>
+                          <li className='cursor-pointer hover:text-blue-500 transition-colors' key={index}>{link}</li>
                         ))}
                       </ul>
                     </li>

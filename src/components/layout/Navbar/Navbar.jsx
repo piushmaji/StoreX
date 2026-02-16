@@ -49,14 +49,14 @@ const Navbar = () => {
                 </div>
 
                 {/* Profile section */}
-                <div className='flex items-center justify-end lg:col-span-3 col-span-6 gap-4 text-gray-500 lg:order-3'>
+                <div className='flex items-center justify-end lg:col-span-3 col-span-6 gap-4 text-gray-500 lg:order-3 '>
 
 
                     <div className="relative flex items-center gap-8 ">
 
                         {/* STORE */}
                         <Link to="/product">
-                            <div className="relative flex flex-col items-center cursor-pointer">
+                            <div className="relative md:flex hidden flex-col items-center cursor-pointer ">
 
                                 <Store
                                     strokeWidth={location.pathname === "/product" ? 2 : 1}
@@ -87,7 +87,7 @@ const Navbar = () => {
 
                         {/* WISHLIST */}
                         <Link to="/wishlist">
-                            <div className="relative flex flex-col items-center cursor-pointer">
+                            <div className="relative md:flex hidden flex-col items-center cursor-pointer">
 
                                 <Heart
                                     strokeWidth={location.pathname === "/wishlist" ? 2 : 1}
@@ -150,7 +150,7 @@ const Navbar = () => {
 
                         <div>
                             {user ? (
-                                <Link to="/profile">  <div className="relative flex flex-col items-center cursor-pointer">
+                                <Link to="/profile">  <div className="relative md:flex hidden  flex-col items-center cursor-pointer">
 
                                     <UserRound
                                         strokeWidth={location.pathname === "/profile" ? 2 : 1}
@@ -209,11 +209,7 @@ const Navbar = () => {
                             setTimeout(() => setShow(false), 200);
                         }}
 
-                        className='w-full h-10 rounded-l-full px-12 focus:outline-none
-bg-white
-border border-blue-200
-shadow-sm
-transition'
+                        className='w-full h-10 rounded-l-full px-12 focus:outline-none bg-white border border-blue-200 shadow-sm transition'
                         type="text" placeholder='Search' />
 
                     <div className='absolute left-0 right-0 top-12 z-50'>
@@ -230,18 +226,7 @@ transition'
                         <option value="Cloths">Cloths</option>
                     </select> */}
 
-                    <button className='h-10 w-32 rounded-r-full p-2 focus:outline-none focus:ring-0 bg-blue-600
-hover:bg-blue-700
-text-white
-px-5
-py-2
-text-sm
-font-medium
-shadow-sm
-hover:shadow-md
-transition-all
-duration-200
-active:scale-95'>Search</button>
+                    <button className='h-10 w-32 rounded-r-full p-2 focus:outline-none focus:ring-0 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 text-sm font-medium shadow-sm hover:shadow-md transition-all duration-200 active:scale-95'>Search</button>
                 </div>
 
             </div>

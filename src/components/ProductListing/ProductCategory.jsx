@@ -3,6 +3,8 @@ import products from '../../data/Products'
 import { Link } from 'react-router-dom'
 import { Rating } from '@mui/material'
 import WishListIcon from '../common/WishListIcon/WishListIcon'
+import Pagination from './Pagination'
+import FilterBar from './FilterBar'
 
 const ProductCategory = () => {
   const productArray = Object.values(products)
@@ -10,34 +12,9 @@ const ProductCategory = () => {
   return (
     <div className='h-full flex flex-col justify-between gap-5'>
       {/* Featured section  */}
-      <div className='flex flex-col md:flex-row items-start md:items-center justify-between p-3 md:p-4 rounded-lg gap-3 md:gap-0 bg-zinc-200'>
-        <div className='font-thin text-sm md:text-base'>
-          <h1>{productArray.length} product in <span className='font-semibold'>Mobile accessory</span></h1>
-        </div>
 
-        <div className='flex flex-wrap gap-3 md:gap-6 w-full md:w-auto'>
-          <div className='flex items-center gap-2 text-sm md:text-base'>
-            <input className='h-4 w-4' type="checkbox" /> <label>Verified only</label>
-          </div>
-          <div className='flex-1 md:flex-none'>
-            <select
-              className='bg-gray-50 p-2 rounded-lg w-full md:w-auto text-sm md:text-base'
-              name="Featured">
-              <option value="Featured">Featured</option>
-              <option value="Featured">Featured</option>
-              <option value="Featured">Featured</option>
-              <option value="Featured">Featured</option>
-            </select>
-          </div>
-          <div className='flex items-center gap-2'>
-            <div className='bg-gray-50 border border-gray-400 p-1 rounded-lg'>
-              <LayoutGrid className='w-5 h-5 md:w-6 md:h-6' />
-            </div>
-            <div className='bg-gray-50 border border-gray-400 p-1 rounded-lg'>
-              <Menu className='w-5 h-5 md:w-6 md:h-6' />
-            </div>
-          </div>
-        </div>
+      <div>
+        <FilterBar count={productArray.length} />
       </div>
 
       {/* Main Product Category section  */}
@@ -45,7 +22,7 @@ const ProductCategory = () => {
 
         {/* Each Product Category section  */}
         {productArray.map((product) => (
-          <div key={product.id} className='w-full flex flex-col sm:flex-row bg-white border border-gray-300 rounded-lg p-3 md:p-4 hover:cursor-pointer group transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg relative'>
+          <div key={product.id} className='w-full sm:flex-row  border-none shadow-sm  border border-gray-300 rounded-lg  md:p-4 hover:cursor-pointer group  ease-out hover:-translate-y-1 relative group  flex flex-col bg-white p-4 transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)]'>
             <Link
               to={`${product.id}`}
               target="_blank"
@@ -61,22 +38,24 @@ const ProductCategory = () => {
                   {/* Name  */}
                   <div className='flex flex-col justify-evenly gap-3 md:gap-4'>
                     <section>
-                      <h1 className='text-base md:text-lg font-medium line-clamp-2'>{product.title}</h1>
+                      <h1 className='text-base md:text-lg line-clamp-2 font-semibold text-gray-900 leading-tight'>{product.title}</h1>
                     </section>
 
                     {/* price,old price and ratings  */}
                     <section className='space-y-2'>
                       <div className='flex gap-2 items-center flex-wrap'>
-                        <h2 className='font-extrabold text-lg md:text-xl'>₹{product.pricing.retail.salePrice}</h2>
-                        <h2 className='line-through text-gray-500 text-sm md:text-base'>₹{product.pricing.retail.originalPrice}</h2>
+                        <h2 className='md:text-xl text-2xl font-semibold  text-blue-600'>₹{product.pricing.retail.salePrice}</h2>
+                        <h2 className='md:text-base text-sm
+text-gray-400
+line-through'>₹{product.pricing.retail.originalPrice}</h2>
                       </div>
                       <div className='flex flex-wrap gap-3 md:gap-6 text-xs md:text-sm'>
                         <div className='flex gap-2 items-center'>
                           <Rating value={product.rating.stars} precision={0.5} readOnly size="small" />
-                          <h1 className='text-yellow-500'>{product.rating.score}</h1>
+                          <h1 className='text-gray-500 text-sm'>{product.rating.score}</h1>
                         </div>
                         <li className='text-gray-400'>{product.rating.sold} Sold</li>
-                        <li className='text-lime-600'>{product.shipping.type}</li>
+                        <li className='bg-green-100 text-green-700 px-2 py-1 rounded text-[10px]'>{product.shipping.type}</li>
                       </div>
                     </section>
 
@@ -103,37 +82,9 @@ const ProductCategory = () => {
       </div>
 
       {/* Next Page section  */}
-      <div className='flex flex-col sm:flex-row justify-end items-center py-4 gap-3 md:gap-4'>
-        <div className='w-full sm:w-auto'>
-          <select className='p-2 bg-white border border-gray-300 rounded-lg w-full sm:w-auto text-sm md:text-base'>
-            <option value="ShowPages">Show Pages</option>
-            <option value="Show 10">Show 10</option>
-            <option value="Show 20">Show 20</option>
-            <option value="Show 25 +">Show 25 +</option>
-          </select>
-        </div>
-        <div>
-          <div className='flex items-center justify-center'>
-            <button className='h-8 w-8 md:h-10 md:w-10 bg-gray-50 flex items-center justify-center rounded-l-lg border border-gray-400 border-r-0'>
-              <ChevronLeft className='w-4 h-4 md:w-5 md:h-5' />
-            </button>
-            <div className='h-8 w-8 md:h-10 md:w-10 bg-gray-50 flex items-center justify-center border border-gray-400 border-r-0 text-sm md:text-base'>
-              <h1>1</h1>
-            </div>
 
-            <div className='h-8 w-8 md:h-10 md:w-10 bg-gray-50 flex items-center justify-center border border-gray-400 border-r-0 text-sm md:text-base'>
-              <h1>2</h1>
-            </div>
-
-            <div className='h-8 w-8 md:h-10 md:w-10 bg-gray-50 flex items-center justify-center border border-gray-400 text-sm md:text-base'>
-              <h1>3</h1>
-            </div>
-
-            <button className='h-8 w-8 md:h-10 md:w-10 bg-gray-50 flex items-center justify-center rounded-r-lg border border-gray-400 border-l-0'>
-              <ChevronRight className='w-4 h-4 md:w-5 md:h-5' />
-            </button>
-          </div>
-        </div>
+      <div className='py-4'>
+        <Pagination />
       </div>
     </div>
   )
