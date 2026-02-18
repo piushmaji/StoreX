@@ -16,3 +16,6 @@ const CartPage = () => {
 }
 
 export default CartPage
+
+{/* 27/02/2001 */}
+
