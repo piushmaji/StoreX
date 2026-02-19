@@ -154,7 +154,7 @@ const products = {
     p002: {
         id: "p002",
         title: "Professional DSLR Camera - 24MP",
-        inStock: true,
+        inStock: false,
         images: [camera1, camera2, camera3, camera4],
         category: "camera",
         rating: {
