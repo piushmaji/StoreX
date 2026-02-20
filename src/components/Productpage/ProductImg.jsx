@@ -214,60 +214,6 @@ const ProductImg = () => {
                                 </div>
                             ))}
                         </div>
-
-                        {/* Description Accordion */}
-                        <div className="rounded-2xl border border-blue-100 bg-white shadow-sm overflow-hidden">
-                            <button
-                                onClick={() => setDescOpen(o => !o)}
-                                className="w-full flex items-center justify-between px-5 py-4 hover:bg-blue-50/60 transition-colors text-left"
-                            >
-                                <span className="font-bold text-gray-900">Description</span>
-                                {descOpen
-                                    ? <ChevronUp size={18} className="text-blue-500 shrink-0" />
-                                    : <ChevronDown size={18} className="text-gray-400 shrink-0" />
-                                }
-                            </button>
-                            {descOpen && (
-                                <div className="px-5 pb-5 border-t border-blue-50 pt-4">
-                                    <p className="text-sm text-gray-500 leading-relaxed">
-                                        {product.description || 'Premium quality product with exceptional craftsmanship. Designed for performance, comfort, and durability — built for every adventure, engineered to last.'}
-                                    </p>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Product Details Accordion */}
-                        <div className="rounded-2xl border border-blue-100 bg-white shadow-sm overflow-hidden">
-                            <button
-                                onClick={() => setDetailsOpen(o => !o)}
-                                className="w-full flex items-center justify-between px-5 py-4 hover:bg-blue-50/60 transition-colors text-left"
-                            >
-                                <span className="font-bold text-gray-900">Product Details</span>
-                                {detailsOpen
-                                    ? <ChevronUp size={18} className="text-blue-500 shrink-0" />
-                                    : <ChevronDown size={18} className="text-gray-400 shrink-0" />
-                                }
-                            </button>
-                            {detailsOpen && (
-                                <div className="grid grid-cols-2 gap-3 px-4 pb-4 border-t border-blue-50 pt-4">
-                                    {detailItems.map(({ icon, bg, label, sub }) => (
-                                        <div
-                                            key={label}
-                                            className="flex items-center gap-3 p-3 bg-blue-50/50 rounded-xl border border-blue-100/80 hover:bg-blue-50 hover:border-blue-200 hover:shadow-sm transition-all duration-200"
-                                        >
-                                            <div className={`${bg} w-9 h-9 rounded-xl flex items-center justify-center shrink-0`}>
-                                                {icon}
-                                            </div>
-                                            <div className="min-w-0">
-                                                <p className="text-xs font-bold text-gray-800 truncate">{label}</p>
-                                                <p className="text-xs text-gray-400">{sub}</p>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-
                     </div>
                 </div>
             </div>

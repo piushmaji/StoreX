@@ -1,61 +1,84 @@
 import { useEffect, useState } from "react"
 import products from "../../data/Products"
 import { Link, useParams } from 'react-router-dom'
-import { ShoppingCart } from 'lucide-react'
+import { ShoppingCart, TrendingUp } from 'lucide-react'
 import WishListIcon from "../common/WishListIcon/WishListIcon"
 import { useCart } from "../../context/CartContext/CartContext"
-import toast from "react-hot-toast"
-const RelatedProduct = () => {
 
+const RelatedProduct = () => {
     const { id } = useParams()
-    const product = products[id]
     const relatedProduct = Object.values(products)
     const [featured, setFeatured] = useState([])
-    const { addToCart, cartItem } = useCart()
+    const { addToCart, isInCart } = useCart()
 
-    const handleCart = (product) => {
-        addToCart(product)
-    }
     useEffect(() => {
-
-        const shuffled = [...relatedProduct].sort(() => Math.random() - 0.5).slice(0, 6)
+        const shuffled = [...relatedProduct].sort(() => Math.random() - 0.5).slice(0, 8)
         setFeatured(shuffled)
-
     }, [])
 
     return (
-        <div>
-            {/*Related Products Section */}
-            <div className='border border-gray-300 rounded-lg bg-gray-50 p-4 mb-4'>
-                <div className="text-xl p-2">
-                    <h1>Related products</h1>
-                </div>
-                <div className='flex gap-4 flex-nowrap scroll-smooth snap-x snap-mandatory'>
-                    {featured.map((item) => (
+        <div className="bg-white rounded-2xl border border-blue-100 shadow-sm p-5 lg:p-6 mb-5">
 
-                        <div key={item.id} className="relative min-w-40 sm:min-w-45 md:min-w-50 py-4 flex flex-col gap-2 snap-start justify-between">
-                            <Link key={item.id} to={`/product/${item.id}`} target="_blank" >
-                                <div className='h-48 w-full rounded-lg bg-gray-50 p-4 border border-gray-300'>
-                                    <img className='h-full w-full rounded-lg object-contain' src={item.images[0]} alt="" />
+            {/* Header */}
+            <div className="flex items-center gap-2.5 mb-5">
+                <div className="w-1 h-6 bg-blue-600 rounded-full" />
+                <h2 className="text-lg font-bold text-gray-900">Related Products</h2>
+                <div className="ml-auto flex items-center gap-1.5 text-xs text-blue-500 font-semibold bg-blue-50 px-3 py-1.5 rounded-full">
+                    <TrendingUp size={13} />
+                    Trending
+                </div>
+            </div>
+
+            {/* Scrollable Row */}
+            <div className="flex gap-4 overflow-x-auto scroll-smooth no-scrollbar pb-1">
+                {featured.map((item) => (
+                    <div
+                        key={item.id}
+                        className="shrink-0 w-44 sm:w-48 flex flex-col bg-white rounded-2xl border border-blue-100 hover:border-blue-300 hover:shadow-lg hover:shadow-blue-100 transition-all duration-300 group overflow-hidden"
+                    >
+                        {/* Image */}
+                        <Link to={`/product/${item.id}`} target="_blank" className="relative">
+                            <div className="relative h-44 w-full bg-gradient-to-br from-blue-50 to-slate-50 flex items-center justify-center p-4 overflow-hidden">
+                                <img
+                                    className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-110"
+                                    src={item.images[0]}
+                                    alt={item.title}
+                                />
+                                {/* Wishlist */}
+                                <div className="absolute top-2.5 right-2.5 bg-white/80 backdrop-blur-sm rounded-full shadow-sm hover:bg-white transition-all duration-200">
+                                    <WishListIcon product={item} />
                                 </div>
-                                <div className="h-20 flex flex-col gap-2 justify-between">
-                                    <div className="font-light"><h1>{item.title}</h1></div>
-                                    <div className='text-gray-400'><h1>₹{item.pricing.retail.salePrice}</h1></div>
-                                </div>
+                            </div>
+                        </Link>
+
+                        {/* Info */}
+                        <div className="flex flex-col gap-3 p-3.5 flex-1">
+                            <Link to={`/product/${item.id}`} target="_blank">
+                                <p className="text-xs font-semibold text-gray-800 leading-snug line-clamp-2 group-hover:text-blue-600 transition-colors">
+                                    {item.title}
+                                </p>
                             </Link>
 
-                            <div className="absolute lg:right-0 lg:top-4 -right-1 top-3">
-                                <WishListIcon product={item} />
-                            </div>
+                            <p className="text-sm font-bold text-gray-900">
+                                ₹{item.pricing.retail.salePrice}
+                                {item.pricing.retail.originalPrice && (
+                                    <span className="ml-1.5 text-xs text-gray-400 font-normal line-through">
+                                        ₹{item.pricing.retail.originalPrice}
+                                    </span>
+                                )}
+                            </p>
 
-                            <button onClick={() => handleCart(item)} className='flex gap-2 items-center justify-center bg-blue-50 text-blue-600 hover:bg-blue-100 text-sm font-medium rounded-full px-5 py-2 transition duration-200'>
-                                <ShoppingCart />
-                                <h1> Add to Cart</h1>
+                            {/* Add to Cart */}
+                            <button
+                                onClick={() => addToCart(item)}
+                                className="flex items-center justify-center gap-1.5 bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white text-xs font-semibold rounded-xl px-3 py-2.5 transition-all duration-200 hover:shadow-md hover:shadow-blue-200 active:scale-95 mt-auto"
+                            >
+                                <ShoppingCart size={14} />
+                                {isInCart(item.id) ? 'In Cart' : 'Add to Cart'}
                             </button>
                         </div>
-
-                    ))}
-                </div>
+                    </div>
+                ))}
             </div>
         </div>
     )
