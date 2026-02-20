@@ -38,16 +38,16 @@ const ProductImg = () => {
     ]
 
     return (
-        <div className="min-h-screen bg-white shadow-lg rounded-xl">
+        <div className="min-h-screen bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200/50 border border-slate-100">
             <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 lg:py-12">
                 <div className="flex flex-col lg:flex-row gap-8 lg:gap-14 items-start">
 
                     {/* ── LEFT: Image Gallery ── */}
-                    <div className="w-full lg:w-115 lg:shrink-0 flex flex-col gap-4 p-4 rounded-4xl bg-white shadow-2xl">
+                    <div className="w-full lg:w-115 lg:shrink-0 flex flex-col gap-4 p-4 rounded-4xl bg-gradient-to-br from-slate-50 to-blue-50 drop-shadow-xl">
 
                         {/* Main Image */}
                         <div
-                            className="relative rounded-4xl overflow-hidden bg-blue-50 shadow-2xl shadow-blue-200/50 aspect-square cursor-zoom-in"
+                            className="relative rounded-[2rem] overflow-hidden shadow-2xl shadow-blue-200/50 aspect-square cursor-zoom-in"
                             onMouseEnter={() => setImgHovered(true)}
                             onMouseLeave={() => setImgHovered(false)}
                         >
@@ -193,7 +193,7 @@ const ProductImg = () => {
                             </button>
 
                             {/* Wishlist heart */}
-                            <button className="hidden w-12 h-12 md:flex items-center justify-center rounded-full border-2 border-gray-200 bg-white hover:border-red-300 hover:bg-red-50 transition-all duration-200 shrink-0 group">
+                            <button className="hidden w-12 h-12 md:flex items-center justify-center rounded-full border-2 border-gray-200 bg-white hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 shrink-0 group">
                                 <WishListIcon product={product} />
                             </button>
                         </div>

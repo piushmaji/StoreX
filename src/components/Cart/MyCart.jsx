@@ -89,12 +89,6 @@ const MyCart = () => {
                                         </div>
                                     </button>
                                 </Link>
-
-                                <button
-                                    onClick={() => {
-                                        setCartItem([])
-                                    }}
-                                    className='w-full sm:w-auto px-4 py-2 sm:py-2.5 bg-gray-50 border border-gray-300 rounded-lg font-light text-blue-500 text-sm sm:text-base shadow-md cursor-pointer active:scale-95 transition-all duration-200'>Remove All</button>
                             </div>
                         </div>
                     </div>
