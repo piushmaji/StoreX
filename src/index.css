@@ -10,5 +10,14 @@ html {
 
 body {
     font-family: var(--font-sans);
-    
+
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }

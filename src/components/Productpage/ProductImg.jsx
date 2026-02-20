@@ -43,11 +43,11 @@ const ProductImg = () => {
                 <div className="flex flex-col lg:flex-row gap-8 lg:gap-14 items-start">
 
                     {/* ── LEFT: Image Gallery ── */}
-                    <div className="w-full lg:w-115 lg:shrink-0 flex flex-col gap-4 p-4 rounded-4xl bg-gradient-to-br from-slate-50 to-blue-50 drop-shadow-xl">
+                    <div className="w-full lg:w-115 lg:shrink-0 flex flex-col gap-4 p-4 rounded-4xl bg-linear-to-br from-slate-50 to-blue-50 drop-shadow-xl">
 
                         {/* Main Image */}
                         <div
-                            className="relative rounded-[2rem] overflow-hidden shadow-2xl shadow-blue-200/50 aspect-square cursor-zoom-in"
+                            className="relative rounded-4xl overflow-hidden shadow-2xl shadow-blue-200/50 aspect-square cursor-zoom-in"
                             onMouseEnter={() => setImgHovered(true)}
                             onMouseLeave={() => setImgHovered(false)}
                         >
@@ -86,7 +86,7 @@ const ProductImg = () => {
                         </div>
 
                         {/* Thumbnails */}
-                        <div className="flex gap-3 overflow-x-auto p-4">
+                        <div className="flex gap-3 overflow-x-auto no-scrollbar p-4">
                             {product.images.map((img, i) => (
                                 <button
                                     key={i}
@@ -180,7 +180,7 @@ const ProductImg = () => {
                             {/* Add to Cart */}
                             <button
                                 onClick={handleCartClick}
-                                className="flex-1 min-w-[150px] flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 active:scale-[0.97] text-white font-bold text-sm rounded-full px-7 py-3.5 shadow-lg shadow-blue-400/40 hover:shadow-xl hover:shadow-blue-400/50 transition-all duration-200"
+                                className="flex-1 min-w-38 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 active:scale-[0.97] text-white font-bold text-sm rounded-full px-7 py-3.5 shadow-lg shadow-blue-400/40 hover:shadow-xl hover:shadow-blue-400/50 transition-all duration-200"
                             >
                                 <ShoppingCart size={17} />
                                 {isInCart(product.id) ? 'Go To Cart' : 'Add to cart'}
