@@ -43,7 +43,7 @@ const ProductImg = () => {
                 <div className="flex flex-col lg:flex-row gap-8 lg:gap-14 items-start">
 
                     {/* ── LEFT: Image Gallery ── */}
-                    <div className="w-full lg:w-115 lg:shrink-0 flex flex-col gap-4 p-4 rounded-4xl bg-linear-to-br from-slate-50 to-blue-50 drop-shadow-xl">
+                    <div className="w-full lg:w-115 lg:shrink-0 flex flex-col gap-4 p-4 rounded-4xl bg-white drop-shadow-xl">
 
                         {/* Main Image */}
                         <div

@@ -82,10 +82,10 @@ const Reviews = ({ product }) => {
     <div className="flex flex-col gap-7">
 
       {/* ── Summary Card ── */}
-      <div className="flex flex-col sm:flex-row gap-6 bg-gradient-to-br from-blue-50 to-slate-50 rounded-2xl p-6 border border-blue-100">
+      <div className="flex flex-col sm:flex-row gap-6 bg-linear-to-br from-blue-50 to-slate-50 rounded-2xl p-6 border border-blue-100">
 
         {/* Big Score */}
-        <div className="flex flex-col items-center justify-center sm:w-40 flex-shrink-0 gap-1">
+        <div className="flex flex-col items-center justify-center sm:w-40 shrink-0 gap-1">
           <span className="text-6xl font-black text-gray-900">{product?.rating?.score ?? '4.6'}</span>
           <StarRow value={Math.round(product?.rating?.stars ?? 4.6)} size={18} />
           <span className="text-xs text-gray-400 mt-1">{product?.rating?.reviews ?? '3470'} reviews</span>
@@ -99,10 +99,10 @@ const Reviews = ({ product }) => {
           {RATING_BREAKDOWN.map(({ stars, count, pct }) => (
             <div key={stars} className="flex items-center gap-3">
               <span className="text-xs font-semibold text-gray-500 w-3">{stars}</span>
-              <Star size={12} className="text-amber-400 fill-amber-400 flex-shrink-0" />
+              <Star size={12} className="text-amber-400 fill-amber-400 shrink-0" />
               <div className="flex-1 h-2 bg-blue-100 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-blue-500 to-blue-400 rounded-full transition-all duration-700"
+                  className="h-full bg-linear-to-r from-blue-500 to-blue-400 rounded-full transition-all duration-700"
                   style={{ width: `${pct}%` }}
                 />
               </div>
@@ -137,7 +137,7 @@ const Reviews = ({ product }) => {
 
             <div className="flex items-start gap-4">
               {/* Avatar */}
-              <div className={`${r.color} w-10 h-10 rounded-xl flex items-center justify-center text-white text-xs font-bold flex-shrink-0`}>
+              <div className={`${r.color} w-10 h-10 rounded-xl flex items-center justify-center text-white text-xs font-bold shrink-0`}>
                 {r.avatar}
               </div>
 
@@ -192,7 +192,7 @@ const Reviews = ({ product }) => {
       </div>
 
       {/* ── Write a Review CTA ── */}
-      <div className="flex flex-col items-center gap-3 bg-gradient-to-br from-blue-50 to-slate-50 rounded-2xl p-6 border border-blue-100 text-center">
+      <div className="flex flex-col items-center gap-3 bg-linear-to-br from-blue-50 to-slate-50 rounded-2xl p-6 border border-blue-100 text-center">
         <p className="text-sm font-bold text-gray-800">Share your experience</p>
         <p className="text-xs text-gray-400">Help others make better decisions</p>
         <button className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-6 py-2.5 rounded-full shadow-md shadow-blue-200 hover:shadow-lg transition-all duration-200 active:scale-95">
