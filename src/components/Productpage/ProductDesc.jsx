@@ -1,18 +1,18 @@
-import { Check, Star, Package, Truck, User, FileText } from 'lucide-react'
+import { Check, Star, Package, Truck, User, FileText, History, Image } from 'lucide-react'
 import products from "../../data/Products"
 import { Link, useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import Description from './Tabs/Description'
-import Reviews from './Tabs/Reviews'
-import Shipping from './Tabs/Shipping'
-import Seller from './Tabs/AboutSeller'
+import DescriptionTab from './Tabs/DescriptionTab'
+import ReviewsTab from './Tabs/ReviewsTab'
+import HistoryTab from './Tabs/HistoryTab'
+import GalleryTab from './Tabs/GalleryTab'
 
 
 const TABS = [
     { label: 'Description', icon: <FileText size={15} /> },
     { label: 'Reviews', icon: <Star size={15} /> },
-    { label: 'Shipping', icon: <Truck size={15} /> },
-    { label: 'About Seller', icon: <User size={15} /> },
+    { label: 'Gallery', icon: <Image size={15} /> },
+    { label: 'History', icon: <History size={15} /> },
 ]
 
 const ProductDesc = () => {
@@ -23,10 +23,10 @@ const ProductDesc = () => {
     const [activeTab, setActiveTab] = useState('Description')
 
     const TabsContent = {
-        "Description": <Description product={product} />,
-        "Reviews": <Reviews product={product} />,
-        "Shipping": <Shipping product={product} />,
-        "About Seller": <Seller product={product} />,
+        "Description": <DescriptionTab product={product} />,
+        "Reviews": <ReviewsTab product={product} />,
+        "History": <HistoryTab product={product} />,
+        "Gallery": <GalleryTab product={product} />,
     }
 
     useEffect(() => {
@@ -46,7 +46,7 @@ const ProductDesc = () => {
                         <button
                             key={label}
                             onClick={() => setActiveTab(label)}
-                            className={`flex items-center gap-2 px-5 py-4 text-sm font-semibold whitespace-nowrap transition-all duration-200 border-b-2 -mb-px
+                            className={`flex items-center gap-2 px-5 py-4 text-sm font-semibold whitespace-nowrap transition-all duration-200 border-b-2 cursor-pointer -mb-px
                                 ${activeTab === label
                                     ? 'border-blue-600 text-blue-600'
                                     : 'border-transparent text-gray-400 hover:text-gray-700 hover:border-gray-200'

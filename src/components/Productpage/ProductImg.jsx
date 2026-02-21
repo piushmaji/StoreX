@@ -108,7 +108,7 @@ const ProductImg = () => {
 
                             {/* Wishlist + Share */}
                             <div className="absolute top-3 right-3 z-20 flex flex-col gap-1.5">
-                                <div className="bg-white/90 backdrop-blur-sm rounded-full shadow hover:scale-110 transition-all duration-200">
+                                <div className="md:hidden bg-white/90 backdrop-blur-sm rounded-full shadow hover:scale-110 transition-all duration-200">
                                     <WishListIcon product={product} />
                                 </div>
                                 <button className="p-2 bg-white/90 backdrop-blur-sm rounded-full shadow hover:scale-110 transition-all duration-200">
@@ -305,25 +305,6 @@ const ProductImg = () => {
                                     <p className="text-[11px] text-gray-400">{sub}</p>
                                 </div>
                             ))}
-                        </div>
-
-                        {/* ── Unique Benefits ── */}
-                        <div className="rounded-2xl border border-dashed border-blue-200 bg-blue-50/40 p-4 space-y-2.5">
-                            <p className="text-xs font-black text-blue-700 uppercase tracking-widest flex items-center gap-1.5">
-                                <Sparkles size={13} />
-                                Only on our store
-                            </p>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                {UNIQUE_BENEFITS.map(({ icon, bg, label, sub }) => (
-                                    <div key={label} className={`flex items-start gap-2.5 p-2.5 rounded-xl border ${bg} transition-all duration-200 hover:scale-[1.02]`}>
-                                        <div className="mt-0.5 shrink-0">{icon}</div>
-                                        <div>
-                                            <p className="text-xs font-bold text-gray-800 leading-tight">{label}</p>
-                                            <p className="text-[11px] text-gray-500 leading-tight mt-0.5">{sub}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
                         </div>
 
                     </div>

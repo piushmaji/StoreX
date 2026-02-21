@@ -1,7 +1,7 @@
 import { Check } from 'lucide-react'
 import React from 'react'
 
-const Description = ({ product }) => {
+const DescriptionTab = ({ product }) => {
   return (
     <div>
       <div className="flex flex-col gap-7">
@@ -59,4 +59,4 @@ const Description = ({ product }) => {
   )
 }
 
-export default Description
+export default DescriptionTab

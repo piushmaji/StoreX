@@ -72,7 +72,7 @@ const StarRow = ({ value, size = 16 }) => (
   </div>
 )
 
-const Reviews = ({ product }) => {
+const ReviewsTab = ({ product }) => {
   const [helpful, setHelpful] = useState({})
   const [filter, setFilter] = useState('All')
 
@@ -204,4 +204,4 @@ const Reviews = ({ product }) => {
   )
 }
 
-export default Reviews
+export default ReviewsTab
