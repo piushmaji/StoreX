@@ -1,4 +1,4 @@
-import { Check, Share2, ShoppingCart, Zap, RotateCcw, Lock, Truck, Minus, Plus, ChevronUp, ChevronDown, Ruler, Trophy, Wrench, Heart, X } from "lucide-react"
+import { Check, Share2, ShoppingCart, Zap, RotateCcw, Lock, Truck, Minus, Plus, ChevronUp, ChevronDown, Ruler, Trophy, Wrench, Heart, X, MapPin, ArrowRight, Shield, Gift, Bell, CreditCard, Sparkles, Star } from "lucide-react"
 import { useEffect, useState } from "react"
 import products from "../../data/Products"
 import { useNavigate, useParams } from 'react-router-dom'
@@ -7,6 +7,33 @@ import { useCart } from "../../context/CartContext/CartContext"
 import WishListIcon from "../common/WishListIcon/WishListIcon"
 
 const SIZES = ['S', 'M', 'L', 'XL', 'XXL']
+
+const UNIQUE_BENEFITS = [
+    {
+        icon: <Bell size={15} className="text-amber-500" />,
+        bg: "bg-amber-50 border-amber-100",
+        label: "Price Drop Alerts",
+        sub: "We notify you if price falls after purchase"
+    },
+    {
+        icon: <Shield size={15} className="text-violet-500" />,
+        bg: "bg-violet-50 border-violet-100",
+        label: "Lifetime Authenticity",
+        sub: "100% genuine or full refund, no questions"
+    },
+    {
+        icon: <Gift size={15} className="text-pink-500" />,
+        bg: "bg-pink-50 border-pink-100",
+        label: "Free Gift Wrap",
+        sub: "Premium packaging on every order"
+    },
+    {
+        icon: <CreditCard size={15} className="text-emerald-500" />,
+        bg: "bg-emerald-50 border-emerald-100",
+        label: "Zero Cost EMI",
+        sub: "Split into 3–12 months, zero interest"
+    },
+]
 
 const ProductImg = () => {
     const { id } = useParams()
@@ -17,9 +44,9 @@ const ProductImg = () => {
     const [activeImg, setActiveImg] = useState(product.images[0])
     const [quantity, setQuantity] = useState(1)
     const [selectedSize, setSelectedSize] = useState('XL')
-    const [descOpen, setDescOpen] = useState(true)
-    const [detailsOpen, setDetailsOpen] = useState(true)
     const [imgHovered, setImgHovered] = useState(false)
+    const [pincode, setPincode] = useState('')
+    const [pincodeStatus, setPincodeStatus] = useState(null) // null | 'checking' | 'valid' | 'invalid'
 
     useEffect(() => {
         if (product?.images?.length) setActiveImg(product.images[0])
@@ -30,71 +57,81 @@ const ProductImg = () => {
         else addToCart(product)
     }
 
-    const detailItems = [
-        { icon: <Truck size={18} className="text-blue-600" />, bg: "bg-blue-100", label: "Delivery", sub: "Quick Shipping" },
-        { icon: <Ruler size={18} className="text-blue-500" />, bg: "bg-blue-50", label: "Size Table", sub: "Accurate sizing" },
-        { icon: <Trophy size={18} className="text-blue-700" />, bg: "bg-blue-100", label: "Champion", sub: "Elite spirit" },
-        { icon: <Wrench size={18} className="text-gray-500" />, bg: "bg-gray-100", label: "Maintenance", sub: "Proper upkeep" },
-    ]
+    const handlePincodeCheck = () => {
+        if (pincode.length !== 6) return
+        setPincodeStatus('checking')
+        setTimeout(() => {
+            const valid = parseInt(pincode) % 2 === 0 // demo logic
+            setPincodeStatus(valid ? 'valid' : 'invalid')
+        }, 800)
+    }
+
+    const inCart = isInCart(product.id)
 
     return (
         <div className="min-h-screen bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200/50 border border-slate-100">
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 lg:py-12">
-                <div className="flex flex-col lg:flex-row gap-8 lg:gap-14 items-start">
+            <div className="max-w-8xl mx-auto px-6 py-8 lg:py-10">
+                <div className="flex flex-col lg:flex-row gap-10 lg:gap-12 items-start">
 
                     {/* ── LEFT: Image Gallery ── */}
-                    <div className="w-full lg:w-115 lg:shrink-0 flex flex-col gap-4 p-4 rounded-4xl bg-white drop-shadow-xl">
+                    <div className="w-full lg:w-[48%] lg:shrink-0 flex flex-row gap-3">
+
+                        {/* Vertical thumbnail strip */}
+                        <div className="hidden sm:flex flex-col gap-2 pt-1">
+                            {product.images.map((img, i) => (
+                                <button
+                                    key={i}
+                                    onClick={() => setActiveImg(img)}
+                                    className={`w-[62px] h-[62px] rounded-xl overflow-hidden p-1.5 bg-gray-50 transition-all duration-200 shrink-0 ${activeImg === img
+                                        ? 'ring-2 ring-blue-500 ring-offset-1 shadow-md shadow-blue-100'
+                                        : 'ring-1 ring-gray-200 hover:ring-blue-300 opacity-70 hover:opacity-100'
+                                        }`}
+                                >
+                                    <img src={img} alt={`thumb-${i}`} className="w-full h-full object-contain" />
+                                </button>
+                            ))}
+                        </div>
 
                         {/* Main Image */}
                         <div
-                            className="relative rounded-4xl overflow-hidden shadow-2xl shadow-blue-200/50 aspect-square cursor-zoom-in"
+                            className="relative flex-1 rounded-2xl overflow-hidden bg-gray-50 aspect-square cursor-zoom-in"
                             onMouseEnter={() => setImgHovered(true)}
                             onMouseLeave={() => setImgHovered(false)}
                         >
-                            {/* Inner glow ring */}
-                            <div className="absolute inset-0 rounded-4xl ring-1 ring-inset ring-blue-300/30 z-10 pointer-events-none" />
-
-                            {/* Soft radial highlight */}
-                            <div className="absolute top-0 right-0 w-2/3 h-2/3 bg-white/30 rounded-full blur-3xl pointer-events-none z-0" />
-
                             {/* Stock badge */}
-                            <div className="absolute top-4 left-4 z-20">
-                                <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold shadow-lg backdrop-blur-sm ${product.inStock ? 'bg-emerald-500/90 text-white' : 'bg-red-500/90 text-white'}`}>
-                                    {product.inStock ? <Check size={12} /> : <X size={12} />}
+                            <div className="absolute top-3 left-3 z-20">
+                                <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold ${product.inStock ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'}`}>
+                                    {product.inStock ? <Check size={11} /> : <X size={11} />}
                                     {product.inStock ? 'In Stock' : 'Out of Stock'}
                                 </span>
                             </div>
 
                             {/* Wishlist + Share */}
-                            <div className="absolute top-4 right-4 z-20 flex flex-col gap-2">
-                                <div className="md:hidden bg-white/80 backdrop-blur-sm rounded-full shadow-md hover:bg-white hover:scale-110 transition-all duration-200">
+                            <div className="absolute top-3 right-3 z-20 flex flex-col gap-1.5">
+                                <div className="bg-white/90 backdrop-blur-sm rounded-full shadow hover:scale-110 transition-all duration-200">
                                     <WishListIcon product={product} />
                                 </div>
-                                <button className="p-2.5 bg-white/80 backdrop-blur-sm rounded-full shadow-md hover:bg-white hover:scale-110 transition-all duration-200">
-                                    <Share2 size={16} className="text-gray-500" />
+                                <button className="p-2 bg-white/90 backdrop-blur-sm rounded-full shadow hover:scale-110 transition-all duration-200">
+                                    <Share2 size={15} className="text-gray-500" />
                                 </button>
                             </div>
 
-                            {/* Image */}
-                            <div className="relative z-5 w-full h-full flex items-center justify-center p-10">
-                                <img
-                                    src={activeImg}
-                                    alt={product.title}
-                                    className={`w-full h-full object-contain transition-transform duration-500 ease-out ${imgHovered ? 'scale-110' : 'scale-100'}`}
-                                />
-                            </div>
+                            {/* Product Image */}
+                            <img
+                                src={activeImg}
+                                alt={product.title}
+                                className={`w-full h-full object-contain p-6 transition-transform duration-500 ease-out ${imgHovered ? 'scale-110' : 'scale-100'}`}
+                                style={{ filter: 'drop-shadow(0 16px 32px rgba(59,130,246,0.12))' }}
+                            />
                         </div>
 
-                        {/* Thumbnails */}
-                        <div className="flex gap-3 overflow-x-auto no-scrollbar p-4">
+                        {/* Mobile thumbnails — horizontal strip below */}
+                        <div className="sm:hidden flex gap-2 overflow-x-auto no-scrollbar">
                             {product.images.map((img, i) => (
                                 <button
                                     key={i}
                                     onClick={() => setActiveImg(img)}
-                                    className={`shrink-0 w-20 h-20 rounded-2xl overflow-hidden p-2 bg-white transition-all duration-200 ${activeImg === img
-                                        ? 'ring-2 ring-blue-500 ring-offset-2 scale-105 shadow-lg shadow-blue-200'
-                                        : 'ring-1 ring-gray-200 hover:ring-blue-300 hover:scale-105 hover:shadow-md'
-                                        }`}
+                                    className={`shrink-0 w-14 h-14 rounded-xl overflow-hidden p-1 bg-gray-50 transition-all duration-200 ${activeImg === img ? 'ring-2 ring-blue-500' : 'ring-1 ring-gray-200'}`}
                                 >
                                     <img src={img} alt={`thumb-${i}`} className="w-full h-full object-contain" />
                                 </button>
@@ -106,7 +143,7 @@ const ProductImg = () => {
                     <div className="flex-1 min-w-0 flex flex-col gap-5">
 
                         {/* Title */}
-                        <h1 className="text-4xl lg:text-[2.8rem] font-extrabold tracking-tight text-gray-900 leading-[1.05]">
+                        <h1 className="text-3xl lg:text-[2.4rem] font-extrabold tracking-tight text-gray-900 leading-[1.08]">
                             {product.title}
                         </h1>
 
@@ -154,7 +191,7 @@ const ProductImg = () => {
                         {/* Stock indicator */}
                         <div className="flex items-center gap-2">
                             <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_0_3px_rgba(16,185,129,0.2)]" />
-                            <span className="text-sm text-gray-600 font-medium">In stock (can be backordered)</span>
+                            <span className="text-sm text-gray-600 font-medium">In stock · can be backordered</span>
                         </div>
 
                         {/* Qty + CTA Buttons */}
@@ -177,43 +214,118 @@ const ProductImg = () => {
                                 </button>
                             </div>
 
-                            {/* Add to Cart */}
-                            <button
-                                onClick={handleCartClick}
-                                className="flex-1 min-w-38 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 active:scale-[0.97] text-white font-bold text-sm rounded-full px-7 py-3.5 shadow-lg shadow-blue-400/40 hover:shadow-xl hover:shadow-blue-400/50 transition-all duration-200"
-                            >
-                                <ShoppingCart size={17} />
-                                {isInCart(product.id) ? 'Go To Cart' : 'Add to cart'}
-                            </button>
+                            {/* Add to Cart — solid blue */}
+                            {!inCart ? (
+                                <button
+                                    onClick={handleCartClick}
+                                    className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 active:scale-[0.97] text-white font-bold text-sm rounded-full px-7 py-3.5 shadow-lg shadow-blue-400/40 hover:shadow-xl hover:shadow-blue-400/50 transition-all duration-200"
+                                >
+                                    <ShoppingCart size={17} />
+                                    Add to Cart
+                                </button>
+                            ) : (
+                                /* Go to Cart — distinct green outline style */
+                                <button
+                                    onClick={handleCartClick}
+                                    className="flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 active:scale-[0.97] text-white font-bold text-sm rounded-full px-7 py-3.5 shadow-lg shadow-emerald-400/40 hover:shadow-xl hover:shadow-emerald-400/50 transition-all duration-200"
+                                >
+                                    <ArrowRight size={17} />
+                                    Go to Cart
+                                </button>
+                            )}
 
-                            {/* Buy Now */}
-                            <button className="flex items-center gap-2 bg-white hover:bg-blue-50 border-2 border-blue-200 hover:border-blue-400 text-blue-700 font-bold text-sm rounded-full px-5 py-3.5 transition-all duration-200 hover:shadow-md">
-                                <Zap size={16} className="text-blue-500" />
-                                Buy Now
-                            </button>
-
-                            {/* Wishlist heart */}
-                            <button className="hidden w-12 h-12 md:flex items-center justify-center rounded-full border-2 border-gray-200 bg-white hover:border-blue-300 hover:bg-blue-50 transition-all duration-200 shrink-0 group">
+                            {/* Wishlist */}
+                            <button className="w-12 h-12 flex items-center justify-center rounded-full border-2 border-gray-200 bg-white hover:border-red-200 hover:bg-red-50 transition-all duration-200 shrink-0">
                                 <WishListIcon product={product} />
                             </button>
                         </div>
 
-                        <div className="h-px bg-linear-to-r from-blue-200 via-blue-100 to-transparent" />
+                        <div className="h-px bg-gradient-to-r from-blue-200 via-blue-100 to-transparent" />
 
-                        {/* Trust Badges */}
-                        <div className="grid grid-cols-3 gap-3">
+                        {/* ── Pincode Checker ── */}
+                        <div className="space-y-2">
+                            <p className="text-xs font-bold text-gray-500 uppercase tracking-widest flex items-center gap-1.5">
+                                <MapPin size={12} className="text-blue-500" />
+                                Check Delivery
+                            </p>
+                            <div className="flex items-center gap-2">
+                                <div className="relative flex-1 max-w-[220px]">
+                                    <input
+                                        type="text"
+                                        maxLength={6}
+                                        inputMode="numeric"
+                                        value={pincode}
+                                        onChange={e => {
+                                            setPincode(e.target.value.replace(/\D/g, ''))
+                                            setPincodeStatus(null)
+                                        }}
+                                        placeholder="Enter 6-digit pincode"
+                                        className="w-full text-sm font-medium border-2 border-gray-200 focus:border-blue-400 rounded-full px-4 py-2.5 outline-none transition-all duration-200 pr-10 placeholder:text-gray-300"
+                                    />
+                                    {pincode.length === 6 && (
+                                        <MapPin size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-blue-400" />
+                                    )}
+                                </div>
+                                <button
+                                    onClick={handlePincodeCheck}
+                                    disabled={pincode.length !== 6 || pincodeStatus === 'checking'}
+                                    className="text-sm font-bold text-blue-600 hover:text-blue-800 disabled:text-gray-300 transition-colors px-1 py-2 disabled:cursor-not-allowed"
+                                >
+                                    {pincodeStatus === 'checking' ? 'Checking…' : 'Check'}
+                                </button>
+                            </div>
+
+                            {/* Pincode result */}
+                            {pincodeStatus === 'valid' && (
+                                <p className="text-xs font-semibold text-emerald-600 flex items-center gap-1.5 pl-1">
+                                    <Check size={13} />
+                                    Delivery available · Estimated in 2–3 days · FREE shipping
+                                </p>
+                            )}
+                            {pincodeStatus === 'invalid' && (
+                                <p className="text-xs font-semibold text-red-500 flex items-center gap-1.5 pl-1">
+                                    <X size={13} />
+                                    Sorry, we don't deliver to this pincode yet
+                                </p>
+                            )}
+                        </div>
+
+                        <div className="h-px bg-gradient-to-r from-blue-200 via-blue-100 to-transparent" />
+
+                        {/* ── Trust Badges ── */}
+                        <div className="grid grid-cols-3 gap-2.5">
                             {[
-                                { icon: <Truck size={16} className="text-white" />, bg: 'bg-blue-500', label: 'Free Delivery', sub: '2–3 Days' },
-                                { icon: <RotateCcw size={16} className="text-white" />, bg: 'bg-blue-600', label: 'Easy Returns', sub: '7 Days' },
-                                { icon: <Lock size={16} className="text-white" />, bg: 'bg-blue-700', label: 'Secure Pay', sub: '100% Safe' },
+                                { icon: <Truck size={15} className="text-white" />, bg: 'bg-blue-500', label: 'Free Delivery', sub: '2–3 Days' },
+                                { icon: <RotateCcw size={15} className="text-white" />, bg: 'bg-blue-600', label: 'Easy Returns', sub: '7 Days' },
+                                { icon: <Lock size={15} className="text-white" />, bg: 'bg-blue-700', label: 'Secure Pay', sub: '100% Safe' },
                             ].map(({ icon, bg, label, sub }) => (
-                                <div key={label} className="flex flex-col items-center text-center p-3.5 bg-white rounded-2xl border border-blue-100 shadow-sm hover:shadow-md hover:border-blue-200 hover:-translate-y-0.5 transition-all duration-200">
-                                    <div className={`${bg} p-2 rounded-xl mb-2 shadow-sm`}>{icon}</div>
+                                <div key={label} className="flex flex-col items-center text-center p-3 bg-white rounded-2xl border border-blue-100 shadow-sm hover:shadow-md hover:border-blue-200 hover:-translate-y-0.5 transition-all duration-200">
+                                    <div className={`${bg} p-2 rounded-xl mb-1.5 shadow-sm`}>{icon}</div>
                                     <p className="text-xs font-bold text-gray-800">{label}</p>
-                                    <p className="text-xs text-gray-400">{sub}</p>
+                                    <p className="text-[11px] text-gray-400">{sub}</p>
                                 </div>
                             ))}
                         </div>
+
+                        {/* ── Unique Benefits ── */}
+                        <div className="rounded-2xl border border-dashed border-blue-200 bg-blue-50/40 p-4 space-y-2.5">
+                            <p className="text-xs font-black text-blue-700 uppercase tracking-widest flex items-center gap-1.5">
+                                <Sparkles size={13} />
+                                Only on our store
+                            </p>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                {UNIQUE_BENEFITS.map(({ icon, bg, label, sub }) => (
+                                    <div key={label} className={`flex items-start gap-2.5 p-2.5 rounded-xl border ${bg} transition-all duration-200 hover:scale-[1.02]`}>
+                                        <div className="mt-0.5 shrink-0">{icon}</div>
+                                        <div>
+                                            <p className="text-xs font-bold text-gray-800 leading-tight">{label}</p>
+                                            <p className="text-[11px] text-gray-500 leading-tight mt-0.5">{sub}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
