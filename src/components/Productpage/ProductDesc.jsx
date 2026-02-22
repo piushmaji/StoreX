@@ -12,7 +12,7 @@ const TABS = [
     { label: 'Description', icon: <FileText size={15} /> },
     { label: 'Reviews', icon: <Star size={15} /> },
     { label: 'Gallery', icon: <Image size={15} /> },
-    { label: 'History', icon: <History size={15} /> },
+    { label: 'Price History', icon: <History size={15} /> },
 ]
 
 const ProductDesc = () => {
@@ -25,7 +25,7 @@ const ProductDesc = () => {
     const TabsContent = {
         "Description": <DescriptionTab product={product} />,
         "Reviews": <ReviewsTab product={product} />,
-        "History": <HistoryTab product={product} />,
+        "Price History": <HistoryTab product={product} />,
         "Gallery": <GalleryTab product={product} />,
     }
 

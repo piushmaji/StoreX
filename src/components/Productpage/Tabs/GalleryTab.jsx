@@ -154,7 +154,7 @@ const PHOTO_LIMIT = 8
 
 const GalleryTab = ({ extraReviews = [] }) => {
   const allReviews = [...extraReviews, ...MOCK_REVIEWS]
-  const [expanded, setExpanded] = useState(false)
+  const [expanded, setExpanded] = useState(true)
   const [showAll, setShowAll] = useState(false)
   const [lightbox, setLightbox] = useState(null)
 
@@ -175,7 +175,7 @@ const GalleryTab = ({ extraReviews = [] }) => {
 
       {/* ── Collapsed trigger ── */}
       <button
-        onClick={() => setExpanded(e => !e)}
+        // onClick={() => setExpanded(e => !e)}
         className="w-full flex items-center justify-between px-4 py-3 rounded-2xl bg-gray-50 hover:bg-gray-100/80 border border-gray-100 transition-all duration-200 group"
       >
         <div className="flex items-center gap-3">
@@ -198,10 +198,7 @@ const GalleryTab = ({ extraReviews = [] }) => {
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-1 text-gray-400 group-hover:text-gray-600 transition-colors">
-          <span className="text-xs font-semibold hidden sm:block">{expanded ? "Close" : "View photos"}</span>
-          {expanded ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
-        </div>
+        
       </button>
 
       {/* ── Expanded: photos only ── */}
