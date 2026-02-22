@@ -111,8 +111,8 @@ const ProductImg = () => {
                                 <div className="sm:hidden bg-white/90 backdrop-blur-sm rounded-full shadow hover:scale-110 transition-all duration-200">
                                     <WishListIcon product={product} />
                                 </div>
-                                <button className="py-3 px-2  bg-white/90 backdrop-blur-sm rounded-full shadow hover:scale-110 transition-all duration-200 flex items-center justify-center">
-                                    <Share2 size={15} className="text-gray-500" />
+                                <button className="h-10 w-10  bg-white/90 backdrop-blur-sm rounded-full shadow hover:scale-110 transition-all duration-200 flex items-center justify-center">
+                                    <Share2 size={20} className="text-gray-500" />
                                 </button>
                             </div>
 
