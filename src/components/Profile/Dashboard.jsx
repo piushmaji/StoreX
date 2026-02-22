@@ -1,152 +1,161 @@
-import { Heart, Map, ShoppingBag } from 'lucide-react'
-import { useContext, useState } from 'react'
+import { Camera, CheckCircle, Pencil, X } from 'lucide-react'
+import { useContext, useRef, useState } from 'react'
 import { updateProfile } from 'firebase/auth'
 import { auth, FirebaseContext } from '../../context/Firebase/Firebase'
 
-const myDashboard =
-    [
-        {
-            id: "D1",
-            icon: ShoppingBag,
-            title: "Total Orders",
-            value: 32,
-            info: 3,
-        },
-        {
-            id: "D2",
-            icon: Heart,
-            title: "My Wishlist",
-            value: 14,
-            info: "Item Saved",
-        },
-        {
-            id: "D3",
-            icon: Map,
-            title: "Saved Addresses",
-            value: 3,
-            info: "Home",
-        },
-    ]
-
 const Dashboard = () => {
-
-
     const { user } = useContext(FirebaseContext)
-    const [name, setName] = useState(user?.displayName || "")
-    const [changeName, setChangeName] = useState('')
 
-    const handlechange = async () => {
-        if (!changeName.trim()) return
+    const [photo, setPhoto] = useState(
+        user?.photoURL || "https://i.pinimg.com/1200x/d9/e1/4c/d9e14c251d468cc476c0ec33f969b5da.jpg"
+    )
+    const [name, setName] = useState(user?.displayName || '')
+    const [editingName, setEditingName] = useState(false)
+    const [draftName, setDraftName] = useState('')
+    const [phone, setPhone] = useState('')
+    const [saved, setSaved] = useState(false)
+    const fileRef = useRef()
 
+    // Photo pick from gallery
+    const handlePhoto = (e) => {
+        const file = e.target.files[0]
+        if (!file) return
+        const reader = new FileReader()
+        reader.onload = (ev) => setPhoto(ev.target.result)
+        reader.readAsDataURL(file)
+    }
+
+    const handleSave = async () => {
         await updateProfile(auth.currentUser, {
-            displayName: changeName
+            displayName: draftName.trim() || name,
         })
-        setName(changeName)
-        setChangeName('')
+        if (draftName.trim()) setName(draftName.trim())
+        setEditingName(false)
+        setDraftName('')
+        setSaved(true)
+        setTimeout(() => setSaved(false), 2500)
     }
 
     return (
-        <div className='flex flex-col gap-4'>
+        <div className="flex flex-col gap-6 max-w-lg">
 
-            <div className='bg-gray-50 border rounded-lg border-gray-300 pb-5'>
-                <section className=' py-3 lg:px-6  '>
-                    <div className='text-2xl py-2 px-4 lg:px-0'>
-                        <h1>Edit Profile</h1>
-                    </div>
-
-
-                    {/* Profile Section */}
-                    <div className='flex flex-col lg:flex-row items-center py-4 px-8 gap-6'>
-                        <div className='lg:w-[20%] flex flex-col items-center gap-2'>
-                            <div className='h-40 w-40 rounded-full'>
-                                <img
-                                    className='h-full w-full rounded-full object-cover'
-                                    src="https://i.pinimg.com/1200x/d9/e1/4c/d9e14c251d468cc476c0ec33f969b5da.jpg" alt="dp" />
-                            </div>
-                            <div className='flex flex-col items-center overflow-hidden'>
-                                <h1 className='text-xl font-bold'>{name}</h1>
-                                <a className='text-blue-700 cursor-pointer hover:text-blue-900'>Change Photo</a>
-                            </div>
-                        </div>
-
-                        <div className='lg:w-[80%] w-full grid grid-cols-2 lg:gap-7 gap-4 items-center'>
-                            <div className='flex flex-col gap-2 col-span-2 lg:col-span-1'>
-                                <h1>Full name</h1>
-                                <input
-                                    onChange={(e) => {
-                                        setChangeName(e.target.value)
-                                    }}
-                                    value={changeName}
-                                    className='p-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-0'
-                                    type="text"
-                                    placeholder={user.displayName} />
-                            </div>
-                            <div className='flex flex-col gap-2 col-span-2 lg:col-span-1'>
-                                <h1>Email Address</h1>
-                                <input
-                                    className='p-2 bg-gray-50 border border-gray-300 rounded-lg w- focus:outline-0'
-                                    type="email"
-                                    placeholder={user.email} />
-                            </div>
-                            <div className='flex flex-col gap-2 col-span-2 lg:col-span-1'>
-                                <h1>Phone Number</h1>
-                                <input
-                                    className='p-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-0'
-                                    type="text"
-                                    placeholder='Phone Number' />
-                            </div>
-                            <div className='flex flex-col gap-2 col-span-2 lg:col-span-1'>
-                                <h1>Password</h1>
-                                <input
-                                    className='p-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-0'
-                                    type="Password"
-                                    placeholder='Password' />
-                            </div>
-                            <div
-                                onClick={handlechange}
-                                className='col-span-2 py-4 bg-green-500 rounded-lg font-light text-white hover:bg-green-600 cursor-pointer active:scale-95 transition-all duration-200 flex items-center justify-center'>
-
-                                <h1>Save Changes</h1>
-
-                            </div>
-                        </div>
-                    </div>
-
-                </section>
+            {/* ── Title ── */}
+            <div>
+                <h1 className="text-xl font-black text-gray-900">Edit Profile</h1>
+                <p className="text-xs text-gray-400 mt-0.5">Update your photo and personal details</p>
             </div>
 
-
-            {/* Dashboard Section */}
-            <section className='hidden bg-gray-50 border rounded-lg border-gray-300 p-6 flex-col gap-4'>
-                <div className='text-2xl'>
-                    <h1>My Dashboard</h1>
+            {/* ── Photo ── */}
+            <div className="flex items-center gap-5">
+                <div className="relative group shrink-0">
+                    <div className="w-20 h-20 rounded-2xl overflow-hidden ring-4 ring-gray-100">
+                        <img src={photo} alt="avatar" className="w-full h-full object-cover" />
+                    </div>
+                    {/* Hover overlay */}
+                    <button
+                        onClick={() => fileRef.current.click()}
+                        className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 rounded-2xl flex flex-col items-center justify-center gap-1 transition-opacity cursor-pointer"
+                    >
+                        <Camera size={16} className="text-white" />
+                        <span className="text-white text-[9px] font-bold">Change</span>
+                    </button>
+                    <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handlePhoto} />
                 </div>
 
-                <div className='flex md:flex-row flex-col  gap-4 justify-between'>
-                    {myDashboard.map((items) => {
-
-                        const Icon = items.icon
-                        return (
-                            <div div key={items.id} className='w-full md:w-1/3 flex flex-col border border-gray-300 rounded-lg p-4 gap-1' >
-                                <div className='h-8 w-8 flex items-center justify-center rounded-lg text-blue-500 bg-blue-200'>
-                                    <Icon />
-                                </div>
-                                <div className='font-semibold'>
-                                    <h1>{items.title}</h1>
-                                </div>
-                                <div className='text-2xl font-bold'>
-                                    <p>{items.value}</p>
-                                </div>
-                                <div>
-                                    <p>{items.info}</p>
-                                </div>
-                            </div>
-                        )
-
-                    })}
+                <div className="flex flex-col gap-1.5">
+                    <p className="text-sm font-bold text-gray-800">{name || 'Your Name'}</p>
+                    <p className="text-xs text-gray-400">{user?.email}</p>
+                    <button
+                        onClick={() => fileRef.current.click()}
+                        className="text-xs font-bold text-blue-600 hover:text-blue-700 transition-colors text-left"
+                    >
+                        Upload new photo →
+                    </button>
                 </div>
-            </section >
-        </div >
+            </div>
+
+            {/* Divider */}
+            <div className="h-px bg-gray-100" />
+
+            {/* ── Fields ── */}
+            <div className="flex flex-col gap-4">
+
+                {/* Full Name */}
+                <div className="flex flex-col gap-1.5">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Full Name</label>
+                    {editingName ? (
+                        <div className="flex gap-2 items-center">
+                            <input
+                                autoFocus
+                                value={draftName}
+                                onChange={e => setDraftName(e.target.value)}
+                                placeholder={name || 'Your name'}
+                                onKeyDown={e => e.key === 'Enter' && handleSave()}
+                                className="flex-1 text-sm bg-gray-100 border-0 focus:ring-2 focus:ring-blue-200 rounded-xl px-4 py-2.5 outline-none transition-all font-medium placeholder:text-gray-300"
+                            />
+                            <button
+                                onClick={handleSave}
+                                className="w-9 h-9 bg-gray-900 hover:bg-gray-800 rounded-xl flex items-center justify-center text-white transition-all active:scale-95 shrink-0"
+                            >
+                                <CheckCircle size={15} />
+                            </button>
+                            <button
+                                onClick={() => { setEditingName(false); setDraftName('') }}
+                                className="w-9 h-9 bg-gray-100 hover:bg-gray-200 rounded-xl flex items-center justify-center text-gray-500 transition-all active:scale-95 shrink-0"
+                            >
+                                <X size={15} />
+                            </button>
+                        </div>
+                    ) : (
+                        <div
+                            onClick={() => { setEditingName(true); setDraftName(name) }}
+                            className="flex items-center justify-between bg-gray-50 hover:bg-gray-100 border-2 border-transparent hover:border-gray-200 rounded-xl px-4 py-2.5 cursor-pointer transition-all group"
+                        >
+                            <span className={`text-sm font-medium ${name ? 'text-gray-800' : 'text-gray-300'}`}>
+                                {name || 'Add your name'}
+                            </span>
+                            <Pencil size={12} className="text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </div>
+                    )}
+                </div>
+
+                {/* Email — read only */}
+                <div className="flex flex-col gap-1.5">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Email Address</label>
+                    <div className="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-2.5">
+                        <span className="text-sm font-medium text-gray-500">{user?.email || 'your@email.com'}</span>
+                        <span className="text-[9px] font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">Verified</span>
+                    </div>
+                </div>
+
+                {/* Phone */}
+                <div className="flex flex-col gap-1.5">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Phone Number</label>
+                    <input
+                        type="tel"
+                        value={phone}
+                        onChange={e => setPhone(e.target.value)}
+                        placeholder="+91 00000 00000"
+                        className="w-full text-sm bg-gray-50 border-2 border-transparent focus:border-blue-200 focus:bg-white rounded-xl px-4 py-2.5 outline-none transition-all font-medium placeholder:text-gray-300"
+                    />
+                </div>
+            </div>
+
+            {/* ── Save ── */}
+            <div className="flex items-center gap-3">
+                <button
+                    onClick={handleSave}
+                    className="flex-1 h-11 bg-gray-900 hover:bg-gray-800 active:scale-[0.98] text-white font-extrabold text-sm rounded-2xl transition-all shadow-lg shadow-gray-900/15"
+                >
+                    Save Changes
+                </button>
+                {saved && (
+                    <div className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 bg-emerald-50 px-4 py-3 rounded-xl border border-emerald-100 whitespace-nowrap">
+                        <CheckCircle size={12} /> Saved!
+                    </div>
+                )}
+            </div>
+        </div>
     )
 }
 

@@ -1,151 +1,209 @@
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Trash2, Heart, Tag, ShoppingBag, ChevronRight, Shield, RotateCcw, Truck, Minus, Plus } from 'lucide-react'
 import { useCart } from '../../context/CartContext/CartContext'
 import { Link } from 'react-router-dom'
+import { useState } from 'react'
 
 const MyCart = () => {
+    const { cartItem, updateQty, totalPrice, removeItem } = useCart()
+    const [coupon, setCoupon] = useState('')
+    const [couponApplied, setCouponApplied] = useState(false)
+    const [saved, setSaved] = useState([])
 
+    const discount = couponApplied ? Math.round(totalPrice * 0.1) : 0
+    const finalTotal = totalPrice - discount
 
-    const { cartItem, setCartItem, updateQty, totalPrice, removeItem } = useCart()
+    const toggleSave = (id) => setSaved(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id])
+
+    // ── Empty state ───────────────────────────────────────────────────────────
+    if (cartItem.length === 0) return (
+        <div className="min-h-[70vh] flex flex-col items-center justify-center gap-4 text-center px-4">
+            <div className="w-20 h-20 bg-gray-100 rounded-3xl flex items-center justify-center">
+                <ShoppingBag size={30} className="text-gray-400" />
+            </div>
+            <div>
+                <p className="text-lg font-extrabold text-gray-900">Your cart is empty</p>
+                <p className="text-sm text-gray-400 mt-1">Add something you love!</p>
+            </div>
+            <Link to="/product">
+                <button className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl transition-all active:scale-95 shadow-lg shadow-blue-200">
+                    Browse Products
+                </button>
+            </Link>
+        </div>
+    )
 
     return (
-        <div className='flex flex-col gap-4 p-2 sm:p-4'>
-            <div className='text-xl sm:text-2xl'>
-                <h1>My Cart
-                    <span className='ml-1'>({cartItem.length})</span>
-                </h1>
+        <div className="w-full max-w-6xl mx-auto px-3 sm:px-6 py-6 sm:pb-8 flex flex-col gap-6">
+
+            {/* ── Header ── */}
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">My Cart
+                        <span className="ml-2 text-sm font-bold text-gray-400 align-middle">({cartItem.length})</span>
+                    </h1>
+                </div>
+                <Link to="/product" className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-gray-400 hover:text-blue-600 transition-colors">
+                    <ArrowLeft size={14} /> Continue Shopping
+                </Link>
             </div>
 
-            {/* Main Cart section  */}
-            <main className='flex flex-col'>
+            {/* ── Layout ── */}
+            <div className="flex flex-col lg:flex-row gap-4 items-start">
 
-                {/* All Product Cart  */}
-                <section className='w-full flex flex-col lg:flex-row gap-4'>
+                {/* ── Cart Items ── */}
+                <div className="flex-1 w-full flex flex-col gap-3">
+                    {cartItem.map((item) => (
+                        <div key={item.id} className="bg-white rounded-2xl border border-gray-100 hover:border-blue-100 hover:shadow-lg hover:shadow-slate-100 transition-all duration-200 p-3 sm:p-4 flex gap-3 sm:gap-4 group">
 
-                    <div className='w-full lg:w-[75%]'>
-                        <div className='flex flex-col rounded-lg border border-gray-300 gap-4 p-3 sm:p-4 justify-between'>
+                            {/* Product image */}
+                            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-slate-50 flex items-center justify-center shrink-0 overflow-hidden">
+                                <img
+                                    src={item.images[0]}
+                                    alt={item.title}
+                                    className="w-full h-full object-contain p-1.5 group-hover:scale-105 transition-transform duration-300"
+                                />
+                            </div>
 
-                            {cartItem.map((item) => (
-                                <div key={item.id} className='w-full flex flex-col sm:flex-row justify-between border-b border-gray-300 pb-4 gap-3 sm:gap-0'>
+                            {/* Details */}
+                            <div className="flex-1 min-w-0 flex flex-col justify-between gap-1.5">
 
-                                    <div className='flex gap-2 sm:gap-4'>
-                                        <div className='h-24 w-24 sm:h-32 sm:w-28 lg:h-40 lg:w-32 bg-gray-200 border border-gray-300 rounded-lg flex items-center justify-center p-2 shrink-0'>
-                                            <img
-                                                className='h-full w-full object-contain'
-                                                src={item.images[0]} alt={item.title} />
-                                        </div>
-                                        <div className='flex flex-col font-light text-gray-400 gap-2 justify-between flex-1'>
-                                            <div className='text-sm sm:text-base lg:text-lg font-semibold text-black'>
-                                                <h1 className='line-clamp-2'>{item.title}</h1>
-                                            </div>
-                                            <div className='flex flex-col text-xs sm:text-sm'>
-                                                <div className='flex flex-wrap'>
-                                                    <p className='line-clamp-2'>
-                                                        Size: {item.specs.size},
-                                                        Material: {item.details.material},
-                                                        Colour: {item.specs.color}
-                                                    </p>
-                                                </div>
-                                                <p className='truncate'>Seller: {item.seller.name}</p>
-                                            </div>
-                                            <div className='flex gap-2 flex-wrap sm:flex-nowrap'>
-                                                <button
-                                                    onClick={() => removeItem(item.id)}
-                                                    className='px-3 py-1.5 sm:px-4 sm:py-2 bg-gray-50 text-xs sm:text-sm border border-gray-300 rounded-lg font-light text-red-500 shadow-md cursor-pointer active:scale-95 transition-all duration-200'>Remove</button>
-                                                <button className='px-3 py-1.5 sm:px-4 sm:py-2 bg-gray-50 text-xs sm:text-sm border border-gray-300 rounded-lg font-light text-blue-500 shadow-md cursor-pointer active:scale-95 transition-all duration-200 whitespace-nowrap'>Save to later</button>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className='flex sm:flex-col justify-between sm:justify-start items-end gap-2 sm:gap-2 sm:ml-2'>
-
-                                        <div className='order-2 sm:order-1'>
-                                            <h1 className='text-base sm:text-lg font-semibold'>₹{item.pricing.retail.salePrice}</h1>
-                                        </div>
-                                        <div className='order-1 sm:order-2'>
-                                            <select
-                                                value={item.quantity}
-                                                onChange={(e) => updateQty(item.id, Number(e.target.value))}
-                                                className='px-2 py-1.5 sm:px-4 sm:py-2 bg-gray-50 border border-gray-300 rounded-lg text-xs sm:text-sm font-light shadow-md focus:outline-0 cursor-pointer'
-                                            >
-                                                {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
-                                                    <option key={n} value={n}>
-                                                        Qty: {n}
-                                                    </option>
-                                                ))}
-                                            </select>
-
-                                        </div>
-                                    </div>
+                                {/* Title + price */}
+                                <div className="flex items-start justify-between gap-2">
+                                    <h2 className="text-sm font-bold text-gray-900 line-clamp-2 leading-snug flex-1">
+                                        {item.title}
+                                    </h2>
+                                    <span className="text-base font-black text-gray-900 shrink-0 whitespace-nowrap">
+                                        ₹{item.pricing.retail.salePrice.toLocaleString()}
+                                    </span>
                                 </div>
-                            ))}
 
+                                {/* Specs */}
+                                <div className="flex flex-wrap gap-x-2 gap-y-0.5">
+                                    {[`${item.specs?.size}`, `${item.specs?.color}`, `${item.seller?.name}`].filter(Boolean).map((t, i) => (
+                                        <span key={i} className="text-[11px] text-gray-400">{t}</span>
+                                    ))}
+                                </div>
 
-                            <div className='flex flex-col sm:flex-row justify-between gap-3 sm:gap-0 pt-2'>
-                                <Link to={'/product'} className='w-full sm:w-auto'>
-                                    <button className='w-full sm:w-auto px-4 py-2 sm:py-2.5 bg-blue-600 rounded-lg font-light text-white text-sm sm:text-base shadow-md cursor-pointer active:scale-95 transition-all duration-200'>
-                                        <div className='flex gap-1 items-center justify-center'>
-                                            <ArrowLeft className='w-4 h-4 sm:w-5 sm:h-5' />
-                                            <h1>Back to shop</h1>
-                                        </div>
+                                {/* Actions */}
+                                <div className="flex items-center gap-1.5 flex-wrap mt-0.5">
+
+                                    {/* Qty stepper */}
+                                    <div className="flex items-center bg-gray-100 rounded-xl h-8 overflow-hidden">
+                                        <button
+                                            onClick={() => item.quantity > 1 && updateQty(item.id, item.quantity - 1)}
+                                            className="w-8 h-full flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
+                                        >
+                                            <Minus size={12} />
+                                        </button>
+                                        <span className="w-7 text-center text-xs font-bold text-gray-800 select-none">{item.quantity}</span>
+                                        <button
+                                            onClick={() => updateQty(item.id, item.quantity + 1)}
+                                            className="w-8 h-full flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
+                                        >
+                                            <Plus size={12} />
+                                        </button>
+                                    </div>
+
+                                    <div className="w-px h-4 bg-gray-200" />
+
+                                    <button
+                                        onClick={() => toggleSave(item.id)}
+                                        className={`inline-flex items-center gap-1 text-xs font-semibold transition-colors ${saved.includes(item.id) ? 'text-rose-500' : 'text-gray-400 hover:text-rose-500'}`}
+                                    >
+                                        <Heart size={12} className={saved.includes(item.id) ? 'fill-rose-500' : ''} />
+                                        {saved.includes(item.id) ? 'Saved' : 'Save'}
                                     </button>
-                                </Link>
+
+                                    <button
+                                        onClick={() => removeItem(item.id)}
+                                        className="inline-flex items-center gap-1 text-xs font-semibold text-gray-400 hover:text-red-500 transition-colors ml-auto"
+                                    >
+                                        <Trash2 size={12} /> Remove
+                                    </button>
+                                </div>
                             </div>
                         </div>
+                    ))}
+                </div>
+
+                {/* ── Order Summary ── */}
+                <div className="w-full lg:w-75 xl:w-[320px] shrink-0 flex flex-col gap-3 lg:sticky lg:top-6">
+
+                    {/* Coupon */}
+                    <div className="bg-white rounded-2xl border border-gray-100 p-4 flex flex-col gap-3">
+                        <div className="flex items-center gap-1.5">
+                            <Tag size={13} className="text-blue-500" />
+                            <p className="text-[10px] font-black text-gray-600 uppercase tracking-widest">Coupon Code</p>
+                        </div>
+                        <div className="flex gap-2 items-center bg-gray-100 rounded-xl p-1 pl-3">
+                            <input
+                                value={coupon}
+                                onChange={e => { setCoupon(e.target.value); setCouponApplied(false) }}
+                                placeholder="Enter code"
+                                className="flex-1 text-sm bg-transparent outline-none placeholder:text-gray-400 font-medium"
+                            />
+                            <button
+                                onClick={() => coupon.trim() && setCouponApplied(true)}
+                                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-extrabold rounded-lg transition-all active:scale-95"
+                            >
+                                Apply
+                            </button>
+                        </div>
+                        {couponApplied && (
+                            <p className="text-xs font-bold text-emerald-600 bg-emerald-50 px-3 py-2 rounded-xl border border-emerald-100">
+                                🎉 10% off applied!
+                            </p>
+                        )}
                     </div>
 
-                    {/* payment and bill section */}
-                    <div className='w-full lg:w-[25%] flex flex-col gap-4'>
+                    {/* Bill summary */}
+                    <div className="bg-white rounded-2xl border border-gray-100 p-4 flex flex-col gap-4">
+                        <p className="text-[10px] font-black text-gray-600 uppercase tracking-widest">Order Summary</p>
 
-                        {/* Coupon code section */}
-                        <div className='flex flex-col border border-gray-300 rounded-lg p-3 sm:p-4 gap-3 sm:gap-4'>
-                            <div className='text-sm sm:text-base'>
-                                <h1>Have a coupon?</h1>
+                        <div className="flex flex-col gap-2.5">
+                            <div className="flex justify-between items-center">
+                                <span className="text-sm text-gray-500">Subtotal <span className="text-gray-400 text-xs">({cartItem.length} items)</span></span>
+                                <span className="text-sm font-bold text-gray-900">₹{totalPrice.toLocaleString()}</span>
                             </div>
-                            <div className='w-full flex items-center'>
-                                <input
-                                    className='flex-1 bg-gray-50 p-2 border border-gray-300 rounded-l-lg focus:outline-0 text-sm sm:text-base'
-                                    type="text"
-                                    placeholder='Add Coupon' />
-                                <button className='px-3 sm:px-4 py-2 bg-blue-600 border border-blue-600 rounded-r-lg font-light text-white text-sm sm:text-base hover:bg-blue-800 cursor-pointer active:scale-95 transition-all duration-200 whitespace-nowrap'>Apply</button>
+                            <div className="flex justify-between items-center">
+                                <span className="text-sm text-gray-500">Platform fee</span>
+                                <span className="text-sm font-bold text-gray-400">₹0</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <span className="text-sm text-gray-500">Delivery</span>
+                                <span className="text-sm font-extrabold text-emerald-500">FREE</span>
+                            </div>
+                            {couponApplied && (
+                                <div className="flex justify-between items-center">
+                                    <span className="text-sm text-emerald-600">Coupon (10%)</span>
+                                    <span className="text-sm font-extrabold text-emerald-600">−₹{discount.toLocaleString()}</span>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Divider */}
+                        <div className="h-px bg-gray-100" />
+
+                        <div className="flex justify-between items-center">
+                            <span className="text-sm font-extrabold text-gray-900">Total</span>
+                            <div className="text-right">
+                                <span className="text-2xl font-black text-gray-900">₹{finalTotal.toLocaleString()}</span>
+                                {couponApplied && <p className="text-[10px] text-emerald-500 font-bold">You save ₹{discount.toLocaleString()}</p>}
                             </div>
                         </div>
 
-                        {/* payment and bill section */}
-                        <div className='p-3 sm:p-4 rounded-lg border border-gray-300 shadow-xl'>
-                            <div className='flex flex-col gap-3 sm:gap-4'>
-                                <div className='border-b border-gray-300 pb-3 sm:pb-4'>
-                                    <div className='flex flex-col gap-2 text-sm sm:text-base'>
-                                        <div className='flex justify-between'>
-                                            <h1>Subtotal:</h1>
-                                            <h2>₹{totalPrice}</h2>
-                                        </div>
-                                        <div className='flex justify-between'>
-                                            <h1>Platform fee:</h1>
-                                            <h2 className='text-red-500'>+0.00</h2>
-                                        </div>
-                                        <div className='flex justify-between'>
-                                            <h1>Discount:</h1>
-                                            <h2 className='text-green-500'>-0.00</h2>
-                                        </div>
-                                    </div>
-                                </div>
+                        {/* Checkout CTA */}
+                        <button className="w-full h-12 bg-gray-900 hover:bg-black active:scale-[0.98] text-white font-extrabold text-sm rounded-2xl transition-all shadow-xl shadow-gray-900/20 flex items-center justify-center gap-2">
+                            Proceed to Checkout <ChevronRight size={16} />
+                        </button>
 
-                                <div className='flex justify-between text-lg sm:text-xl font-bold'>
-                                    <h1>Total:</h1>
-                                    <h2>₹{totalPrice}</h2>
-                                </div>
-
-                                <div className='flex justify-center items-center'>
-                                    <button className='w-full p-3 sm:p-4 bg-green-500 rounded-lg font-light text-white text-sm sm:text-base hover:bg-green-600 cursor-pointer active:scale-95 transition-all duration-200'>Checkout</button>
-                                </div>
-                            </div>
+                        <div className="flex items-center justify-center gap-1.5">
+                            <Shield size={11} className="text-gray-400" />
+                            <p className="text-[10px] text-gray-400 text-center">Secure checkout · 100% payment protection</p>
                         </div>
                     </div>
-
-                </section>
-
-            </main>
-
+                </div>
+            </div>
         </div>
     )
 }

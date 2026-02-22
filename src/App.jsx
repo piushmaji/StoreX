@@ -14,6 +14,7 @@ import Address from './components/Profile/Address'
 import Payment from './components/Profile/Payment'
 import { Toaster } from "react-hot-toast"
 import MainLayout from "./components/layout/MainLayout/MainLayout"
+import ProfileLayout from './components/layout/ProfileLayout/ProfileLayout'
 import MainAuth from "./Auth/MainAuth"
 import AuthLayout from "./components/layout/AuthLayout/AuthLayout"
 import Signup from "./Auth/SignUp"
@@ -30,6 +31,13 @@ const router = createBrowserRouter([
       { path: "product/:id", element: <ProductDetails /> },
       { path: "cart", element: <CartPage /> },
       { path: "wishList", element: <WishListPage /> },
+    ],
+  },
+  {
+    path: "/",
+    element: <ProfileLayout />,
+    errorElement: <NotFound />,
+    children: [
       {
         path: "profile",
         element: <ProfilePage />,
@@ -39,8 +47,8 @@ const router = createBrowserRouter([
           { path: "address", element: <Address /> },
           { path: "payment", element: <Payment /> },
         ],
-      },
-    ],
+      }
+    ]
   },
 
   {

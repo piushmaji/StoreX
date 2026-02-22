@@ -1,74 +1,82 @@
-import { ClipboardList, CreditCard, MapPin, Pencil } from 'lucide-react'
-import { NavLink } from "react-router-dom";
+import { ClipboardList, CreditCard, MapPin, Pencil, LogOut, ChevronRight } from 'lucide-react'
+import { NavLink, useNavigate } from "react-router-dom"
 import { signOut } from "firebase/auth"
-import { Navigate, useNavigate } from 'react-router-dom'
-import { auth } from '../../context/Firebase/Firebase';
+import { auth } from '../../context/Firebase/Firebase'
 
-const linkClass = ({ isActive }) => `flex gap-2 items-center p-4 rounded-lg  cursor-pointer  transition-all duration-200 ease-in-out
-
- ${isActive
-        ? "bg-blue-500 text-white "
-        : "text-gray-700 hover:bg-gray-200 "
-    }}`
+const NAV = [
+    { to: '', label: 'Edit Profile', icon: Pencil, end: true },
+    { to: 'orders', label: 'Orders', icon: ClipboardList },
+    { to: 'address', label: 'Address', icon: MapPin },
+    { to: 'payment', label: 'Payment Method', icon: CreditCard },
+]
 
 const SideBar = () => {
-
     const navigate = useNavigate()
+
     const handleSignOut = async () => {
         try {
             await signOut(auth)
             navigate('/')
-
-        } catch (error) {
-            console.log("Logout error:", error)
+        } catch (err) {
+            console.log("Logout error:", err)
         }
     }
 
     return (
-        <div className=''>
-            <section className='hidden lg:block bg-zinc-200 p-4 rounded-lg shadow-md'>
-                <div className='text-2xl py-2'>
-                    <h1>Profile</h1>
+        <div className="hidden lg:block shrink-0">
+            <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm">
+
+                {/* Header */}
+                <div className="px-4 py-4 border-b border-gray-100">
+                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">My Account</p>
                 </div>
 
-                <div className='flex flex-col cursor-pointer gap-2'>
+                {/* Nav links */}
+                <nav className="p-2 flex flex-col gap-0.5">
+                    {NAV.map(({ to, label, icon: Icon, end }) => (
+                        <NavLink
+                            key={to}
+                            to={to}
+                            end={end}
+                            className={({ isActive }) =>
+                                `flex items-center justify-between gap-2.5 px-3 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 group
+                                ${isActive
+                                    ? 'bg-blue-600 text-white shadow-md shadow-gray-900/20'
+                                    : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'
+                                }`
+                            }
+                        >
+                            {({ isActive }) => (
+                                <>
+                                    <div className="flex items-center gap-2.5">
+                                        <div className={`w-7 h-7 rounded-lg flex items-center justify-center transition-colors ${isActive ? 'bg-white/15' : 'bg-gray-100 group-hover:bg-gray-200'}`}>
+                                            <Icon size={13} className={isActive ? 'text-white' : 'text-gray-500'} />
+                                        </div>
+                                        {label}
+                                    </div>
+                                    {isActive && <ChevronRight size={13} className="text-white/60" />}
+                                </>
+                            )}
+                        </NavLink>
+                    ))}
+                </nav>
 
-                    {/* Edit Profile Section */}
+                {/* Divider */}
+                <div className="mx-4 h-px bg-gray-100" />
 
-                    <NavLink to='' end className={linkClass}>
-                        <Pencil size={16} />
-                        <h1>Edit Profile</h1>
-                    </NavLink>
-
-
-                    {/* Orders Section */}
-
-                    <NavLink to='orders' className={linkClass}>
-                        <ClipboardList size={16} />
-                        <h1>Orders</h1>
-                    </NavLink>
-
-
-                    {/* Address Section */}
-                    <NavLink to="address" className={linkClass}>
-                        <MapPin size={16} />
-                        <h1>Address</h1>
-                    </NavLink>
-
-                    {/* Payment Section */}
-                    <NavLink to="payment" className={linkClass}>
-                        <CreditCard size={16} />
-                        <h1>Payment Method</h1>
-                    </NavLink>
-
+                {/* Sign out */}
+                <div className="p-2">
+                    <button
+                        onClick={handleSignOut}
+                        className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm font-bold text-red-400 hover:bg-red-50 hover:text-red-500 transition-all duration-200 group"
+                    >
+                        <div className="w-7 h-7 rounded-lg bg-red-50 group-hover:bg-red-100 flex items-center justify-center transition-colors">
+                            <LogOut size={13} className="text-red-400" />
+                        </div>
+                        Sign Out
+                    </button>
                 </div>
-
-                <div
-                    onClick={handleSignOut}
-                    className='text-red-500 flex  items-center p-4 cursor-pointer'>
-                    <h1>Log Out</h1>
-                </div>
-            </section>
+            </div>
         </div>
     )
 }
