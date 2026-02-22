@@ -46,7 +46,7 @@ const ProductImg = () => {
     const [selectedSize, setSelectedSize] = useState('XL')
     const [imgHovered, setImgHovered] = useState(false)
     const [pincode, setPincode] = useState('')
-    const [pincodeStatus, setPincodeStatus] = useState(null) // null | 'checking' | 'valid' | 'invalid'
+    const [pincodeStatus, setPincodeStatus] = useState(null)
 
     useEffect(() => {
         if (product?.images?.length) setActiveImg(product.images[0])
@@ -61,7 +61,7 @@ const ProductImg = () => {
         if (pincode.length !== 6) return
         setPincodeStatus('checking')
         setTimeout(() => {
-            const valid = parseInt(pincode) % 2 === 0 // demo logic
+            const valid = parseInt(pincode) % 2 === 0
             setPincodeStatus(valid ? 'valid' : 'invalid')
         }, 800)
     }
@@ -69,12 +69,12 @@ const ProductImg = () => {
     const inCart = isInCart(product.id)
 
     return (
-        <div className="min-h-screen bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200/50 border border-slate-100">
+        <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200/50 border border-slate-100">
             <div className="max-w-8xl mx-auto px-6 py-8 lg:py-10">
                 <div className="flex flex-col lg:flex-row gap-10 lg:gap-12 items-start">
 
                     {/* ── LEFT: Image Gallery ── */}
-                    <div className="w-full lg:w-[48%] lg:shrink-0 flex flex-row gap-3">
+                    <div className="w-full lg:w-[48%] lg:shrink-0 flex flex-row gap-3 ">
 
                         {/* Vertical thumbnail strip */}
                         <div className="hidden sm:flex flex-col gap-2 pt-1">
@@ -82,7 +82,7 @@ const ProductImg = () => {
                                 <button
                                     key={i}
                                     onClick={() => setActiveImg(img)}
-                                    className={`w-[62px] h-[62px] rounded-xl overflow-hidden p-1.5 bg-gray-50 transition-all duration-200 shrink-0 ${activeImg === img
+                                    className={`w-16 h-16 rounded-xl overflow-hidden p-1.5 bg-gray-50 transition-all duration-200 shrink-0 ${activeImg === img
                                         ? 'ring-2 ring-blue-500 ring-offset-1 shadow-md shadow-blue-100'
                                         : 'ring-1 ring-gray-200 hover:ring-blue-300 opacity-70 hover:opacity-100'
                                         }`}
@@ -240,7 +240,7 @@ const ProductImg = () => {
                             </button>
                         </div>
 
-                        <div className="h-px bg-gradient-to-r from-blue-200 via-blue-100 to-transparent" />
+                        <div className="h-px bg-linear-to-r from-blue-200 via-blue-100 to-transparent" />
 
                         {/* ── Pincode Checker ── */}
                         <div className="space-y-2">
@@ -290,7 +290,7 @@ const ProductImg = () => {
                             )}
                         </div>
 
-                        <div className="h-px bg-gradient-to-r from-blue-200 via-blue-100 to-transparent" />
+                        <div className="h-px bg-linear-to-r from-blue-200 via-blue-100 to-transparent" />
 
                         {/* ── Trust Badges ── */}
                         <div className="grid grid-cols-3 gap-2.5">

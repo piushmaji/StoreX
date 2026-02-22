@@ -38,7 +38,7 @@ const RelatedProduct = () => {
                     >
                         {/* Image */}
                         <Link to={`/product/${item.id}`} target="_blank" className="relative">
-                            <div className="relative h-44 w-full bg-gradient-to-br from-blue-50 to-slate-50 flex items-center justify-center p-4 overflow-hidden">
+                            <div className="relative h-44 w-full bg-linear-to-br from-blue-50 to-slate-50 flex items-center justify-center p-4 overflow-hidden">
                                 <img
                                     className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-110"
                                     src={item.images[0]}
