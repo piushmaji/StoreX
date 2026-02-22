@@ -71,7 +71,7 @@ const Lightbox = ({ images, startIndex, review, onClose }) => {
         onClick={e => e.stopPropagation()}
       >
         {/* ── Image side ── */}
-        <div className="relative flex-1 bg-gray-950 min-h-[260px] flex items-center justify-center">
+        <div className="relative flex-1 bg-gray-950 min-h-65 flex items-center justify-center">
           <img
             src={images[idx]}
             alt=""
