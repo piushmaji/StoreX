@@ -11,7 +11,6 @@ const ProductPage = () => {
 
             {/*Product Description wala Section */}
             <ProductDesc />
-            <GalleryTab />
             {/*Related Products Section */}
             <RelatedProduct />
         </div >

@@ -74,10 +74,10 @@ const ProductImg = () => {
                 <div className="flex flex-col lg:flex-row gap-10 lg:gap-12 items-start">
 
                     {/* ── LEFT: Image Gallery ── */}
-                    <div className="w-full lg:w-[48%] lg:shrink-0 flex flex-row gap-3 ">
+                    <div className="w-full lg:w-[50%] lg:shrink-0 flex sm:flex-row flex-col gap-3">
 
                         {/* Vertical thumbnail strip */}
-                        <div className="hidden sm:flex flex-col gap-2 pt-1">
+                        <div className="hidden sm:flex flex-col gap-2 pt-1 ">
                             {product.images.map((img, i) => (
                                 <button
                                     key={i}
@@ -126,7 +126,7 @@ const ProductImg = () => {
                         </div>
 
                         {/* Mobile thumbnails — horizontal strip below */}
-                        <div className="sm:hidden flex gap-2 overflow-x-auto no-scrollbar">
+                        <div className="sm:hidden flex gap-2 p-1 overflow-x-auto no-scrollbar">
                             {product.images.map((img, i) => (
                                 <button
                                     key={i}
@@ -140,7 +140,7 @@ const ProductImg = () => {
                     </div>
 
                     {/* ── RIGHT: Product Details ── */}
-                    <div className="flex-1 min-w-0 flex flex-col gap-5">
+                    <div className="w-full flex flex-col gap-5">
 
                         {/* Title */}
                         <h1 className="text-3xl lg:text-[2.4rem] font-extrabold tracking-tight text-gray-900 leading-[1.08]">
@@ -296,10 +296,10 @@ const ProductImg = () => {
                         <div className="grid grid-cols-3 gap-2.5">
                             {[
                                 { icon: <Truck size={15} className="text-white" />, bg: 'bg-blue-500', label: 'Free Delivery', sub: '2–3 Days' },
-                                { icon: <RotateCcw size={15} className="text-white" />, bg: 'bg-blue-600', label: 'Easy Returns', sub: '7 Days' },
-                                { icon: <Lock size={15} className="text-white" />, bg: 'bg-blue-700', label: 'Secure Pay', sub: '100% Safe' },
+                                { icon: <RotateCcw size={15} className="text-white" />, bg: 'bg-blue-500', label: 'Easy Returns', sub: '7 Days' },
+                                { icon: <Lock size={15} className="text-white" />, bg: 'bg-blue-500', label: 'Secure Pay', sub: '100% Safe' },
                             ].map(({ icon, bg, label, sub }) => (
-                                <div key={label} className="flex flex-col items-center text-center p-3 bg-white rounded-2xl border border-blue-100 shadow-sm hover:shadow-md hover:border-blue-200 hover:-translate-y-0.5 transition-all duration-200">
+                                <div key={label} className="flex flex-col items-center text-center p-3 bg-blue-50 rounded-2xl border border-blue-100 hover:shadow-xs hover:border-blue-200">
                                     <div className={`${bg} p-2 rounded-xl mb-1.5 shadow-sm`}>{icon}</div>
                                     <p className="text-xs font-bold text-gray-800">{label}</p>
                                     <p className="text-[11px] text-gray-400">{sub}</p>
