@@ -108,10 +108,10 @@ const ProductImg = () => {
 
                             {/* Wishlist + Share */}
                             <div className="absolute top-3 right-3 z-20 flex flex-col gap-1.5">
-                                <div className="md:hidden bg-white/90 backdrop-blur-sm rounded-full shadow hover:scale-110 transition-all duration-200">
+                                <div className="sm:hidden bg-white/90 backdrop-blur-sm rounded-full shadow hover:scale-110 transition-all duration-200">
                                     <WishListIcon product={product} />
                                 </div>
-                                <button className="p-2 bg-white/90 backdrop-blur-sm rounded-full shadow hover:scale-110 transition-all duration-200">
+                                <button className="py-3 px-2  bg-white/90 backdrop-blur-sm rounded-full shadow hover:scale-110 transition-all duration-200 flex items-center justify-center">
                                     <Share2 size={15} className="text-gray-500" />
                                 </button>
                             </div>
@@ -235,7 +235,7 @@ const ProductImg = () => {
                             )}
 
                             {/* Wishlist */}
-                            <button className="w-12 h-12 flex items-center justify-center rounded-full border-2 border-gray-200 bg-white hover:border-red-200 hover:bg-red-50 transition-all duration-200 shrink-0">
+                            <button className="hidden w-12 h-12 sm:flex items-center justify-center rounded-full border-2 border-gray-200 bg-white hover:border-red-200 hover:bg-red-50 transition-all duration-200 shrink-0">
                                 <WishListIcon product={product} />
                             </button>
                         </div>
