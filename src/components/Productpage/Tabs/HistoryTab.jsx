@@ -18,6 +18,7 @@ const ALL_DATA = [
 ]
 
 const FILTERS = [
+  { label: "1M", slice: 3 },
   { label: "3M", slice: 3 },
   { label: "6M", slice: 6 },
   { label: "1Y", slice: 12 },
@@ -117,7 +118,7 @@ export default function PriceHistoryChart() {
               <Tooltip content={<CustomTooltip />} />
 
               {/* Lowest price dashed line */}
-              <ReferenceLine y={minPrice} stroke="#10b981" strokeDasharray="4 3" strokeWidth={1.5} />
+              <ReferenceLine y={minPrice} stroke="#10b991" strokeDasharray="4 3" strokeWidth={1.5} />
 
               <Area
                 type="monotone"
