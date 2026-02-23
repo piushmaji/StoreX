@@ -2,17 +2,17 @@ import { ArrowLeft, Trash2, Heart, Tag, ShoppingBag, ChevronRight, Shield, Rotat
 import { useCart } from '../../context/CartContext/CartContext'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
+import { useSaveForLater } from '../../context/SaveForLater/SaveForLater'
 
 const MyCart = () => {
     const { cartItem, updateQty, totalPrice, removeItem } = useCart()
+    const { addToSaved } = useSaveForLater()
+
     const [coupon, setCoupon] = useState('')
     const [couponApplied, setCouponApplied] = useState(false)
-    const [saved, setSaved] = useState([])
 
     const discount = couponApplied ? Math.round(totalPrice * 0.1) : 0
     const finalTotal = totalPrice - discount
-
-    const toggleSave = (id) => setSaved(p => p.includes(id) ? p.filter(x => x !== id) : [...p, id])
 
     // ── Empty state ───────────────────────────────────────────────────────────
     if (cartItem.length === 0) return (
@@ -107,11 +107,13 @@ const MyCart = () => {
                                     <div className="w-px h-4 bg-gray-200" />
 
                                     <button
-                                        onClick={() => toggleSave(item.id)}
-                                        className={`inline-flex items-center gap-1 text-xs font-semibold transition-colors ${saved.includes(item.id) ? 'text-rose-500' : 'text-gray-400 hover:text-rose-500'}`}
+                                        onClick={() =>
+                                            addToSaved(item)
+                                        }
+                                        className="inline-flex items-center gap-1 text-xs font-semibold transition-colors text-gray-500 hover:text-rose-500"
                                     >
-                                        <Heart size={12} className={saved.includes(item.id) ? 'fill-rose-500' : ''} />
-                                        {saved.includes(item.id) ? 'Saved' : 'Save'}
+                                        <Heart size={12} />
+                                        Save For Later
                                     </button>
 
                                     <button
@@ -204,7 +206,7 @@ const MyCart = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     )
 }
 
