@@ -4,7 +4,7 @@ import { useCart } from '../../context/CartContext/CartContext'
 
 const SaveForLater = ({ onMoveToCart }) => {
 
-    const { removeToSaved, savedItem } = useSaveForLater()
+    const { removeFromSaved, savedItem } = useSaveForLater()
 
     const { addToCart, removeItem } = useCart()
 
@@ -12,7 +12,7 @@ const SaveForLater = ({ onMoveToCart }) => {
 
     const handleMoveToCart = (item) => {
         addToCart(item)
-        removeToSaved(item.id)
+        removeFromSaved(item.id)
     }
 
     return (
@@ -46,7 +46,7 @@ const SaveForLater = ({ onMoveToCart }) => {
                                 </span>
                                 {/* Remove */}
                                 <button
-                                    onClick={() => ""}
+                                    onClick={() => removeFromSaved(item.id)}
                                     className="absolute top-2 right-2 w-6 h-6 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-sm opacity-0 group-hover:opacity-100 transition-all duration-200"
                                 >
                                     <X size={11} className="text-gray-500" />

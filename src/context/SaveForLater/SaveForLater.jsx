@@ -28,11 +28,11 @@ export const SaveForLaterProvider = ({ children }) => {
         })
     }
 
-    const removeToSaved = (id) => {
+    const removeFromSaved = (id) => {
         setSavedItem((prev) => prev.filter((item) => item.id !== id))
     }
 
-    return <SaveForLaterContext.Provider value={{ savedItem, addToSaved, removeToSaved }}>
+    return <SaveForLaterContext.Provider value={{ savedItem, addToSaved, removeFromSaved }}>
         {children}
     </SaveForLaterContext.Provider>
 }
