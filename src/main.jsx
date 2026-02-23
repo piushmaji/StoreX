@@ -9,12 +9,12 @@ import { SaveForLaterProvider } from './context/SaveForLater/SaveForLater.jsx'
 
 createRoot(document.getElementById('root')).render(
   <FirebaseProvider>
+    <SaveForLaterProvider>
     <CartProvider>
       <WishListProvider>
-        <SaveForLaterProvider>
-          <App />
-        </SaveForLaterProvider>
+        <App />
       </WishListProvider>
     </CartProvider>
-  </FirebaseProvider>
+  </SaveForLaterProvider>
+  </FirebaseProvider >
 )

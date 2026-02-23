@@ -14,6 +14,12 @@ const MyCart = () => {
     const discount = couponApplied ? Math.round(totalPrice * 0.1) : 0
     const finalTotal = totalPrice - discount
 
+    const handleMoveToLater = (item) => {
+
+        addToSaved(item)
+        removeItem(item.id)
+    }
+
     // ── Empty state ───────────────────────────────────────────────────────────
     if (cartItem.length === 0) return (
         <div className="min-h-[70vh] flex flex-col items-center justify-center gap-4 text-center px-4">
@@ -107,9 +113,7 @@ const MyCart = () => {
                                     <div className="w-px h-4 bg-gray-200" />
 
                                     <button
-                                        onClick={() =>
-                                            addToSaved(item)
-                                        }
+                                        onClick={() => handleMoveToLater(item)}
                                         className="inline-flex items-center gap-1 text-xs font-semibold transition-colors text-gray-500 hover:text-rose-500"
                                     >
                                         <Heart size={12} />

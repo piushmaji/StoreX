@@ -1,15 +1,17 @@
 import { ShoppingCart, X, Heart } from 'lucide-react'
-import { useState } from 'react'
 import { useSaveForLater } from '../../context/SaveForLater/SaveForLater'
+import { useCart } from '../../context/CartContext/CartContext'
 
 const SaveForLater = ({ onMoveToCart }) => {
 
     const { removeToSaved, savedItem } = useSaveForLater()
 
+    const { addToCart, removeItem } = useCart()
+
     if (savedItem.length === 0) return null
 
     const handleMoveToCart = (item) => {
-        onMoveToCart(item)
+        addToCart(item)
         removeToSaved(item.id)
     }
 
@@ -61,7 +63,7 @@ const SaveForLater = ({ onMoveToCart }) => {
 
                                 {/* Add to cart */}
                                 <button
-                                    onClick={() => ''}
+                                    onClick={() => handleMoveToCart(item)}
                                     className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-[11px] font-extrabold transition-all duration-200 shadow-sm shadow-blue-200"
                                 >
                                     <ShoppingCart size={12} /> Add to Cart
