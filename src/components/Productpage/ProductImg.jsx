@@ -157,13 +157,13 @@ const ProductImg = () => {
                         {/* Pricing */}
                         <div className="flex items-baseline gap-3 flex-wrap">
                             <span className="text-4xl font-black text-gray-900">
-                                ₹{product.pricing.retail.salePrice}
+                                ₹{product.pricing.salePrice}
                             </span>
                             <span className="text-xl text-gray-400 line-through font-normal">
-                                ₹{product.pricing.retail.originalPrice}
+                                ₹{product.pricing.originalPrice}
                             </span>
                             <span className="text-xs font-bold text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-full tracking-wide">
-                                {product.pricing.retail.discountPercentage}% OFF
+                                {product.pricing.discountPercentage}% OFF
                             </span>
                         </div>
 

@@ -60,10 +60,10 @@ const RelatedProduct = () => {
                             </Link>
 
                             <p className="text-sm font-bold text-gray-900">
-                                ₹{item.pricing.retail.salePrice}
-                                {item.pricing.retail.originalPrice && (
+                                ₹{item.pricing.salePrice}
+                                {item.pricing.originalPrice && (
                                     <span className="ml-1.5 text-xs text-gray-400 font-normal line-through">
-                                        ₹{item.pricing.retail.originalPrice}
+                                        ₹{item.pricing.originalPrice}
                                     </span>
                                 )}
                             </p>

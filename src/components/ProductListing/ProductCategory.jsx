@@ -44,10 +44,10 @@ const ProductCategory = () => {
                     {/* price,old price and ratings  */}
                     <section className='space-y-2'>
                       <div className='flex gap-2 items-center flex-wrap'>
-                        <h2 className='md:text-xl text-2xl font-semibold  text-blue-600'>₹{product.pricing.retail.salePrice}</h2>
+                        <h2 className='md:text-xl text-2xl font-semibold  text-blue-600'>₹{product.pricing.salePrice}</h2>
                         <h2 className='md:text-base text-sm
 text-gray-400
-line-through'>₹{product.pricing.retail.originalPrice}</h2>
+line-through'>₹{product.pricing.originalPrice}</h2>
                       </div>
                       <div className='flex flex-wrap gap-3 md:gap-6 text-xs md:text-sm'>
                         <div className='flex gap-2 items-center'>
