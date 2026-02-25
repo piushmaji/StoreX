@@ -79,7 +79,7 @@ const MyCart = () => {
                                         {item.title}
                                     </h2>
                                     <span className="text-base font-black text-gray-900 shrink-0 whitespace-nowrap">
-                                        ₹{item.pricing.salePrice.toLocaleString()}
+                                        ₹{item.pricing.toLocaleString()}
                                     </span>
                                 </div>
 
