@@ -24,9 +24,9 @@ const WishList = () => {
             {/* ── Grid ── */}
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
                 {wishList.map((item) => {
-                    const sale = item.pricing?.retail?.salePrice
-                    const original = item.pricing?.retail?.originalPrice
-                    const off = item.pricing?.retail?.discountPercentage
+                    const sale = item.pricing?.salePrice
+                    const original = item.pricing?.originalPrice
+                    const off = item.pricing?.discountPercentage
 
                     return (
                         <div

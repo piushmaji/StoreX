@@ -15,28 +15,9 @@ const MyCart = () => {
     const finalTotal = totalPrice - discount
 
     const handleMoveToLater = (item) => {
-
         addToSaved(item)
         removeItem(item.id)
     }
-
-    // ── Empty state ───────────────────────────────────────────────────────────
-    if (cartItem.length === 0) return (
-        <div className="min-h-[70vh] flex flex-col items-center justify-center gap-4 text-center px-4">
-            <div className="w-20 h-20 bg-gray-100 rounded-3xl flex items-center justify-center">
-                <ShoppingBag size={30} className="text-gray-400" />
-            </div>
-            <div>
-                <p className="text-lg font-extrabold text-gray-900">Your cart is empty</p>
-                <p className="text-sm text-gray-400 mt-1">Add something you love!</p>
-            </div>
-            <Link to="/product">
-                <button className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl transition-all active:scale-95 shadow-lg shadow-blue-200">
-                    Browse Products
-                </button>
-            </Link>
-        </div>
-    )
 
     return (
         <div className="w-full max-w-6xl mx-auto px-3 sm:px-6 py-6 sm:pb-8 flex flex-col gap-6">
@@ -59,6 +40,8 @@ const MyCart = () => {
                 {/* ── Cart Items ── */}
                 <div className="flex-1 w-full flex flex-col gap-3">
                     {cartItem.map((item) => (
+
+
                         <div key={item.id} className="bg-white rounded-2xl border border-gray-100 hover:border-blue-100 hover:shadow-lg hover:shadow-slate-100 transition-all duration-200 p-3 sm:p-4 flex gap-3 sm:gap-4 group">
 
                             {/* Product image */}
@@ -79,13 +62,13 @@ const MyCart = () => {
                                         {item.title}
                                     </h2>
                                     <span className="text-base font-black text-gray-900 shrink-0 whitespace-nowrap">
-                                        ₹{item.pricing.toLocaleString()}
+                                        ₹{item.pricing.salePrice}
                                     </span>
                                 </div>
 
                                 {/* Specs */}
                                 <div className="flex flex-wrap gap-x-2 gap-y-0.5">
-                                    {[`${item.specs?.size}`, `${item.specs?.color}`, `${item.seller?.name}`].filter(Boolean).map((t, i) => (
+                                    {[`${item.sizes}`, `${item.details?.material}`, `${item.specs?.certificate}`].filter(Boolean).map((t, i) => (
                                         <span key={i} className="text-[11px] text-gray-400">{t}</span>
                                     ))}
                                 </div>

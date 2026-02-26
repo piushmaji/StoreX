@@ -38,7 +38,7 @@ export const CartProvider = ({ children }) => {
     }
 
     const totalPrice = cartItem.reduce(
-        (total, item) => total + item.pricing.retail.salePrice * item.quantity, 0
+        (total, item) => total + item.pricing.salePrice * item.quantity, 0
     )
     const updateQty = (id, qty) => {
         if (qty < 1) return;
