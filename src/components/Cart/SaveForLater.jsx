@@ -27,7 +27,7 @@ const SaveForLater = ({ onMoveToCart }) => {
             {/* Horizontal scroll */}
             <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar">
                 {savedItem.map(item => {
-                    const off = Math.round((1 - item.pricing.retail.salePrice / item.pricing.retail.originalPrice) * 100)
+                    const off = Math.round((1 - item.pricing.salePrice / item.pricing.originalPrice) * 100)
                     return (
                         <div
                             key={item.id}
@@ -57,8 +57,8 @@ const SaveForLater = ({ onMoveToCart }) => {
                             <div className="p-3 flex flex-col gap-2 flex-1">
                                 <p className="text-[11px] text-gray-500 font-medium line-clamp-2 leading-tight">{item.title}</p>
                                 <div className="flex items-baseline gap-1.5 mt-auto">
-                                    <span className="text-sm font-extrabold text-gray-900">₹{item.pricing.retail.salePrice.toLocaleString()}</span>
-                                    <span className="text-[10px] text-gray-400 line-through">₹{item.pricing.retail.originalPrice.toLocaleString()}</span>
+                                    <span className="text-sm font-extrabold text-gray-900">₹{item.pricing.salePrice.toLocaleString()}</span>
+                                    <span className="text-[10px] text-gray-400 line-through">₹{item.pricing.originalPrice.toLocaleString()}</span>
                                 </div>
 
                                 {/* Add to cart */}

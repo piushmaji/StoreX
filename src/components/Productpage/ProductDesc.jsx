@@ -97,7 +97,7 @@ const ProductDesc = () => {
                                             {item.title}
                                         </p>
                                         <p className="text-xs text-blue-500 font-bold mt-1">
-                                            ₹{item.pricing?.retail?.salePrice ?? '—'}
+                                            ₹{item.pricing?.salePrice ?? '—'}
                                         </p>
                                     </div>
                                 </div>
