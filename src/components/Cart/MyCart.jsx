@@ -1,6 +1,6 @@
 import { ArrowLeft, Trash2, Heart, Tag, ShoppingBag, ChevronRight, Shield, RotateCcw, Truck, Minus, Plus } from 'lucide-react'
 import { useCart } from '../../context/CartContext/CartContext'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { useSaveForLater } from '../../context/SaveForLater/SaveForLater'
 
@@ -13,6 +13,8 @@ const MyCart = () => {
 
     const discount = couponApplied ? Math.round(totalPrice * 0.1) : 0
     const finalTotal = totalPrice - discount
+
+    const navigate = useNavigate()
 
     const handleMoveToLater = (item) => {
         addToSaved(item)
@@ -182,7 +184,9 @@ const MyCart = () => {
                         </div>
 
                         {/* Checkout CTA */}
-                        <button className="w-full h-12 bg-gray-900 hover:bg-black active:scale-[0.98] text-white font-extrabold text-sm rounded-2xl transition-all shadow-xl shadow-gray-900/20 flex items-center justify-center gap-2">
+                        <button
+                            onClick={() => navigate("/checkout")}
+                            className="w-full h-12 bg-gray-900 hover:bg-black active:scale-[0.98] text-white font-extrabold text-sm rounded-2xl transition-all shadow-xl shadow-gray-900/20 flex items-center justify-center gap-2">
                             Proceed to Checkout <ChevronRight size={16} />
                         </button>
 

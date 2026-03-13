@@ -101,10 +101,10 @@ export default function PriceHistoryChart() {
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={data} margin={{ top: 8, right: 4, left: 4, bottom: 0 }}>
               <defs>
-                <linearGradient id="priceGrad" x1="0" y1="0" x2="0" y2="1">
+                <linearlinear id="priceGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#2563eb" stopOpacity={0.18} />
                   <stop offset="95%" stopColor="#2563eb" stopOpacity={0} />
-                </linearGradient>
+                </linearlinear>
               </defs>
 
               <XAxis

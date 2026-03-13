@@ -54,7 +54,7 @@ const AddCardForm = ({ onClose, onSave }) => {
 
                 {/* Live card preview */}
                 <div className="px-5 pt-5">
-                    <div className={`relative w-full h-40 bg-gradient-to-br ${COLORS[0]} rounded-2xl p-5 overflow-hidden shadow-xl`}>
+                    <div className={`relative w-full h-40 bg-linear-to-br ${COLORS[0]} rounded-2xl p-5 overflow-hidden shadow-xl`}>
                         {/* Glow orbs */}
                         <div className="absolute -top-8 -right-8 w-32 h-32 bg-white/5 rounded-full" />
                         <div className="absolute -bottom-6 -left-6 w-28 h-28 bg-white/5 rounded-full" />

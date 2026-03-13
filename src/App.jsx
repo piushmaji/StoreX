@@ -20,7 +20,8 @@ import Signup from "./Auth/SignUp"
 import Login from "./Auth/Login"
 import { AuthProvider } from "./context/Auth/AuthContext"
 import ProtectedRoute from "./context/Auth/ProtectedRoute"
-
+import CheckoutPage from "./pages/CheckoutPage"
+import OrderConfirmationPage from "./pages/OrderConfirmationPage"
 
 
 const RootLayout = () => (
@@ -73,7 +74,10 @@ const router = createBrowserRouter([
             ],
           }
         ]
-      }
+      },
+
+      { path: "/checkout", element: <ProtectedRoute><CheckoutPage /></ProtectedRoute> },
+      { path: "/order-confirmation", element: <ProtectedRoute><OrderConfirmationPage /></ProtectedRoute> },
     ]
   }
 ])
