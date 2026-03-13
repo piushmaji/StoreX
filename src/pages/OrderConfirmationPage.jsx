@@ -75,7 +75,7 @@ const OrderConfirmationPage = () => {
                 {/* ── Hero ── */}
                 <Fade delay={0} className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
                     {/* Top blue strip */}
-                    <div className="h-1.5 bg-gradient-to-r from-blue-500 to-blue-600" />
+                    <div className="h-1.5 bg-linear-to-r from-blue-500 to-blue-600" />
 
                     <div className="px-6 py-8 text-center">
                         {/* Check icon */}
@@ -139,9 +139,9 @@ const OrderConfirmationPage = () => {
                         <div className="px-5 py-5">
                             <div className="relative space-y-4">
                                 {/* Vertical line */}
-                                <div className="absolute left-[15px] top-2 bottom-2 w-px bg-gray-100" />
+                                <div className="absolute left-3.75 top-2 bottom-2 w-px bg-gray-100" />
                                 <motion.div
-                                    className="absolute left-[15px] top-2 w-px bg-blue-500"
+                                    className="absolute left-3.75 top-2 w-px bg-blue-500"
                                     initial={{ height: 0 }}
                                     animate={{ height: "28%" }}
                                     transition={{ delay: 0.6, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
@@ -151,10 +151,10 @@ const OrderConfirmationPage = () => {
                                     <div key={step.label} className="flex items-center gap-4 relative">
                                         {/* Dot */}
                                         <div className={`relative z-10 w-8 h-8 rounded-full flex items-center justify-center shrink-0 border-2 transition-all ${step.done
-                                                ? "bg-blue-600 border-blue-600"
-                                                : step.active
-                                                    ? "bg-white border-blue-400"
-                                                    : "bg-white border-gray-200"
+                                            ? "bg-blue-600 border-blue-600"
+                                            : step.active
+                                                ? "bg-white border-blue-400"
+                                                : "bg-white border-gray-200"
                                             }`}>
                                             {step.done
                                                 ? <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />
@@ -279,11 +279,11 @@ const OrderConfirmationPage = () => {
                                     whileTap={{ scale: 0.96 }}
                                     onClick={onClick}
                                     className={`flex flex-col items-center gap-1.5 py-3.5 rounded-xl transition-all ${primary
-                                            ? "bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-500/20"
-                                            : "bg-gray-50 hover:bg-gray-100 border border-gray-100"
+                                        ? "bg-blue-600 hover:bg-blue-700 shadow-md shadow-blue-500/20"
+                                        : "bg-gray-50 hover:bg-gray-100 border border-gray-100"
                                         }`}
                                 >
-                                    <Icon className={`w-4.5 h-4.5 w-5 h-5 ${primary ? "text-white" : "text-blue-500"}`} />
+                                    <Icon className={`w-5 h-5 w-5 h-5 ${primary ? "text-white" : "text-blue-500"}`} />
                                     <span className={`text-[11px] font-semibold ${primary ? "text-white" : "text-gray-600"}`}>{label}</span>
                                 </motion.button>
                             ))}

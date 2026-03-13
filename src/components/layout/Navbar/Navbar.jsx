@@ -13,6 +13,7 @@ import { useEffect, useState } from 'react'
 import products from '../../../data/Products'
 import Dropdown from '../SearchBar/Dropdown'
 
+import { AnimatePresence } from 'framer-motion'
 
 import { useContext } from "react"
 import { useNavigate } from "react-router-dom"
@@ -214,18 +215,16 @@ const Navbar = () => {
                         type="text" placeholder='Search' />
 
                     <div className='absolute left-0 right-0 top-12 z-50'>
-                        {show && query &&
-                            (<Dropdown data={filtered} close={() => setShow(false)} />
+                        <AnimatePresence>
+                            {show && (
+                                <Dropdown
+                                    data={filtered}
+                                    query={query}
+                                    close={() => setShow(false)}
+                                />
                             )}
+                        </AnimatePresence>
                     </div>
-
-                    {/* <select className='flex-1 h-10 border-l-0 p-2 focus:outline-none focus:ring-0 hidden sm:block bg-zinc-300'>
-                        <option value="Category">Category</option>
-                        <option value="Phone">Phone</option>
-                        <option value="Laptop">Laptop</option>
-                        <option value="Gadgets">Gadgets</option>
-                        <option value="Cloths">Cloths</option>
-                    </select> */}
 
                     <button className='h-10 w-32 rounded-r-full p-2 focus:outline-none focus:ring-0 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 text-sm font-medium shadow-sm hover:shadow-md transition-all duration-200 active:scale-95'>Search</button>
                 </div>
