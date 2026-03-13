@@ -283,7 +283,7 @@ const OrderConfirmationPage = () => {
                                         : "bg-gray-50 hover:bg-gray-100 border border-gray-100"
                                         }`}
                                 >
-                                    <Icon className={`w-5 h-5 w-5 h-5 ${primary ? "text-white" : "text-blue-500"}`} />
+                                    <Icon className={`w-5 h-5 ${primary ? "text-white" : "text-blue-500"}`} />
                                     <span className={`text-[11px] font-semibold ${primary ? "text-white" : "text-gray-600"}`}>{label}</span>
                                 </motion.button>
                             ))}
