@@ -5,16 +5,14 @@ import { CartProvider } from './context/CartContext/CartContext.jsx'
 import { WishListProvider } from './context/WishListContext/WishListContext.jsx'
 import "@fontsource/inter";
 import { SaveForLaterProvider } from './context/SaveForLater/SaveForLater.jsx'
-import { AuthProvider } from './context/Auth/AuthContext.jsx'
+
 
 createRoot(document.getElementById('root')).render(
-  <AuthProvider>
-    <SaveForLaterProvider>
-      <CartProvider>
-        <WishListProvider>
-          <App />
-        </WishListProvider>
-      </CartProvider>
-    </SaveForLaterProvider>
-  </AuthProvider>
+  <SaveForLaterProvider>
+    <CartProvider>
+      <WishListProvider>
+        <App />
+      </WishListProvider>
+    </CartProvider>
+  </SaveForLaterProvider>
 )

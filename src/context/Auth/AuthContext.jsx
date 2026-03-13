@@ -10,9 +10,9 @@ export const AuthProvider = ({ children }) => {
     const [session, setSession] = useState(null)
     const [loading, setLoading] = useState(true)
 
-    // const navigate = useNavigate()
+    const navigate = useNavigate()
 
-    // restore session
+
     useEffect(() => {
 
         const getSession = async () => {
@@ -93,11 +93,7 @@ export const AuthProvider = ({ children }) => {
     const logout = async () => {
 
         const { error } = await supabase.auth.signOut()
-        if (!error) {
-            // navigate("/")
-            console.log(error);
-            
-        }
+        if (!error) navigate("/")
         return { error }
     }
 

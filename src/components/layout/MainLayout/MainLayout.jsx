@@ -1,6 +1,4 @@
 import { Outlet, useLocation } from "react-router-dom";
-import PageTransition from "../../Animation/PageTransition/PageTransition";
-import { AnimatePresence } from "motion/react";
 import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer/Footer";
 
@@ -10,13 +8,15 @@ const MainLayout = () => {
     return (
         <>
             <Navbar />
-            <AnimatePresence mode="wait">
-                <PageTransition key={location.pathname}>
-                    <Outlet />
-                </PageTransition>
-            </AnimatePresence>
+            <div
+                key={location.pathname}
+                style={{
+                    animation: "fadeIn 0.25s ease-in-out"
+                }}
+            >
+                <Outlet />
+            </div>
             <Footer />
-
         </>
     );
 };
