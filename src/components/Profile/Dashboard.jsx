@@ -1,21 +1,18 @@
 import { Camera, CheckCircle, Pencil, X, Shield, Phone, User } from 'lucide-react'
 import { useContext, useRef, useState } from 'react'
-import { updateProfile } from 'firebase/auth'
-import { auth, FirebaseContext } from '../../context/Firebase/Firebase'
+import { useAuth } from '../../context/Auth/AuthContext'
+
 
 const Dashboard = () => {
-    const { user } = useContext(FirebaseContext)
 
-    const [photo, setPhoto] = useState(
-        user?.photoURL || "https://i.pinimg.com/1200x/d9/e1/4c/d9e14c251d468cc476c0ec33f969b5da.jpg"
-    )
+    const { user } = useAuth()
     const [name, setName] = useState(user?.displayName || '')
     const [editingName, setEditingName] = useState(false)
     const [draftName, setDraftName] = useState('')
     const [phone, setPhone] = useState('')
     const [saved, setSaved] = useState(false)
     const fileRef = useRef()
-
+const photo=null
     const handlePhoto = (e) => {
         const file = e.target.files[0]
         if (!file) return

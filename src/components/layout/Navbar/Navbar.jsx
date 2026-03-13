@@ -16,11 +16,10 @@ import Dropdown from '../SearchBar/Dropdown'
 
 import { useContext } from "react"
 import { useNavigate } from "react-router-dom"
-import { FirebaseContext } from '../../../context/Firebase/Firebase'
+import { useAuth } from '../../../context/Auth/AuthContext'
 
 const Navbar = () => {
 
-    const { user } = useContext(FirebaseContext)
     const navigate = useNavigate()
 
     const items = Object.values(products)
@@ -33,6 +32,8 @@ const Navbar = () => {
     const filtered = items.filter(p => p.title.toLowerCase().includes(query.toLowerCase()))
 
     const location = useLocation()
+
+    const { user } = useAuth()
 
     return (
         <div>

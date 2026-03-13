@@ -1,7 +1,7 @@
 import { ClipboardList, CreditCard, MapPin, Pencil, LogOut, ChevronRight } from 'lucide-react'
 import { NavLink, useNavigate } from "react-router-dom"
-import { signOut } from "firebase/auth"
-import { auth } from '../../context/Firebase/Firebase'
+import { useAuth } from '../../context/Auth/AuthContext'
+
 
 const NAV = [
     { to: '', label: 'Edit Profile', icon: Pencil, end: true },
@@ -13,14 +13,7 @@ const NAV = [
 const SideBar = () => {
     const navigate = useNavigate()
 
-    const handleSignOut = async () => {
-        try {
-            await signOut(auth)
-            navigate('/')
-        } catch (err) {
-            console.log("Logout error:", err)
-        }
-    }
+    const { logout } = useAuth()
 
     return (
         <div className="hidden lg:block shrink-0 w-72">
@@ -72,7 +65,7 @@ const SideBar = () => {
                 {/* Sign Out */}
                 <div className="p-2.5">
                     <button
-                        onClick={handleSignOut}
+                        onClick={logout}
                         className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-2xl text-[13.5px] font-semibold text-red-400 hover:bg-red-50 hover:text-red-500 transition-all group"
                     >
                         <div className="w-8 h-8 rounded-xl bg-red-50 group-hover:bg-red-100 flex items-center justify-center shrink-0 transition-colors">
