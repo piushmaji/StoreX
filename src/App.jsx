@@ -7,22 +7,34 @@ import ProductDetails from "./pages/ProductDetails"
 import CartPage from "./pages/CartPage"
 import WishListPage from "./pages/WishListPage"
 import ProfilePage from "./pages/ProfilePage"
-import Dashboard from "./components/Profile/Dashboard"
-import Orders from "./components/Profile/Orders"
-import Address from './components/Profile/Address'
-import Payment from './components/Profile/Payment'
-import { Toaster } from "react-hot-toast"
-import MainLayout from "./components/layout/MainLayout/MainLayout"
-import ProfileLayout from './components/layout/ProfileLayout/ProfileLayout'
-import MainAuth from "./Auth/MainAuth"
-import AuthLayout from "./components/layout/AuthLayout/AuthLayout"
-import Signup from "./Auth/SignUp"
-import Login from "./Auth/Login"
-import { AuthProvider } from "./context/Auth/AuthContext"
-import ProtectedRoute from "./context/Auth/ProtectedRoute"
 import CheckoutPage from "./pages/CheckoutPage"
 import OrderConfirmationPage from "./pages/OrderConfirmationPage"
 
+import Dashboard from "./components/Profile/Dashboard"
+import Orders from "./components/Profile/Orders"
+import Address from "./components/Profile/Address"
+import Payment from "./components/Profile/Payment"
+
+import MainLayout from "./components/layout/MainLayout/MainLayout"
+import ProfileLayout from "./components/layout/ProfileLayout/ProfileLayout"
+import AuthLayout from "./components/layout/AuthLayout/AuthLayout"
+
+import Signup from "./Auth/SignUp"
+import Login from "./Auth/Login"
+import MainAuth from "./Auth/MainAuth"
+
+import { Toaster } from "react-hot-toast"
+
+import { AuthProvider } from "./context/Auth/AuthContext"
+import ProtectedRoute from "./context/Auth/ProtectedRoute"
+import AdminRoute from "./routes/AdminRoute"
+
+import AdminDashboard from "./pages/admin/AdminDashboard"
+import AddProduct from "./pages/admin/AddProduct"
+import EditProduct from "./pages/admin/EditProduct"
+import AdminOrders from "./pages/admin/AdminOrders"
+import AdminLayout from "./components/layout/admin/AdminLayout"
+import AdminProducts from "./pages/admin/AdminProducts"
 
 const RootLayout = () => (
   <AuthProvider>
@@ -34,6 +46,8 @@ const router = createBrowserRouter([
   {
     element: <RootLayout />,
     children: [
+
+      // USER WEBSITE ROUTES
       {
         path: "/",
         element: <MainLayout />,
@@ -42,10 +56,29 @@ const router = createBrowserRouter([
           { index: true, element: <HomePage /> },
           { path: "product", element: <ProductListingPage /> },
           { path: "product/:id", element: <ProductDetails /> },
-          { path: "cart", element: <ProtectedRoute><CartPage /></ProtectedRoute> },
-          { path: "wishList", element: <ProtectedRoute><WishListPage /></ProtectedRoute> },
-        ],
+
+          {
+            path: "cart",
+            element: (
+              <ProtectedRoute>
+                <CartPage />
+              </ProtectedRoute>
+            )
+          },
+
+          {
+            path: "wishList",
+            element: (
+              <ProtectedRoute>
+                <WishListPage />
+              </ProtectedRoute>
+            )
+          }
+        ]
       },
+
+
+      // PROFILE ROUTES
       {
         path: "/",
         element: <ProtectedRoute><ProfileLayout /></ProtectedRoute>,
@@ -63,6 +96,9 @@ const router = createBrowserRouter([
           }
         ]
       },
+
+
+      // AUTH ROUTES
       {
         element: <AuthLayout />,
         children: [
@@ -70,14 +106,67 @@ const router = createBrowserRouter([
             element: <MainAuth />,
             children: [
               { path: "login", element: <Login /> },
-              { path: "signup", element: <Signup /> },
-            ],
+              { path: "signup", element: <Signup /> }
+            ]
           }
         ]
       },
 
-      { path: "/checkout", element: <ProtectedRoute><CheckoutPage /></ProtectedRoute> },
-      { path: "/order-confirmation", element: <ProtectedRoute><OrderConfirmationPage /></ProtectedRoute> },
+
+      // CHECKOUT ROUTES
+      {
+        path: "/checkout",
+        element: (
+          <ProtectedRoute>
+            <CheckoutPage />
+          </ProtectedRoute>
+        )
+      },
+
+      {
+        path: "/order-confirmation",
+        element: (
+          <ProtectedRoute>
+            <OrderConfirmationPage />
+          </ProtectedRoute>
+        )
+      },
+
+
+      // ADMIN ROUTES
+      {
+        path: "/admin",
+        element: <AdminRoute />,
+        children: [
+          {
+            element: <AdminLayout />,
+            children: [
+
+              {
+                path: "dashboard",
+                element: <AdminDashboard />
+              },
+              {
+                path: "products",
+                element: <AdminProducts />
+              },
+              {
+                path: "products/add",
+                element: <AddProduct />
+              },
+              {
+                path: "products/edit/:id",
+                element: <EditProduct />
+              },
+              {
+                path: "orders",
+                element: <AdminOrders />
+              }
+            ]
+          }
+        ]
+      }
+
     ]
   }
 ])
@@ -86,6 +175,7 @@ const App = () => {
   return (
     <>
       <RouterProvider router={router} />
+
       <Toaster
         position="top-center"
         toastOptions={{

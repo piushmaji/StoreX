@@ -4,6 +4,7 @@ import storex from '../assets/images/Logo/storex.png'
 import { Link, useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { useAuth } from '../context/Auth/AuthContext'
+import supabase from '../lib/Supabase/Supabase'
 
 const Login = () => {
     const navigate = useNavigate()
@@ -25,14 +26,27 @@ const Login = () => {
         setLoading(true)
         setErrors('')
 
-        const { error } = await login(formData.email, formData.password)
+        const { data, error } = await login(formData.email, formData.password)
 
         if (error) {
             setErrors(error.message)
             toast.error(error.message)
+            setLoading(false)
+            return
+        }
+
+
+        // Check role and redirect accordingly
+        const { data: profileData } = await supabase
+            .from("profiles")
+            .select("role")
+            .eq("id", data.user.id)
+            .single()
+
+        if (profileData?.role === "admin") {
+            navigate("/admin/dashboard")
         } else {
-            toast.success('Signed in successfully!')
-            navigate('/')
+            navigate("/")
         }
 
         setLoading(false)
@@ -49,7 +63,7 @@ const Login = () => {
             toast.error(error.message)
             setLoading(false)
         }
-        
+
     }
 
     return (

@@ -8,14 +8,63 @@ export const AuthProvider = ({ children }) => {
 
     const [user, setUser] = useState(null)
     const [session, setSession] = useState(null)
+    const [profile, setProfile] = useState(null)
     const [loading, setLoading] = useState(true)
+    const [profileLoading, setProfileLoading] = useState(false)
 
     const navigate = useNavigate()
 
+    // FETCH USER PROFILE
+    const fetchProfile = async (userId) => {
 
+        const { data, error } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", userId)
+            .single()
+
+        if (error) {
+            console.error("Profile fetch error:", error.message)
+            return null
+        }
+
+        setProfile(data)
+        return data
+    }
+
+
+    // CREATE PROFILE IF NOT EXISTS
+    const createProfile = async (user) => {
+
+        const { data: existingProfile } = await supabase
+            .from("profiles")
+            .select("*")
+            .eq("id", user.id)
+            .maybeSingle()
+
+        if (!existingProfile) {
+
+            const { error } = await supabase
+                .from("profiles")
+                .insert([
+                    {
+                        id: user.id,
+                        email: user.email,
+                        role: "user"
+                    }
+                ])
+
+            if (error) {
+                console.error("Profile creation error:", error.message)
+            }
+        }
+    }
+
+
+    // CHECK SESSION ON PAGE LOAD
     useEffect(() => {
 
-        const getSession = async () => {
+        const initializeAuth = async () => {
 
             const { data, error } = await supabase.auth.getSession()
 
@@ -23,19 +72,34 @@ export const AuthProvider = ({ children }) => {
                 console.error(error.message)
             }
 
-            setSession(data.session)
-            setUser(data.session?.user ?? null)
+            const session = data.session
+
+            setSession(session)
+            setUser(session?.user ?? null)
+
+            if (session?.user) {
+                await fetchProfile(session.user.id)
+            }
 
             setLoading(false)
         }
 
-        getSession()
+        initializeAuth()
 
         const { data: listener } = supabase.auth.onAuthStateChange(
-            (_event, session) => {
+            async (_event, session) => {
 
                 setSession(session)
                 setUser(session?.user ?? null)
+
+                if (session?.user) {
+                    setProfileLoading(true)
+                    await fetchProfile(session.user.id)
+                    setProfileLoading(false)
+
+                } else {
+                    setProfile(null)
+                }
 
             }
         )
@@ -47,7 +111,6 @@ export const AuthProvider = ({ children }) => {
     }, [])
 
 
-
     // SIGNUP
     const signup = async (email, password) => {
 
@@ -56,22 +119,26 @@ export const AuthProvider = ({ children }) => {
             password
         })
 
-        return { data, error }
-    }
+        if (error) return { error }
 
+        if (data?.user) {
+            await createProfile(data.user)
+        }
+
+        return { data }
+    }
 
 
     // LOGIN
     const login = async (email, password) => {
-
         const { data, error } = await supabase.auth.signInWithPassword({
             email,
             password
         })
 
-        return { data, error }
+        if (error) return { error }
+        return { data }
     }
-
 
 
     // GOOGLE LOGIN
@@ -88,26 +155,34 @@ export const AuthProvider = ({ children }) => {
     }
 
 
-
     // LOGOUT
     const logout = async () => {
 
         const { error } = await supabase.auth.signOut()
-        if (!error) navigate("/")
+
+        if (!error) {
+            setUser(null)
+            setSession(null)
+            setProfile(null)
+            navigate("/")
+        }
+
         return { error }
     }
-
 
 
     const value = {
         user,
         session,
+        profile,
         loading,
         signup,
         login,
         loginWithGoogle,
-        logout
+        logout,
+        profileLoading,
     }
+
 
     return (
         <AuthContext.Provider value={value}>
