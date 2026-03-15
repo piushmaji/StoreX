@@ -18,7 +18,7 @@ const Navbar = () => {
     const navigate = useNavigate()
     const items = Object.values(products)
     const { cartItem } = useCart()
-    const { user } = useAuth()
+    const { user,profile } = useAuth()
     const location = useLocation()
 
     const [query, setQuery] = useState('')
@@ -75,8 +75,8 @@ const Navbar = () => {
 
                         {/* Input wrapper with glow */}
                         <div className={`relative flex-1 transition-all duration-300 ${focused
-                                ? "drop-shadow-[0_0_12px_rgba(37,99,235,0.2)]"
-                                : "drop-shadow-[0_1px_4px_rgba(0,0,0,0.06)]"
+                            ? "drop-shadow-[0_0_12px_rgba(37,99,235,0.2)]"
+                            : "drop-shadow-[0_1px_4px_rgba(0,0,0,0.06)]"
                             }`}>
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
                             <input
@@ -118,8 +118,8 @@ const Navbar = () => {
                                     whileHover={{ y: -1 }}
                                     whileTap={{ scale: 0.94 }}
                                     className={`relative hidden md:flex flex-col items-center px-3 py-2 rounded-xl cursor-pointer transition-all duration-200 ${isActive(to)
-                                            ? "bg-blue-50 text-blue-600"
-                                            : "text-gray-500 hover:bg-gray-50 hover:text-blue-500"
+                                        ? "bg-blue-50 text-blue-600"
+                                        : "text-gray-500 hover:bg-gray-50 hover:text-blue-500"
                                         }`}
                                 >
                                     <Icon
@@ -148,8 +148,8 @@ const Navbar = () => {
                                 whileHover={{ y: -1 }}
                                 whileTap={{ scale: 0.94 }}
                                 className={`relative flex flex-col items-center px-3 py-2 rounded-xl cursor-pointer transition-all duration-200 ${isActive("/cart")
-                                        ? "bg-blue-50 text-blue-600"
-                                        : "text-gray-500 hover:bg-gray-50 hover:text-blue-500"
+                                    ? "bg-blue-50 text-blue-600"
+                                    : "text-gray-500 hover:bg-gray-50 hover:text-blue-500"
                                     }`}
                             >
                                 <div className="relative">
@@ -182,13 +182,13 @@ const Navbar = () => {
 
                         {/* Profile / Login */}
                         {user ? (
-                            <Link to="/profile">
+                            <Link to={profile?.role === "admin" ? "/admin/dashboard" : "/profile"}>
                                 <motion.div
                                     whileHover={{ y: -1 }}
                                     whileTap={{ scale: 0.94 }}
                                     className={`relative hidden md:flex flex-col items-center px-3 py-2 rounded-xl cursor-pointer transition-all duration-200 ${isActive("/profile")
-                                            ? "bg-blue-50 text-blue-600"
-                                            : "text-gray-500 hover:bg-gray-50 hover:text-blue-500"
+                                        ? "bg-blue-50 text-blue-600"
+                                        : "text-gray-500 hover:bg-gray-50 hover:text-blue-500"
                                         }`}
                                 >
                                     <UserRound

@@ -247,7 +247,7 @@ const AdminDashboard = () => {
                                         className="flex items-center gap-3 px-5 py-3.5 hover:bg-gray-50/60 transition-colors"
                                     >
                                         {/* Avatar */}
-                                        <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center shrink-0">
+                                        <div className="w-8 h-8 rounded-xl bg-linear-to-br from-blue-500 to-blue-700 flex items-center justify-center shrink-0">
                                             <span className="text-white text-[11px] font-black">
                                                 {order.customer[0]}
                                             </span>

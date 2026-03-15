@@ -14,9 +14,13 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import StoreIcon from "@mui/icons-material/Store";
 
 import { Link } from "react-router-dom";
+import { useAuth } from "../../../context/Auth/AuthContext";
 
 export default function SideDrawer() {
     const [open, setOpen] = React.useState(false);
+
+    const { profile } = useAuth()
+
 
     const toggleDrawer = (state) => () => {
         setOpen(state);
@@ -42,8 +46,8 @@ export default function SideDrawer() {
         {
             text: "Profile",
             icon: <PersonIcon />,
-            path: "/profile",
-        },
+            path: profile?.role === "admin" ? "/admin/dashboard" : "/profile"
+        }
     ];
 
     const DrawerList = (

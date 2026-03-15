@@ -1,7 +1,7 @@
 import SideBar from './SideBar'
 import Topbar from './Topbar'
 import AnimatedOutlet from '../../pages/AnimatedOutlet'
-
+console.log("hello")
 const Profile = () => {
 
 
@@ -13,7 +13,7 @@ const Profile = () => {
             </aside>
 
             <main className='w-full flex-1 '>
-                
+
                 <div className='md:hidden'>
                     <Topbar />
                 </div>

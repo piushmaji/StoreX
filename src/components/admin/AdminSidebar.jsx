@@ -3,8 +3,8 @@ import { Link, useLocation } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
 import {
     LayoutDashboard, Package, ShoppingBag, PlusCircle,
-    Edit3, ChevronRight, Store, LogOut, Settings,
-    ChevronLeft, Sparkles
+    Edit3, ChevronRight, Store, LogOut,
+    ChevronLeft, X
 } from "lucide-react"
 import { useAuth } from "../../context/Auth/AuthContext"
 import storex from "../../assets/images/Logo/storex.png"
@@ -13,7 +13,7 @@ const NAV = [
     {
         label: "Overview",
         items: [
-            { to: "/admin", label: "Dashboard", icon: LayoutDashboard },
+            { to: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
             { to: "/admin/orders", label: "Orders", icon: ShoppingBag },
         ]
     },
@@ -27,102 +27,134 @@ const NAV = [
     },
 ]
 
-const AdminSidebar = ({ collapsed, setCollapsed }) => {
+/* ─────────────────────────────────────────────
+   Shared nav list rendered in both desktop & drawer
+───────────────────────────────────────────── */
+const NavContent = ({ collapsed, isMobile, onClose, logout }) => {
     const location = useLocation()
-    const { logout } = useAuth()
 
     const isActive = (path) =>
-        path === "/admin"
-            ? location.pathname === "/admin"
+        path === "/admin/dashboard"
+            ? location.pathname === "/admin/dashboard"
             : location.pathname.startsWith(path)
 
     return (
-        <motion.aside
-            animate={{ width: collapsed ? 72 : 240 }}
-            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="relative h-screen bg-slate-900 flex flex-col border-r border-slate-800 shrink-0 overflow-hidden"
-        >
-            {/* Top accent */}
-            <div className="h-[2px] w-full bg-gradient-to-r from-blue-600 via-blue-400 to-transparent" />
+        <div className="flex flex-col h-full select-none" style={{ fontFamily: "'Sora', sans-serif" }}>
 
-            {/* Brand */}
-            <div className="flex items-center gap-3 px-4 py-5 border-b border-slate-800">
+            {/* ── Brand ── */}
+            <div className={`flex items-center gap-3 pt-7 pb-6 ${collapsed && !isMobile ? "px-4.5" : "px-6"}`}>
                 <div className="relative shrink-0">
-                    <div className="absolute inset-0 bg-blue-500 rounded-xl blur-sm opacity-40" />
-                    <img src={storex} className="relative w-9 h-9 rounded-xl border-2 border-blue-500 p-1 bg-slate-800" />
+                    <div className="absolute inset-0 rounded-xl bg-blue-500 blur-[6px] opacity-30" />
+                    <div className="relative w-9 h-9 rounded-xl bg-white flex items-center justify-center shadow-md">
+                        <img src={storex} className="w-5 h-5 object-contain" alt="logo" />
+                    </div>
                 </div>
-                <AnimatePresence>
-                    {!collapsed && (
+
+                <AnimatePresence initial={false}>
+                    {(!collapsed || isMobile) && (
                         <motion.div
-                            initial={{ opacity: 0, x: -8 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -8 }}
-                            transition={{ duration: 0.2 }}
+                            key="brand-text"
+                            initial={{ opacity: 0, width: 0 }}
+                            animate={{ opacity: 1, width: "auto" }}
+                            exit={{ opacity: 0, width: 0 }}
+                            transition={{ duration: 0.22, ease: "easeInOut" }}
+                            className="overflow-hidden whitespace-nowrap"
                         >
-                            <p className="text-white font-black text-lg tracking-tight leading-none">StoreX</p>
-                            <p className="text-blue-400 text-[10px] font-bold tracking-widest uppercase mt-0.5">Admin Panel</p>
+                            <p className="text-slate-900 font-black text-[17px] tracking-tight leading-none">StoreX</p>
+                            <p className="text-blue-500 text-[8.5px] font-bold tracking-[0.25em] uppercase mt-0.75">Admin Panel</p>
                         </motion.div>
                     )}
                 </AnimatePresence>
             </div>
 
-            {/* Nav */}
-            <nav className="flex-1 overflow-y-auto py-4 space-y-5 px-3">
+            {/* ── Nav ── */}
+            <nav className="flex-1 overflow-y-auto px-3 pb-2 space-y-5">
                 {NAV.map(group => (
                     <div key={group.label}>
-                        <AnimatePresence>
-                            {!collapsed && (
+                        <AnimatePresence initial={false}>
+                            {(!collapsed || isMobile) && (
                                 <motion.p
+                                    key={group.label + "-label"}
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
                                     exit={{ opacity: 0 }}
-                                    className="text-[9px] font-black text-slate-500 uppercase tracking-[0.18em] px-2 mb-2"
+                                    transition={{ duration: 0.15 }}
+                                    className="text-[8px] font-extrabold text-slate-400 uppercase tracking-[0.25em] px-3 mb-2 mt-1"
                                 >
                                     {group.label}
                                 </motion.p>
                             )}
                         </AnimatePresence>
 
-                        <div className="space-y-1">
+                        <div className="space-y-0.5">
                             {group.items.map(({ to, label, icon: Icon }) => {
                                 const active = isActive(to)
                                 return (
-                                    <Link key={to} to={to}>
-                                        <motion.div
-                                            whileHover={{ x: collapsed ? 0 : 3 }}
-                                            whileTap={{ scale: 0.97 }}
-                                            className={`relative flex items-center gap-3 px-2.5 py-2.5 rounded-xl transition-all duration-200 cursor-pointer group ${active
-                                                ? "bg-blue-600 text-white shadow-lg shadow-blue-500/25"
-                                                : "text-slate-400 hover:bg-slate-800 hover:text-white"
-                                                }`}
+                                    <Link
+                                        key={to}
+                                        to={to}
+                                        onClick={() => isMobile && onClose?.()}
+                                    >
+                                        <div
+                                            className={`
+                                                relative flex items-center gap-3 rounded-xl cursor-pointer group
+                                                transition-all duration-150
+                                                ${collapsed && !isMobile ? "px-2.5 py-2.5 justify-center" : "px-3 py-2.5"}
+                                                ${active
+                                                    ? "bg-blue-600 text-white"
+                                                    : "text-slate-500 hover:bg-slate-100 hover:text-slate-800"
+                                                }
+                                            `}
                                         >
-                                            <Icon size={18} strokeWidth={active ? 2.5 : 1.8} className="shrink-0" />
+                                            {/* Active pill glow */}
+                                            {active && (
+                                                <div className="absolute inset-0 rounded-xl bg-blue-500 opacity-20 blur-sm -z-10" />
+                                            )}
 
-                                            <AnimatePresence>
-                                                {!collapsed && (
+                                            {/* Icon */}
+                                            <div className={`shrink-0 flex items-center justify-center w-7.5 h-7.5 rounded-lg transition-all duration-150
+                                                ${active ? "bg-white/15" : "group-hover:bg-white"}`}>
+                                                <Icon
+                                                    size={15}
+                                                    strokeWidth={active ? 2.5 : 1.9}
+                                                    className={active ? "text-white" : "text-slate-400 group-hover:text-blue-600"}
+                                                />
+                                            </div>
+
+                                            {/* Label */}
+                                            <AnimatePresence initial={false}>
+                                                {(!collapsed || isMobile) && (
                                                     <motion.span
-                                                        initial={{ opacity: 0, x: -6 }}
+                                                        key={label}
+                                                        initial={{ opacity: 0, x: -4 }}
                                                         animate={{ opacity: 1, x: 0 }}
-                                                        exit={{ opacity: 0, x: -6 }}
-                                                        transition={{ duration: 0.18 }}
-                                                        className="text-sm font-semibold truncate flex-1"
+                                                        exit={{ opacity: 0, x: -4 }}
+                                                        transition={{ duration: 0.16 }}
+                                                        className="flex-1 text-[12.5px] font-semibold truncate"
                                                     >
                                                         {label}
                                                     </motion.span>
                                                 )}
                                             </AnimatePresence>
 
-                                            {active && !collapsed && (
-                                                <ChevronRight size={14} className="shrink-0 opacity-70" />
+                                            {active && (!collapsed || isMobile) && (
+                                                <ChevronRight size={12} className="text-white/60 shrink-0" />
                                             )}
 
-                                            {/* Tooltip when collapsed */}
-                                            {collapsed && (
-                                                <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-slate-800 text-white text-xs font-semibold rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50 border border-slate-700">
+                                            {/* Collapsed tooltip */}
+                                            {collapsed && !isMobile && (
+                                                <span className="
+                                                    pointer-events-none absolute left-full ml-3 z-50
+                                                    px-2.5 py-1.5 rounded-lg text-[11px] font-semibold whitespace-nowrap
+                                                    bg-slate-900 text-white shadow-xl
+                                                    opacity-0 group-hover:opacity-100
+                                                    translate-x-1 group-hover:translate-x-0
+                                                    transition-all duration-150
+                                                ">
                                                     {label}
-                                                </div>
+                                                </span>
                                             )}
-                                        </motion.div>
+                                        </div>
                                     </Link>
                                 )
                             })}
@@ -131,62 +163,163 @@ const AdminSidebar = ({ collapsed, setCollapsed }) => {
                 ))}
             </nav>
 
-            {/* Bottom */}
-            <div className="px-3 py-4 border-t border-slate-800 space-y-1">
-                <Link to="/">
-                    <motion.div
-                        whileTap={{ scale: 0.97 }}
-                        className="flex items-center gap-3 px-2.5 py-2.5 rounded-xl text-slate-400 hover:bg-slate-800 hover:text-white transition-all cursor-pointer group"
-                    >
-                        <Store size={18} strokeWidth={1.8} className="shrink-0" />
-                        <AnimatePresence>
-                            {!collapsed && (
-                                <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-sm font-semibold">
-                                    View Store
-                                </motion.span>
+            {/* ── Divider ── */}
+            <div className="mx-4 my-2 h-px bg-slate-100" />
+
+            {/* ── Footer actions ── */}
+            <div className="px-3 pb-5 space-y-0.5">
+                {/* View Store */}
+                <Link to="/" onClick={() => isMobile && onClose?.()}>
+                    <div className={`
+                        relative flex items-center gap-3 rounded-xl cursor-pointer group
+                        transition-all duration-150 text-slate-500 hover:bg-slate-100 hover:text-slate-800
+                        ${collapsed && !isMobile ? "px-2.5 py-2.5 justify-center" : "px-3 py-2.5"}
+                    `}>
+                        <div className="shrink-0 w-7.5 h-7.5 rounded-lg flex items-center justify-center group-hover:bg-white transition-all">
+                            <Store size={15} strokeWidth={1.9} className="text-slate-400 group-hover:text-blue-600" />
+                        </div>
+                        <AnimatePresence initial={false}>
+                            {(!collapsed || isMobile) && (
+                                <motion.span
+                                    key="vs"
+                                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                                    className="text-[12.5px] font-semibold"
+                                >View Store</motion.span>
                             )}
                         </AnimatePresence>
-                        {collapsed && (
-                            <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-slate-800 text-white text-xs font-semibold rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50 border border-slate-700">
+                        {collapsed && !isMobile && (
+                            <span className="pointer-events-none absolute left-full ml-3 z-50 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold whitespace-nowrap bg-slate-900 text-white shadow-xl opacity-0 group-hover:opacity-100 translate-x-1 group-hover:translate-x-0 transition-all duration-150">
                                 View Store
-                            </div>
+                            </span>
                         )}
-                    </motion.div>
+                    </div>
                 </Link>
 
-                <motion.button
-                    whileTap={{ scale: 0.97 }}
+                {/* Logout */}
+                <button
                     onClick={logout}
-                    className="w-full flex items-center gap-3 px-2.5 py-2.5 rounded-xl text-slate-400 hover:bg-red-500/10 hover:text-red-400 transition-all cursor-pointer group"
+                    className={`
+                        w-full relative flex items-center gap-3 rounded-xl cursor-pointer group
+                        transition-all duration-150 text-slate-500 hover:bg-red-50 hover:text-red-500
+                        ${collapsed && !isMobile ? "px-2.5 py-2.5 justify-center" : "px-3 py-2.5"}
+                    `}
                 >
-                    <LogOut size={18} strokeWidth={1.8} className="shrink-0" />
-                    <AnimatePresence>
-                        {!collapsed && (
-                            <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="text-sm font-semibold">
-                                Logout
-                            </motion.span>
+                    <div className="shrink-0 w-7.5 h-7.5 rounded-lg flex items-center justify-center group-hover:bg-red-100/60 transition-all">
+                        <LogOut size={15} strokeWidth={1.9} className="text-slate-400 group-hover:text-red-500" />
+                    </div>
+                    <AnimatePresence initial={false}>
+                        {(!collapsed || isMobile) && (
+                            <motion.span
+                                key="lo"
+                                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                                className="text-[12.5px] font-semibold"
+                            >Logout</motion.span>
                         )}
                     </AnimatePresence>
-                    {collapsed && (
-                        <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-slate-800 text-white text-xs font-semibold rounded-lg opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-50 border border-slate-700">
+                    {collapsed && !isMobile && (
+                        <span className="pointer-events-none absolute left-full ml-3 z-50 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold whitespace-nowrap bg-slate-900 text-white shadow-xl opacity-0 group-hover:opacity-100 translate-x-1 group-hover:translate-x-0 transition-all duration-150">
                             Logout
-                        </div>
+                        </span>
                     )}
-                </motion.button>
+                </button>
             </div>
+        </div>
+    )
+}
 
-            {/* Collapse toggle */}
-            <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setCollapsed(!collapsed)}
-                className="absolute -right-3 top-20 w-6 h-6 bg-blue-600 hover:bg-blue-700 text-white rounded-full flex items-center justify-center shadow-lg shadow-blue-500/30 border-2 border-slate-900 transition-colors z-10"
+/* ─────────────────────────────────────────────
+   Root component
+───────────────────────────────────────────── */
+const AdminSidebar = ({ collapsed, setCollapsed }) => {
+    const [mobileOpen, setMobileOpen] = useState(false)
+    const { logout } = useAuth()
+
+    return (
+        <>
+            {/* ══════════════ DESKTOP ══════════════ */}
+            <motion.aside
+                animate={{ width: collapsed ? 68 : 232 }}
+                transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                className="relative hidden md:flex flex-col h-screen bg-white border-r border-slate-100 shrink-0 overflow-visible"
+                style={{ boxShadow: "2px 0 20px rgba(0,0,0,0.04)" }}
             >
-                <motion.div animate={{ rotate: collapsed ? 0 : 180 }} transition={{ duration: 0.3 }}>
-                    <ChevronLeft size={12} strokeWidth={3} />
-                </motion.div>
-            </motion.button>
-        </motion.aside>
+
+                <NavContent collapsed={collapsed} isMobile={false} logout={logout} />
+
+                {/* Collapse pill */}
+                <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => setCollapsed(!collapsed)}
+                    className="absolute -right-3 top-20 z-20 w-6 h-6 rounded-full bg-white border border-slate-200 shadow-md flex items-center justify-center text-slate-400 hover:text-blue-600 hover:border-blue-300 transition-colors"
+                >
+                    <motion.div animate={{ rotate: collapsed ? 0 : 180 }} transition={{ duration: 0.28 }}>
+                        <ChevronLeft size={12} strokeWidth={2.5} />
+                    </motion.div>
+                </motion.button>
+            </motion.aside>
+
+            {/* ══════════════ MOBILE ══════════════ */}
+            <div className="md:hidden">
+                {/* Hamburger FAB */}
+                <motion.button
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => setMobileOpen(true)}
+                    className="fixed top-4 left-4 z-40 w-10 h-10 bg-white rounded-2xl border border-slate-200 shadow-[0_2px_16px_rgba(0,0,0,0.1)] flex flex-col items-center justify-center gap-[4.5px]"
+                >
+                    <span className="block w-4.25 h-[1.8px] bg-slate-700 rounded-full" />
+                    <span className="block w-3 h-[1.8px] bg-blue-500 rounded-full" />
+                    <span className="block w-4.5 h-[1.8px] bg-slate-700 rounded-full" />
+                </motion.button>
+
+                {/* Backdrop */}
+                <AnimatePresence>
+                    {mobileOpen && (
+                        <motion.div
+                            key="backdrop"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            onClick={() => setMobileOpen(false)}
+                            className="fixed inset-0 z-40 bg-slate-900/25 backdrop-blur-[2px]"
+                        />
+                    )}
+                </AnimatePresence>
+
+                {/* Drawer */}
+                <AnimatePresence>
+                    {mobileOpen && (
+                        <motion.aside
+                            key="drawer"
+                            initial={{ x: "-100%" }}
+                            animate={{ x: 0 }}
+                            exit={{ x: "-100%" }}
+                            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                            className="fixed top-0 left-0 h-full w-[256px] bg-white z-50 flex flex-col border-r border-slate-100"
+                            style={{ boxShadow: "6px 0 32px rgba(0,0,0,0.10)" }}
+                        >
+                            <div className="absolute top-0 inset-x-0 h-[2.5px] bg-linear-to-r from-blue-600 to-sky-400" />
+
+                            {/* Close */}
+                            <button
+                                onClick={() => setMobileOpen(false)}
+                                className="absolute top-5.5 right-4 z-10 w-7 h-7 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-500 transition-colors"
+                            >
+                                <X size={13} strokeWidth={2.5} />
+                            </button>
+
+                            <NavContent
+                                collapsed={false}
+                                isMobile
+                                onClose={() => setMobileOpen(false)}
+                                logout={logout}
+                            />
+                        </motion.aside>
+                    )}
+                </AnimatePresence>
+            </div>
+        </>
     )
 }
 

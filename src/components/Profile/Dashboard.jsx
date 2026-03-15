@@ -1,5 +1,5 @@
 import { Camera, CheckCircle, Pencil, X, Shield, Phone, User } from 'lucide-react'
-import { useContext, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { useAuth } from '../../context/Auth/AuthContext'
 
 
@@ -12,7 +12,8 @@ const Dashboard = () => {
     const [phone, setPhone] = useState('')
     const [saved, setSaved] = useState(false)
     const fileRef = useRef()
-const photo=null
+    const [photo, setPhoto] = useState('https://i.pinimg.com/1200x/5d/41/bc/5d41bc0b19e55fc7aa8c659c9ec109d9.jpg')
+
     const handlePhoto = (e) => {
         const file = e.target.files[0]
         if (!file) return
@@ -22,9 +23,6 @@ const photo=null
     }
 
     const handleSave = async () => {
-        await updateProfile(auth.currentUser, {
-            displayName: draftName.trim() || name,
-        })
         if (draftName.trim()) setName(draftName.trim())
         setEditingName(false)
         setDraftName('')
