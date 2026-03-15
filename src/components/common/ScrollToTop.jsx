@@ -1,11 +1,23 @@
-import { useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useEffect, useRef } from "react"
+import { useLocation } from "react-router-dom"
 
 const ScrollToTop = () => {
     const { pathname } = useLocation()
+    const isFirstRender = useRef(true)
+
+    // ✅ Add this — disables browser's default scroll restoration
+    useEffect(() => {
+        if ("scrollRestoration" in window.history) {
+            window.history.scrollRestoration = "manual"
+        }
+    }, [])
 
     useEffect(() => {
-        window.scrollTo({ top: 0, behavior: 'instant' })
+        if (isFirstRender.current) {
+            isFirstRender.current = false
+            return
+        }
+        window.scrollTo(0, 0)
     }, [pathname])
 
     return null
