@@ -8,21 +8,22 @@ import {
 } from "lucide-react"
 import { useAuth } from "../../context/Auth/AuthContext"
 import storex from "../../assets/images/Logo/storex.png"
+import OrderTable from "./OrderTable"
 
 const NAV = [
     {
         label: "Overview",
         items: [
-            { to: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
-            { to: "/admin/orders", label: "Orders", icon: ShoppingBag },
+            { to: "/admin/dashboard", label: "dashboard", icon: LayoutDashboard, file: <OrderTable /> },
+            { to: "/admin/orders", label: "Orders", icon: ShoppingBag, file: <OrderTable /> },
         ]
     },
     {
         label: "Catalog",
         items: [
-            { to: "/admin/products", label: "Products", icon: Package },
-            { to: "/admin/products/add", label: "Add Product", icon: PlusCircle },
-            { to: "/admin/products/edit/1", label: "Edit Product", icon: Edit3 },
+            { to: "/admin/products", label: "Products", icon: Package, file: <OrderTable /> },
+            { to: "/admin/products/add", label: "Add Product", icon: PlusCircle, file: <OrderTable /> },
+            { to: "/admin/products/edit/1", label: "Edit Product", icon: Edit3, file: <OrderTable /> },
         ]
     },
 ]
