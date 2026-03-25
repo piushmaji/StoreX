@@ -22,8 +22,8 @@ const NAV = [
         label: "Catalog",
         items: [
             { to: "/admin/products", label: "Products", icon: Package, file: <OrderTable /> },
-            { to: "/admin/products/add", label: "Add Product", icon: PlusCircle, file: <OrderTable /> },
-            { to: "/admin/products/edit/1", label: "Edit Product", icon: Edit3, file: <OrderTable /> },
+            { to: "/admin/add-product", label: "Add Product", icon: PlusCircle, file: <OrderTable /> },
+            { to: "/admin/edit-product/", label: "Edit Product", icon: Edit3, file: <OrderTable /> },
         ]
     },
 ]

@@ -1,7 +1,6 @@
 import SideBar from './SideBar'
 import Topbar from './Topbar'
 import AnimatedOutlet from '../../pages/AnimatedOutlet'
-console.log("hello")
 const Profile = () => {
 
 

@@ -53,6 +53,10 @@ const router = createBrowserRouter([
         element: <MainLayout />,
         errorElement: <NotFound />,
         children: [
+          {
+  path: "*",
+  element: <NotFound />
+},
           { index: true, element: <HomePage /> },
           { path: "product", element: <ProductListingPage /> },
           { path: "product/:id", element: <ProductDetails /> },
@@ -151,11 +155,11 @@ const router = createBrowserRouter([
                 element: <AdminProducts />
               },
               {
-                path: "products/add",
+                path: "add-product",
                 element: <AddProduct />
               },
               {
-                path: "products/edit",
+                path: "edit-product/:id",
                 element: <EditProduct />
               },
               {

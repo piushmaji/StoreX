@@ -3,41 +3,18 @@ import { motion, AnimatePresence } from "framer-motion"
 import {
   Search, Filter, Plus, Edit2, Trash2, Eye, EyeOff,
   ChevronLeft, ChevronRight, ArrowUpDown, ChevronDown, ChevronUp,
-  X, Package, Tag, DollarSign, Layers, Image as ImageIcon,
-  CheckCircle2, AlertCircle, ToggleLeft, ToggleRight, Grid, List,
-  Upload, Save, MoreVertical
+  X, Package,  Image as ImageIcon,Grid, List,Upload, Save, 
 } from "lucide-react"
+import { useProduct } from "../../context/admin/ProductContext"
+import { useNavigate } from "react-router-dom"
 
-// ─── Mock Data ────────────────────────────────────────────────
-const CATEGORIES = ["Electronics", "Clothing", "Footwear", "Accessories", "Home & Living", "Sports"]
+let PAGE_SIZE = 10
 
-const MOCK_PRODUCTS = Array.from({ length: 24 }, (_, i) => ({
-  id: `PRD-${String(100 + i).padStart(4, "0")}`,
-  name: [
-    "Nike Air Max 270", "Sony WH-1000XM5", "Levi's 501 Jeans", "Apple AirPods Pro",
-    "Adidas Ultraboost 22", "Ray-Ban Aviator", "Puma Track Jacket", "Samsung Galaxy Buds",
-    "Fossil Gen 6 Watch", "Woodland Boots", "JBL Flip 6 Speaker", "Reebok Classic",
-    "Boat Airdopes 141", "H&M Slim Chinos", "Skybags Backpack", "Wildcraft Rain Jacket",
-    "OnePlus Buds Z2", "New Balance 574", "Fastrack Sunglasses", "Urbanic Hoodie",
-    "Noise ColorFit Pro", "Hush Puppies Loafers", "Peter England Shirt", "UCB Bomber Jacket"
-  ][i],
-  category: CATEGORIES[i % CATEGORIES.length],
-  price: [2999, 24999, 3499, 19999, 8999, 7499, 4999, 8499, 14999, 5999, 9999, 4499, 1999, 2499, 1799, 5499, 2999, 7999, 1299, 2199, 3499, 3999, 1899, 6999][i],
-  stock: [45, 12, 78, 5, 34, 22, 0, 67, 8, 43, 19, 88, 150, 31, 25, 7, 55, 40, 92, 18, 62, 29, 74, 11][i],
-  visible: i % 7 !== 0,
-  image: `https://picsum.photos/seed/${i + 10}/200/200`,
-  description: "Premium quality product with excellent build and lasting comfort. Ideal for everyday use.",
-  rating: (3.5 + (i % 15) * 0.1).toFixed(1),
-  sales: [120, 45, 200, 18, 95, 60, 0, 180, 22, 110, 55, 230, 400, 88, 70, 15, 140, 105, 260, 48, 175, 80, 210, 30][i],
-  createdAt: new Date(2025, 8, i + 1).toISOString(),
-}))
-
-const PAGE_SIZE = 8
-
+// ─── Stock Status Helper ──────────────────────────────────────
 const STOCK_STATUS = (stock) => {
-  if (stock === 0) return { label: "Out of Stock", bg: "bg-red-50", text: "text-red-500", border: "border-red-200", dot: "bg-red-400" }
-  if (stock <= 10) return { label: "Low Stock", bg: "bg-amber-50", text: "text-amber-600", border: "border-amber-200", dot: "bg-amber-400" }
-  return { label: "In Stock", bg: "bg-emerald-50", text: "text-emerald-600", border: "border-emerald-200", dot: "bg-emerald-500" }
+  if (stock === 0) return { bg: "bg-red-50", text: "text-red-500", border: "border-red-200", dot: "bg-red-400" }
+  if (stock <= 10) return { bg: "bg-amber-50", text: "text-amber-600", border: "border-amber-200", dot: "bg-amber-400" }
+  return { bg: "bg-emerald-50", text: "text-emerald-600", border: "border-emerald-200", dot: "bg-emerald-400" }
 }
 
 // ─── Delete Confirm Modal ─────────────────────────────────────
@@ -76,180 +53,42 @@ const DeleteModal = ({ product, onConfirm, onClose }) => (
 )
 
 // ─── Add / Edit Modal ─────────────────────────────────────────
-const ProductModal = ({ product, onClose, onSave }) => {
+const ProductModal = ({ product, categories, onClose, onSave }) => {
   const isEdit = !!product?.id
   const [form, setForm] = useState(product || {
-    name: "", category: CATEGORIES[0], price: "", stock: "",
-    description: "", image: "", visible: true
+    name: "", category_id: categories[0]?.id || "", price: "", stock: "",
+    description: "", image_urls: [], is_visible: true
   })
-  const [imgPreview, setImgPreview] = useState(form.image || "")
+  const [files, setFiles] = useState([])
+  const [imgPreviews, setImgPreviews] = useState(form.image_urls || [])
+  const [loading, setLoading] = useState(false)
 
   const set = (key, val) => setForm(f => ({ ...f, [key]: val }))
 
   const handleImageChange = (e) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    const url = URL.createObjectURL(file)
-    setImgPreview(url)
-    set("image", url)
+    const selected = Array.from(e.target.files || [])
+    if (!selected.length) return
+    setFiles(selected)
+    const previews = selected.map(f => URL.createObjectURL(f))
+    setImgPreviews(previews)
   }
 
-  return (
-    <motion.div
-      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm"
-      onClick={onClose}
-    >
-      <motion.div
-        initial={{ opacity: 0, y: 24, scale: 0.97 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: 16 }}
-        transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-        onClick={e => e.stopPropagation()}
-        className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden"
-        style={{ fontFamily: "'Sora', sans-serif" }}
-      >
-        {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-5 flex items-center justify-between">
-          <div>
-            <p className="text-blue-100 text-[10px] font-bold tracking-widest uppercase">{isEdit ? "Edit Product" : "New Product"}</p>
-            <h2 className="text-white font-black text-xl mt-0.5">{isEdit ? form.name : "Add to Store"}</h2>
-          </div>
-          <button onClick={onClose} className="w-8 h-8 rounded-xl bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition-colors">
-            <X size={15} strokeWidth={2.5} />
-          </button>
-        </div>
-
-        <div className="p-6 overflow-y-auto max-h-[75vh] space-y-5">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {/* Left col */}
-            <div className="space-y-4">
-              {/* Image upload */}
-              <div>
-                <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block mb-2">Product Image</label>
-                <label className="relative block cursor-pointer group">
-                  <div className={`w-full h-40 rounded-2xl border-2 border-dashed overflow-hidden flex flex-col items-center justify-center transition-all
-                                        ${imgPreview ? "border-blue-200 bg-blue-50/30" : "border-slate-200 bg-slate-50 hover:border-blue-300 hover:bg-blue-50/40"}`}>
-                    {imgPreview
-                      ? <img src={imgPreview} className="w-full h-full object-cover" alt="preview" />
-                      : <>
-                        <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center mb-2">
-                          <Upload size={16} className="text-blue-500" />
-                        </div>
-                        <p className="text-xs font-semibold text-slate-500">Click to upload image</p>
-                        <p className="text-[10px] text-slate-400 mt-0.5">PNG, JPG up to 5MB</p>
-                      </>
-                    }
-                    {imgPreview && (
-                      <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center rounded-2xl">
-                        <div className="w-9 h-9 rounded-xl bg-white flex items-center justify-center">
-                          <Upload size={15} className="text-blue-600" />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  <input type="file" accept="image/*" className="hidden" onChange={handleImageChange} />
-                </label>
-              </div>
-
-              {/* Visibility toggle */}
-              <div className="flex items-center justify-between bg-slate-50 rounded-2xl px-4 py-3.5 border border-slate-100">
-                <div>
-                  <p className="text-sm font-bold text-slate-700">Visible in Store</p>
-                  <p className="text-xs text-slate-400">Customers can see this product</p>
-                </div>
-                <button onClick={() => set("visible", !form.visible)} className="transition-all">
-                  {form.visible
-                    ? <ToggleRight size={28} className="text-blue-600" />
-                    : <ToggleLeft size={28} className="text-slate-300" />
-                  }
-                </button>
-              </div>
-            </div>
-
-            {/* Right col */}
-            <div className="space-y-3.5">
-              {/* Name */}
-              <div>
-                <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block mb-1.5">Product Name</label>
-                <input
-                  value={form.name}
-                  onChange={e => set("name", e.target.value)}
-                  placeholder="e.g. Nike Air Max 270"
-                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:border-blue-300 focus:bg-white transition-all"
-                />
-              </div>
-
-              {/* Category */}
-              <div>
-                <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block mb-1.5">Category</label>
-                <div className="relative">
-                  <select
-                    value={form.category}
-                    onChange={e => set("category", e.target.value)}
-                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:border-blue-300 focus:bg-white transition-all appearance-none"
-                  >
-                    {CATEGORIES.map(c => <option key={c}>{c}</option>)}
-                  </select>
-                  <ChevronDown size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-                </div>
-              </div>
-
-              {/* Price + Stock */}
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block mb-1.5">Price (₹)</label>
-                  <input
-                    type="number"
-                    value={form.price}
-                    onChange={e => set("price", e.target.value)}
-                    placeholder="0"
-                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:border-blue-300 focus:bg-white transition-all"
-                  />
-                </div>
-                <div>
-                  <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block mb-1.5">Stock</label>
-                  <input
-                    type="number"
-                    value={form.stock}
-                    onChange={e => set("stock", e.target.value)}
-                    placeholder="0"
-                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:border-blue-300 focus:bg-white transition-all"
-                  />
-                </div>
-              </div>
-
-              {/* Description */}
-              <div>
-                <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest block mb-1.5">Description</label>
-                <textarea
-                  value={form.description}
-                  onChange={e => set("description", e.target.value)}
-                  placeholder="Brief product description..."
-                  rows={4}
-                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:border-blue-300 focus:bg-white transition-all resize-none"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Save */}
-          <button
-            onClick={() => onSave(form)}
-            className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm transition-all shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2"
-          >
-            <Save size={15} />
-            {isEdit ? "Save Changes" : "Add Product"}
-          </button>
-        </div>
-      </motion.div>
-    </motion.div>
-  )
+  const handleSubmit = async () => {
+    if (!form.name || !form.price) return
+    setLoading(true)
+    try {
+      await onSave(form, files)
+    } finally {
+      setLoading(false)
+    }
+  }
 }
 
 // ─── Product Card (Grid View) ─────────────────────────────────
-const ProductCard = ({ product, onEdit, onDelete, onToggleVisibility }) => {
+const ProductCard = ({ product, categoryName, onEdit, onDelete, onToggleVisibility }) => {
   const stock = STOCK_STATUS(product.stock)
+  const firstImage = product.image_urls?.[0] || null
+
   return (
     <motion.div
       layout
@@ -260,8 +99,8 @@ const ProductCard = ({ product, onEdit, onDelete, onToggleVisibility }) => {
     >
       {/* Image */}
       <div className="relative h-44 bg-slate-50 overflow-hidden">
-        {product.image
-          ? <img src={product.image} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+        {firstImage
+          ? <img src={firstImage} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
           : <div className="w-full h-full flex items-center justify-center"><Package size={32} className="text-slate-200" /></div>
         }
         {/* Overlay actions */}
@@ -272,37 +111,39 @@ const ProductCard = ({ product, onEdit, onDelete, onToggleVisibility }) => {
           <button onClick={() => onDelete(product)} className="w-9 h-9 rounded-xl bg-white text-red-500 flex items-center justify-center shadow-md hover:bg-red-50 transition-colors">
             <Trash2 size={14} />
           </button>
-          <button onClick={() => onToggleVisibility(product.id)} className="w-9 h-9 rounded-xl bg-white text-slate-600 flex items-center justify-center shadow-md hover:bg-slate-50 transition-colors">
-            {product.visible ? <Eye size={14} /> : <EyeOff size={14} />}
+          <button onClick={() => onToggleVisibility(product.id, product.is_visible)} className="w-9 h-9 rounded-xl bg-white text-slate-600 flex items-center justify-center shadow-md hover:bg-slate-50 transition-colors">
+            {product.is_visible ? <Eye size={14} /> : <EyeOff size={14} />}
           </button>
         </div>
 
         {/* Visibility badge */}
-        {!product.visible && (
+        {!product.is_visible && (
           <div className="absolute top-2.5 left-2.5 bg-slate-800/70 text-white text-[9px] font-bold px-2 py-1 rounded-lg flex items-center gap-1 backdrop-blur-sm">
             <EyeOff size={9} /> Hidden
           </div>
         )}
 
         {/* Category */}
-        <div className="absolute top-2.5 right-2.5 bg-white/90 backdrop-blur-sm text-blue-600 text-[9px] font-extrabold px-2 py-1 rounded-lg border border-blue-100">
-          {product.category}
-        </div>
+        {categoryName && (
+          <div className="absolute top-2.5 right-2.5 bg-white/90 backdrop-blur-sm text-blue-600 text-[9px] font-extrabold px-2 py-1 rounded-lg border border-blue-100">
+            {categoryName}
+          </div>
+        )}
       </div>
 
       {/* Info */}
       <div className="p-4">
         <p className="font-bold text-slate-800 text-sm truncate">{product.name}</p>
         <div className="flex items-center justify-between mt-2">
-          <span className="text-base font-black text-blue-600">₹{product.price.toLocaleString()}</span>
+          <span className="text-base font-black text-blue-600">₹{Number(product.price).toLocaleString()}</span>
           <span className={`text-[10px] font-bold px-2 py-0.5 rounded-lg border ${stock.bg} ${stock.text} ${stock.border} flex items-center gap-1`}>
             <span className={`w-1.5 h-1.5 rounded-full ${stock.dot}`} />
             {product.stock > 0 ? `${product.stock} left` : "Out"}
           </span>
         </div>
         <div className="flex items-center justify-between mt-3 pt-3 border-t border-slate-100">
-          <span className="text-[10px] text-slate-400 font-medium">{product.sales} sold</span>
-          <span className="text-[10px] text-amber-500 font-bold">★ {product.rating}</span>
+          <span className="text-[10px] text-slate-400 font-medium">{product.sales ?? 0} sold</span>
+          <span className="text-[10px] text-amber-500 font-bold">★ {product.rating ?? "—"}</span>
         </div>
       </div>
     </motion.div>
@@ -311,69 +152,80 @@ const ProductCard = ({ product, onEdit, onDelete, onToggleVisibility }) => {
 
 // ─── Main Component ───────────────────────────────────────────
 const AdminProducts = () => {
-  const [products, setProducts] = useState(MOCK_PRODUCTS)
+  const { products, categories, addProduct, deleteProduct, toggleVisibility } = useProduct()
+
   const [search, setSearch] = useState("")
   const [categoryFilter, setCategoryFilter] = useState("all")
   const [stockFilter, setStockFilter] = useState("all")
   const [visibilityFilter, setVisibilityFilter] = useState("all")
-  const [sortField, setSortField] = useState("createdAt")
+  const [sortField, setSortField] = useState("created_at")
   const [sortDir, setSortDir] = useState("desc")
   const [page, setPage] = useState(1)
-  const [viewMode, setViewMode] = useState("grid") // grid | table
+  const [viewMode, setViewMode] = useState("grid")
   const [filterOpen, setFilterOpen] = useState(false)
-  const [editProduct, setEditProduct] = useState(null)   // null = closed, {} = new, {...} = edit
-  const [deleteProduct, setDeleteProduct] = useState(null)
+  const [editProduct, setEditProduct] = useState(null)
+  const [deleteTarget, setDeleteTarget] = useState(null)
+
+  const navigate = useNavigate()
+
+  // Map category id → name
+  const categoryMap = useMemo(() => {
+    const m = {}
+    categories.forEach(c => { m[c.id] = c.name })
+    return m
+  }, [categories])
 
   const handleSort = (field) => {
     if (sortField === field) setSortDir(d => d === "asc" ? "desc" : "asc")
     else { setSortField(field); setSortDir("desc") }
   }
 
-  const handleSave = (form) => {
+  const handleSave = async (form, files) => {
     if (form.id) {
-      setProducts(p => p.map(pr => pr.id === form.id ? { ...pr, ...form } : pr))
+      // edit — extend as needed via context
+      // For now just close (add updateProduct to context if needed)
     } else {
-      const newProduct = {
-        ...form,
-        id: `PRD-${String(100 + products.length).padStart(4, "0")}`,
-        price: Number(form.price),
-        stock: Number(form.stock),
-        rating: "4.0",
-        sales: 0,
-        createdAt: new Date().toISOString(),
-      }
-      setProducts(p => [newProduct, ...p])
+      await addProduct(
+        {
+          name: form.name,
+          category_id: form.category_id,
+          price: Number(form.price),
+          stock: Number(form.stock),
+          description: form.description,
+          is_visible: form.is_visible,
+        },
+        files
+      )
     }
     setEditProduct(null)
   }
 
-  const handleDelete = () => {
-    setProducts(p => p.filter(pr => pr.id !== deleteProduct.id))
-    setDeleteProduct(null)
-  }
-
-  const handleToggleVisibility = (id) => {
-    setProducts(p => p.map(pr => pr.id === id ? { ...pr, visible: !pr.visible } : pr))
+  const handleDelete = async () => {
+    await deleteProduct(deleteTarget.id)
+    setDeleteTarget(null)
   }
 
   const filtered = useMemo(() => {
     let data = [...products]
-    if (search) data = data.filter(p => p.name.toLowerCase().includes(search.toLowerCase()) || p.category.toLowerCase().includes(search.toLowerCase()))
-    if (categoryFilter !== "all") data = data.filter(p => p.category === categoryFilter)
+    if (search) data = data.filter(p =>
+      p.name.toLowerCase().includes(search.toLowerCase()) ||
+      (categoryMap[p.category_id] || "").toLowerCase().includes(search.toLowerCase())
+    )
+    if (categoryFilter !== "all") data = data.filter(p => p.category_id === categoryFilter)
     if (stockFilter === "out") data = data.filter(p => p.stock === 0)
     if (stockFilter === "low") data = data.filter(p => p.stock > 0 && p.stock <= 10)
     if (stockFilter === "in") data = data.filter(p => p.stock > 10)
-    if (visibilityFilter === "visible") data = data.filter(p => p.visible)
-    if (visibilityFilter === "hidden") data = data.filter(p => !p.visible)
+    if (visibilityFilter === "visible") data = data.filter(p => p.is_visible)
+    if (visibilityFilter === "hidden") data = data.filter(p => !p.is_visible)
     data.sort((a, b) => {
       let va = a[sortField], vb = b[sortField]
-      if (typeof va === "string") va = va.toLowerCase(), vb = vb.toLowerCase()
+      if (typeof va === "string") { va = va.toLowerCase(); vb = (vb || "").toLowerCase() }
       if (va < vb) return sortDir === "asc" ? -1 : 1
       if (va > vb) return sortDir === "asc" ? 1 : -1
       return 0
     })
     return data
-  }, [products, search, categoryFilter, stockFilter, visibilityFilter, sortField, sortDir])
+  }, [products, search, categoryFilter, stockFilter, visibilityFilter, sortField, sortDir, categoryMap])
 
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE)
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
@@ -397,10 +249,9 @@ const AdminProducts = () => {
         </div>
         <button
           onClick={() => setEditProduct({})}
-          className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-blue-500/25"
+          className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-xl transition-all shadow-md shadow-blue-500/25"
         >
-          <Plus size={15} strokeWidth={2.5} />
-          Add Product
+          <Plus size={15} /> Add Product
         </button>
       </div>
 
@@ -416,7 +267,10 @@ const AdminProducts = () => {
             <p className="text-xs font-semibold text-slate-400">{stat.label}</p>
             <p className="text-2xl font-black text-slate-800 mt-0.5">{stat.value}</p>
             <p className="text-[10px] text-slate-400 mt-0.5">{stat.sub}</p>
-            <div className={`mt-2 h-1 rounded-full bg-gradient-to-r ${stat.color} opacity-60`} style={{ width: `${(stat.value / products.length) * 100}%` }} />
+            <div
+              className={`mt-2 h-1 rounded-full bg-gradient-to-r ${stat.color} opacity-60`}
+              style={{ width: products.length > 0 ? `${(stat.value / products.length) * 100}%` : "0%" }}
+            />
           </div>
         ))}
       </div>
@@ -472,10 +326,14 @@ const AdminProducts = () => {
                 {/* Category */}
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest w-16 shrink-0">Category</span>
-                  {["all", ...CATEGORIES].map(c => (
-                    <button key={c} onClick={() => { setCategoryFilter(c); setPage(1) }}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${categoryFilter === c ? "bg-blue-600 text-white border-blue-600" : "bg-slate-50 text-slate-500 border-slate-200 hover:border-blue-200"}`}>
-                      {c === "all" ? "All" : c}
+                  <button
+                    onClick={() => { setCategoryFilter("all"); setPage(1) }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${categoryFilter === "all" ? "bg-blue-600 text-white border-blue-600" : "bg-slate-50 text-slate-500 border-slate-200 hover:border-blue-200"}`}
+                  >All</button>
+                  {categories.map(c => (
+                    <button key={c.id} onClick={() => { setCategoryFilter(c.id); setPage(1) }}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${categoryFilter === c.id ? "bg-blue-600 text-white border-blue-600" : "bg-slate-50 text-slate-500 border-slate-200 hover:border-blue-200"}`}>
+                      {c.name}
                     </button>
                   ))}
                 </div>
@@ -532,9 +390,10 @@ const AdminProducts = () => {
               <ProductCard
                 key={product.id}
                 product={product}
-                onEdit={setEditProduct}
-                onDelete={setDeleteProduct}
-                onToggleVisibility={handleToggleVisibility}
+                categoryName={categoryMap[product.category_id]}
+                onEdit={(product) => navigate(`/admin/edit-product/${product.id}`)}
+                onDelete={setDeleteTarget}
+                onToggleVisibility={toggleVisibility}
               />
             ))}
           </AnimatePresence>
@@ -550,11 +409,11 @@ const AdminProducts = () => {
                 <tr className="border-b border-slate-100 bg-slate-50/60">
                   {[
                     { label: "Product", field: "name" },
-                    { label: "Category", field: "category" },
+                    { label: "Category", field: "category_id" },
                     { label: "Price", field: "price" },
                     { label: "Stock", field: "stock" },
                     { label: "Sales", field: "sales" },
-                    { label: "Visibility", field: "visible" },
+                    { label: "Visibility", field: "is_visible" },
                     { label: "Actions", field: null },
                   ].map(col => (
                     <th key={col.label}
@@ -575,6 +434,7 @@ const AdminProducts = () => {
                     </td></tr>
                   ) : paginated.map((product, idx) => {
                     const stock = STOCK_STATUS(product.stock)
+                    const firstImage = product.image_urls?.[0] || null
                     return (
                       <motion.tr key={product.id}
                         initial={{ opacity: 0, y: 6 }}
@@ -587,26 +447,28 @@ const AdminProducts = () => {
                         <td className="px-4 py-3.5">
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-xl overflow-hidden bg-slate-100 shrink-0">
-                              {product.image
-                                ? <img src={product.image} className="w-full h-full object-cover" alt={product.name} />
+                              {firstImage
+                                ? <img src={firstImage} className="w-full h-full object-cover" alt={product.name} />
                                 : <div className="w-full h-full flex items-center justify-center"><Package size={14} className="text-slate-300" /></div>
                               }
                             </div>
                             <div>
                               <p className="text-sm font-bold text-slate-700 whitespace-nowrap">{product.name}</p>
-                              <p className="text-[10px] text-slate-400">{product.id}</p>
+                              <p className="text-[10px] text-slate-400">{product.id?.slice(0, 8)}…</p>
                             </div>
                           </div>
                         </td>
 
                         {/* Category */}
                         <td className="px-4 py-3.5">
-                          <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-100">{product.category}</span>
+                          <span className="text-xs font-semibold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-100">
+                            {categoryMap[product.category_id] || "—"}
+                          </span>
                         </td>
 
                         {/* Price */}
                         <td className="px-4 py-3.5">
-                          <span className="text-sm font-black text-slate-800">₹{product.price.toLocaleString()}</span>
+                          <span className="text-sm font-black text-slate-800">₹{Number(product.price).toLocaleString()}</span>
                         </td>
 
                         {/* Stock */}
@@ -619,13 +481,13 @@ const AdminProducts = () => {
 
                         {/* Sales */}
                         <td className="px-4 py-3.5">
-                          <span className="text-sm font-semibold text-slate-600">{product.sales}</span>
+                          <span className="text-sm font-semibold text-slate-600">{product.sales ?? 0}</span>
                         </td>
 
                         {/* Visibility */}
                         <td className="px-4 py-3.5">
-                          <button onClick={() => handleToggleVisibility(product.id)} className="transition-all">
-                            {product.visible
+                          <button onClick={() => toggleVisibility(product.id, product.is_visible)} className="transition-all">
+                            {product.is_visible
                               ? <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-emerald-50 text-emerald-600 border border-emerald-200"><Eye size={11} /> Visible</span>
                               : <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-100 text-slate-400 border border-slate-200"><EyeOff size={11} /> Hidden</span>
                             }
@@ -635,10 +497,10 @@ const AdminProducts = () => {
                         {/* Actions */}
                         <td className="px-4 py-3.5">
                           <div className="flex items-center gap-1.5">
-                            <button onClick={() => setEditProduct(product)} className="w-8 h-8 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 flex items-center justify-center transition-colors">
+                            <button onClick={() => navigate(`/admin/edit-product/${product.id}`)} className="w-8 h-8 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-600 flex items-center justify-center transition-colors">
                               <Edit2 size={13} />
                             </button>
-                            <button onClick={() => setDeleteProduct(product)} className="w-8 h-8 rounded-xl bg-red-50 hover:bg-red-100 text-red-500 flex items-center justify-center transition-colors">
+                            <button onClick={() => setDeleteTarget(product)} className="w-8 h-8 rounded-xl bg-red-50 hover:bg-red-100 text-red-500 flex items-center justify-center transition-colors">
                               <Trash2 size={13} />
                             </button>
                           </div>
@@ -686,12 +548,17 @@ const AdminProducts = () => {
       {/* ── Modals ── */}
       <AnimatePresence>
         {editProduct !== null && (
-          <ProductModal product={editProduct} onClose={() => setEditProduct(null)} onSave={handleSave} />
+          <ProductModal
+            product={Object.keys(editProduct).length === 0 ? null : editProduct}
+            categories={categories}
+            onClose={() => setEditProduct(null)}
+            onSave={handleSave}
+          />
         )}
       </AnimatePresence>
       <AnimatePresence>
-        {deleteProduct && (
-          <DeleteModal product={deleteProduct} onClose={() => setDeleteProduct(null)} onConfirm={handleDelete} />
+        {deleteTarget && (
+          <DeleteModal product={deleteTarget} onClose={() => setDeleteTarget(null)} onConfirm={handleDelete} />
         )}
       </AnimatePresence>
     </div>

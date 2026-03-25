@@ -33,7 +33,6 @@ export const AuthProvider = ({ children }) => {
 
         const { data: listener } = supabase.auth.onAuthStateChange(
             (_event, session) => {
-                console.log("Auth event:", _event)
                 setSession(session)
                 setUser(session?.user ?? null)
                 if (!session) {
@@ -51,15 +50,12 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         if (!user) return
 
-        console.log("Fetching profile for:", user.id)
-
         supabase
             .from("profiles")
             .select("*")
             .eq("id", user.id)
             .maybeSingle()
             .then(({ data, error }) => {
-                console.log("Profile result:", { data, error })
                 if (data) setProfile(data)
             })
 

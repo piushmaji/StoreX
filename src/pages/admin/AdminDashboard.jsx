@@ -95,7 +95,6 @@ const Fade = ({ children, delay = 0, className = "" }) => (
         {children}
     </motion.div>
 )
-console.log("ADMIN DASHBOARD LOADED")
 // ─── Main Dashboard ───────────────────────────────────────────────────────────
 const AdminDashboard = () => {
     return (

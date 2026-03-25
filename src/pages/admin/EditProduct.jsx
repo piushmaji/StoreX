@@ -8,9 +8,7 @@ import {
   Image as ImageIcon, Plus, Trash2, Star, RefreshCw,
   History, Eye, EyeOff, AlertTriangle
 } from "lucide-react"
-import supabase from "../../lib/Supabase/Supabase"
-
-const CATEGORIES = ["Electronics", "Clothing", "Footwear", "Accessories", "Home & Living", "Sports"]
+import { useProduct } from "../../context/admin/ProductContext"
 
 // ─── Helpers ──────────────────────────────────────────────────
 const inputCls = (hasError) =>
@@ -69,7 +67,6 @@ const ImageManager = ({ images, onAdd, onRemove, onSetMain, error }) => {
 
   return (
     <div className="space-y-3">
-      {/* Current Images Grid */}
       <AnimatePresence>
         {images.length > 0 && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-3 gap-2.5">
@@ -79,29 +76,25 @@ const ImageManager = ({ images, onAdd, onRemove, onSetMain, error }) => {
                 exit={{ opacity: 0, scale: 0.88 }} transition={{ duration: 0.18 }}
                 onClick={() => onSetMain(i)}
                 className={`relative group aspect-square rounded-xl overflow-hidden border-2 cursor-pointer transition-all duration-200
-                                    ${i === 0 ? "border-blue-500 shadow-md shadow-blue-500/20" : "border-slate-200 hover:border-blue-300"}`}
+                  ${i === 0 ? "border-blue-500 shadow-md shadow-blue-500/20" : "border-slate-200 hover:border-blue-300"}`}
               >
                 <img src={img.preview || img.url} alt="" className="w-full h-full object-cover" />
 
-                {/* Main badge */}
                 {i === 0 && (
                   <div className="absolute top-1.5 left-1.5 bg-blue-600 text-white text-[8px] font-black px-1.5 py-0.5 rounded-md flex items-center gap-0.5">
                     <Star size={7} fill="white" /> Main
                   </div>
                 )}
 
-                {/* New badge */}
                 {img.isNew && (
                   <div className="absolute top-1.5 right-6 bg-emerald-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded-md">New</div>
                 )}
 
-                {/* Remove */}
                 <button onClick={e => { e.stopPropagation(); onRemove(i) }}
                   className="absolute top-1.5 right-1.5 w-5 h-5 bg-red-500 text-white rounded-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all shadow-md">
                   <X size={9} strokeWidth={3} />
                 </button>
 
-                {/* Set as main hint */}
                 {i !== 0 && (
                   <div className="absolute inset-0 bg-blue-600/0 group-hover:bg-blue-600/10 transition-all flex items-end justify-center pb-1.5 rounded-xl">
                     <span className="text-[8px] font-bold text-blue-600 bg-white/90 px-1.5 py-0.5 rounded-md opacity-0 group-hover:opacity-100 transition-all">
@@ -112,7 +105,6 @@ const ImageManager = ({ images, onAdd, onRemove, onSetMain, error }) => {
               </motion.div>
             ))}
 
-            {/* Add more tile */}
             <motion.div onClick={() => inputRef.current?.click()}
               whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
               className="aspect-square rounded-xl border-2 border-dashed border-slate-200 hover:border-blue-300 bg-slate-50 hover:bg-blue-50/40 flex flex-col items-center justify-center cursor-pointer transition-all gap-1">
@@ -123,11 +115,10 @@ const ImageManager = ({ images, onAdd, onRemove, onSetMain, error }) => {
         )}
       </AnimatePresence>
 
-      {/* Drop Zone — shown when no images */}
       {images.length === 0 && (
         <div onClick={() => inputRef.current?.click()}
           className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all duration-200
-                        ${error ? "border-red-300 bg-red-50/30" : "border-slate-200 bg-slate-50/50 hover:border-blue-300 hover:bg-blue-50/40"}`}
+            ${error ? "border-red-300 bg-red-50/30" : "border-slate-200 bg-slate-50/50 hover:border-blue-300 hover:bg-blue-50/40"}`}
         >
           <div className="w-10 h-10 rounded-xl bg-slate-100 mx-auto mb-2 flex items-center justify-center">
             <Upload size={16} className="text-slate-400" />
@@ -200,57 +191,50 @@ const SuccessToast = ({ onClose }) => (
 const EditProduct = () => {
   const { id } = useParams()
   const navigate = useNavigate()
+  const { products, categories, updateProduct } = useProduct()
 
   const [loading, setLoading] = useState(false)
   const [fetching, setFetching] = useState(true)
   const [showSuccess, setShowSuccess] = useState(false)
   const [showDiscard, setShowDiscard] = useState(false)
-  const [images, setImages] = useState([])
+  const [images, setImages] = useState([])   // { url?, preview, file?, name?, isNew }
   const [original, setOriginal] = useState(null)
   const [errors, setErrors] = useState({})
 
   const [form, setForm] = useState({
     name: "", description: "", price: "",
-    category: "", stock: "", visible: true,
+    category_id: "", stock: "", is_visible: true,
   })
 
-  // ── Fetch existing product ──
+  // ── Resolve product from context (no extra fetch needed) ──
   useEffect(() => {
-    const fetchProduct = async () => {
-      setFetching(true)
-      const { data, error } = await supabase
-        .from("products")
-        .select("*")
-        .eq("id", id)
-        .single()
+    if (products.length === 0) return  // still loading from context
 
-      if (error || !data) {
-        navigate("/admin/products")
-        return
-      }
-
-      const loaded = {
-        name: data.name || "",
-        description: data.description || "",
-        price: String(data.price || ""),
-        category: data.category || "",
-        stock: String(data.stock || ""),
-        visible: data.visible ?? true,
-      }
-
-      setForm(loaded)
-      setOriginal(loaded)
-
-      // Convert existing image URLs to image objects
-      if (data.images?.length) {
-        setImages(data.images.map(url => ({ url, preview: url, isNew: false })))
-      }
-
-      setFetching(false)
+    const data = products.find(p => p.id === id)
+    if (!data) {
+      navigate("/admin/products")
+      return
     }
 
-    fetchProduct()
-  }, [id])
+    const loaded = {
+      name: data.name || "",
+      description: data.description || "",
+      price: String(data.price || ""),
+      category_id: data.category_id || "",
+      stock: String(data.stock || ""),
+      is_visible: data.is_visible ?? true,
+    }
+
+    setForm(loaded)
+    setOriginal(loaded)
+
+    // Convert existing image_urls array → image objects
+    if (data.image_urls?.length) {
+      setImages(data.image_urls.map(url => ({ url, preview: url, isNew: false })))
+    }
+
+    setFetching(false)
+  }, [id, products])
 
   const set = (key, val) => {
     setForm(f => ({ ...f, [key]: val }))
@@ -260,7 +244,9 @@ const EditProduct = () => {
   const isChanged = (key) => original && form[key] !== original[key]
   const hasAnyChange = original && (
     Object.keys(form).some(k => form[k] !== original[k]) ||
-    images.some(img => img.isNew)
+    images.some(img => img.isNew) ||
+    // also detect removed images
+    images.filter(i => !i.isNew).length !== (original ? products.find(p => p.id === id)?.image_urls?.length ?? 0 : 0)
   )
 
   const validate = () => {
@@ -268,46 +254,31 @@ const EditProduct = () => {
     if (!form.name.trim()) e.name = "Product name is required"
     if (!form.description.trim()) e.description = "Description is required"
     if (!form.price || isNaN(form.price) || Number(form.price) <= 0) e.price = "Enter a valid price"
-    if (!form.category) e.category = "Please select a category"
+    if (!form.category_id) e.category_id = "Please select a category"
     if (form.stock === "" || isNaN(form.stock) || Number(form.stock) < 0) e.stock = "Enter valid stock quantity"
     if (images.length === 0) e.images = "At least one product image is required"
     setErrors(e)
     return Object.keys(e).length === 0
   }
 
-  const uploadNewImages = async () => {
-    const urls = []
-    for (const img of images) {
-      if (!img.isNew) {
-        urls.push(img.url)
-        continue
-      }
-      const fileName = `products/${Date.now()}-${img.name}`
-      const { error } = await supabase.storage.from("product-images").upload(fileName, img.file)
-      if (error) throw new Error(error.message)
-      const { data: urlData } = supabase.storage.from("product-images").getPublicUrl(fileName)
-      urls.push(urlData.publicUrl)
-    }
-    return urls
-  }
-
   const handleSave = async () => {
     if (!validate()) return
     setLoading(true)
     try {
-      const imageUrls = await uploadNewImages()
-      const { error } = await supabase.from("products").update({
+      // Separate kept existing URLs from new files
+      const keptUrls = images.filter(img => !img.isNew).map(img => img.url)
+      const newFiles = images.filter(img => img.isNew).map(img => img.file)
+
+      await updateProduct(id, {
         name: form.name.trim(),
         description: form.description.trim(),
         price: Number(form.price),
-        category: form.category,
+        category_id: form.category_id,
         stock: Number(form.stock),
-        visible: form.visible,
-        images: imageUrls,
-        updated_at: new Date().toISOString(),
-      }).eq("id", id)
+        is_visible: form.is_visible,
+        image_urls: keptUrls,   // context merges new uploads on top
+      }, newFiles)
 
-      if (error) throw new Error(error.message)
       setOriginal({ ...form })
       setImages(prev => prev.map(img => ({ ...img, isNew: false })))
       setShowSuccess(true)
@@ -323,7 +294,7 @@ const EditProduct = () => {
     if (!original) return
     setForm({ ...original })
     setErrors({})
-    // revert images to original (non-new only)
+    // Remove newly added images, keep originals
     setImages(prev => prev.filter(img => !img.isNew))
   }
 
@@ -370,17 +341,17 @@ const EditProduct = () => {
             </div>
           </div>
 
-          {/* Visibility toggle */}
+          {/* Visibility toggle — desktop */}
           <div className="hidden sm:flex items-center gap-3 bg-white border border-slate-200 rounded-2xl px-4 py-2.5 shadow-sm shrink-0">
             <div className="text-right">
               <p className="text-xs font-bold text-slate-700 flex items-center gap-1.5 justify-end">
-                {form.visible ? <Eye size={12} className="text-emerald-500" /> : <EyeOff size={12} className="text-slate-400" />}
-                {form.visible ? "Visible" : "Hidden"}
+                {form.is_visible ? <Eye size={12} className="text-emerald-500" /> : <EyeOff size={12} className="text-slate-400" />}
+                {form.is_visible ? "Visible" : "Hidden"}
               </p>
-              <p className="text-[10px] text-slate-400">{form.visible ? "Shown in store" : "Not visible"}</p>
+              <p className="text-[10px] text-slate-400">{form.is_visible ? "Shown in store" : "Not visible"}</p>
             </div>
-            <button onClick={() => set("visible", !form.visible)} className="transition-all shrink-0">
-              {form.visible
+            <button onClick={() => set("is_visible", !form.is_visible)} className="transition-all shrink-0">
+              {form.is_visible
                 ? <ToggleRight size={30} className="text-blue-600" />
                 : <ToggleLeft size={30} className="text-slate-300" />
               }
@@ -406,7 +377,9 @@ const EditProduct = () => {
                   </div>
                   <h2 className="text-sm font-extrabold text-slate-700">Product Images</h2>
                 </div>
-                <span className="text-[10px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-lg">{images.length} photo{images.length !== 1 ? "s" : ""}</span>
+                <span className="text-[10px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-lg">
+                  {images.length} photo{images.length !== 1 ? "s" : ""}
+                </span>
               </div>
 
               <ImageManager
@@ -423,18 +396,21 @@ const EditProduct = () => {
               />
             </div>
 
-            {/* Visibility mobile */}
+            {/* Visibility — mobile */}
             <div className="sm:hidden bg-white rounded-2xl border border-slate-100 shadow-sm p-4 flex items-center justify-between">
               <div>
                 <p className="text-sm font-bold text-slate-700">Store Visibility</p>
-                <p className="text-xs text-slate-400">{form.visible ? "Visible to customers" : "Hidden from store"}</p>
+                <p className="text-xs text-slate-400">{form.is_visible ? "Visible to customers" : "Hidden from store"}</p>
               </div>
-              <button onClick={() => set("visible", !form.visible)}>
-                {form.visible ? <ToggleRight size={28} className="text-blue-600" /> : <ToggleLeft size={28} className="text-slate-300" />}
+              <button onClick={() => set("is_visible", !form.is_visible)}>
+                {form.is_visible
+                  ? <ToggleRight size={28} className="text-blue-600" />
+                  : <ToggleLeft size={28} className="text-slate-300" />
+                }
               </button>
             </div>
 
-            {/* Change summary */}
+            {/* Unsaved change summary */}
             <AnimatePresence>
               {hasAnyChange && (
                 <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
@@ -447,7 +423,7 @@ const EditProduct = () => {
                     {Object.keys(form).filter(k => isChanged(k)).map(k => (
                       <li key={k} className="text-[11px] text-amber-700 font-medium capitalize flex items-center gap-1.5">
                         <span className="w-1 h-1 rounded-full bg-amber-400 shrink-0" />
-                        {k} updated
+                        {k === "category_id" ? "category" : k === "is_visible" ? "visibility" : k} updated
                       </li>
                     ))}
                     {images.some(i => i.isNew) && (
@@ -504,26 +480,29 @@ const EditProduct = () => {
                 <Field label="Stock Qty" icon={Layers} error={errors.stock} index={3} required changed={isChanged("stock")}>
                   <input type="number" value={form.stock} onChange={e => set("stock", e.target.value)}
                     placeholder="0" className={inputCls(errors.stock)} />
-                  {/* Stock status pill */}
                   {form.stock !== "" && !isNaN(form.stock) && (
                     <div className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-lg border mt-1
-                                            ${Number(form.stock) === 0 ? "bg-red-50 text-red-500 border-red-200"
+                      ${Number(form.stock) === 0 ? "bg-red-50 text-red-500 border-red-200"
                         : Number(form.stock) <= 10 ? "bg-amber-50 text-amber-600 border-amber-200"
                           : "bg-emerald-50 text-emerald-600 border-emerald-200"}`}>
-                      <span className={`w-1.5 h-1.5 rounded-full ${Number(form.stock) === 0 ? "bg-red-400" : Number(form.stock) <= 10 ? "bg-amber-400" : "bg-emerald-500"}`} />
+                      <span className={`w-1.5 h-1.5 rounded-full
+                        ${Number(form.stock) === 0 ? "bg-red-400"
+                          : Number(form.stock) <= 10 ? "bg-amber-400" : "bg-emerald-500"}`} />
                       {Number(form.stock) === 0 ? "Out of Stock" : Number(form.stock) <= 10 ? "Low Stock" : "In Stock"}
                     </div>
                   )}
                 </Field>
               </div>
 
-              {/* Category */}
-              <Field label="Category" icon={Tag} error={errors.category} index={4} required changed={isChanged("category")}>
+              {/* Category — dropdown */}
+              <Field label="Category" icon={Tag} error={errors.category_id} index={4} required changed={isChanged("category_id")}>
                 <div className="relative">
-                  <select value={form.category} onChange={e => set("category", e.target.value)}
-                    className={inputCls(errors.category) + " appearance-none pr-10"}>
+                  <select value={form.category_id} onChange={e => set("category_id", e.target.value)}
+                    className={inputCls(errors.category_id) + " appearance-none pr-10"}>
                     <option value="">Select a category</option>
-                    {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                    {categories.map(c => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
                   </select>
                   <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
                 </div>
@@ -531,14 +510,14 @@ const EditProduct = () => {
 
               {/* Category pills */}
               <div className="flex flex-wrap gap-2 -mt-2">
-                {CATEGORIES.map(c => (
-                  <button key={c} type="button" onClick={() => set("category", c)}
+                {categories.map(c => (
+                  <button key={c.id} type="button" onClick={() => set("category_id", c.id)}
                     className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold border transition-all duration-150
-                                            ${form.category === c
+                      ${form.category_id === c.id
                         ? "bg-blue-600 text-white border-blue-600 shadow-sm"
                         : "bg-slate-50 text-slate-500 border-slate-200 hover:border-blue-200 hover:text-blue-600"
                       }`}>
-                    {c}
+                    {c.name}
                   </button>
                 ))}
               </div>
@@ -553,7 +532,7 @@ const EditProduct = () => {
                 )}
               </AnimatePresence>
 
-              {/* Live comparison preview */}
+              {/* Before → After comparison */}
               <AnimatePresence>
                 {hasAnyChange && original && (
                   <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}
@@ -565,12 +544,19 @@ const EditProduct = () => {
                           { key: "name", label: "Name" },
                           { key: "price", label: "Price", prefix: "₹" },
                           { key: "stock", label: "Stock" },
-                          { key: "category", label: "Category" },
-                        ].filter(({ key }) => isChanged(key)).map(({ key, label, prefix = "" }) => (
+                          {
+                            key: "category_id", label: "Category",
+                            display: (val) => categories.find(c => c.id === val)?.name || val
+                          },
+                        ].filter(({ key }) => isChanged(key)).map(({ key, label, prefix = "", display }) => (
                           <div key={key} className="bg-white rounded-xl p-2.5 border border-blue-100">
                             <p className="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">{label}</p>
-                            <p className="text-slate-400 line-through text-[11px]">{prefix}{original[key]}</p>
-                            <p className="text-blue-600 font-bold text-[11px]">{prefix}{form[key]}</p>
+                            <p className="text-slate-400 line-through text-[11px]">
+                              {prefix}{display ? display(original[key]) : original[key]}
+                            </p>
+                            <p className="text-blue-600 font-bold text-[11px]">
+                              {prefix}{display ? display(form[key]) : form[key]}
+                            </p>
                           </div>
                         ))}
                       </div>

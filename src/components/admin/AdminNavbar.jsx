@@ -8,8 +8,8 @@ const PAGE_TITLES = {
     "/admin": { title: "Dashboard", sub: "Welcome back 👋" },
     "/admin/orders": { title: "Orders", sub: "Manage all customer orders" },
     "/admin/products": { title: "Products", sub: "Your product catalog" },
-    "/admin/add": { title: "Add Product", sub: "Create a new listing" },
-    "/admin/edit": { title: "Edit Product", sub: "Update product details" },
+    "/admin/add-product": { title: "Add Product", sub: "Create a new listing" },
+    "/admin/edit-product": { title: "Edit Product", sub: "Update product details" },
 }
 
 const NOTIFS = [
