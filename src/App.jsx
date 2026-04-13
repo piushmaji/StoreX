@@ -21,6 +21,7 @@ import AuthLayout from "./components/layout/AuthLayout/AuthLayout"
 
 import Signup from "./Auth/SignUp"
 import Login from "./Auth/Login"
+import ForgotPwd from "./Auth/ForgotPwd"
 import MainAuth from "./Auth/MainAuth"
 
 import { Toaster } from "react-hot-toast"
@@ -110,7 +111,8 @@ const router = createBrowserRouter([
             element: <MainAuth />,
             children: [
               { path: "login", element: <Login /> },
-              { path: "signup", element: <Signup /> }
+              { path: "signup", element: <Signup /> },
+              { path: "forgot-password", element: <ForgotPwd /> }
             ]
           }
         ]

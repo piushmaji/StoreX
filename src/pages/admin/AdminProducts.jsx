@@ -268,7 +268,7 @@ const AdminProducts = () => {
             <p className="text-2xl font-black text-slate-800 mt-0.5">{stat.value}</p>
             <p className="text-[10px] text-slate-400 mt-0.5">{stat.sub}</p>
             <div
-              className={`mt-2 h-1 rounded-full bg-gradient-to-r ${stat.color} opacity-60`}
+              className={`mt-2 h-1 rounded-full bg-linear-to-r ${stat.color} opacity-60`}
               style={{ width: products.length > 0 ? `${(stat.value / products.length) * 100}%` : "0%" }}
             />
           </div>

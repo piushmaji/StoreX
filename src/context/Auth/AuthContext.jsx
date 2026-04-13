@@ -85,6 +85,28 @@ export const AuthProvider = ({ children }) => {
         return { data, error }
     }
 
+    // RESET PASSWORD
+    const resetPassword = async (email) => {
+        const { data, error } = await supabase.auth.resetPasswordForEmail(email)
+        return { data, error }
+    }
+
+    // VERIFY RECOVERY OTP
+    const verifyRecoveryOtp = async (email, token) => {
+        const { data, error } = await supabase.auth.verifyOtp({
+            email,
+            token,
+            type: 'recovery'
+        })
+        return { data, error }
+    }
+
+    // UPDATE PASSWORD
+    const updatePassword = async (newPassword) => {
+        const { data, error } = await supabase.auth.updateUser({ password: newPassword })
+        return { data, error }
+    }
+
     // LOGOUT
     const logout = async () => {
         const { error } = await supabase.auth.signOut()
@@ -105,6 +127,9 @@ export const AuthProvider = ({ children }) => {
         signup,
         login,
         loginWithGoogle,
+        resetPassword,
+        verifyRecoveryOtp,
+        updatePassword,
         logout,
     }
 
