@@ -369,7 +369,7 @@ const EditProduct = () => {
 
             {/* Image card */}
             <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-5">
-              <div className="h-[2.5px] w-full bg-gradient-to-r from-blue-600 via-blue-400 to-sky-300 rounded-full mb-5" />
+              <div className="h-[2.5px] w-full bg-linear-to-r from-blue-600 via-blue-400 to-sky-300 rounded-full mb-5" />
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center">
@@ -444,7 +444,7 @@ const EditProduct = () => {
             className="lg:col-span-3">
 
             <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-5 space-y-5">
-              <div className="h-[2.5px] w-full bg-gradient-to-r from-blue-600 via-blue-400 to-sky-300 rounded-full" />
+              <div className="h-[2.5px] w-full bg-linear-to-r from-blue-600 via-blue-400 to-sky-300 rounded-full" />
 
               <div className="flex items-center gap-2">
                 <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center">
@@ -537,7 +537,7 @@ const EditProduct = () => {
                 {hasAnyChange && original && (
                   <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}
                     className="overflow-hidden">
-                    <div className="bg-gradient-to-r from-blue-50 to-sky-50 border border-blue-100 rounded-2xl p-4">
+                    <div className="bg-linear-to-r from-blue-50 to-sky-50 border border-blue-100 rounded-2xl p-4">
                       <p className="text-[9px] font-extrabold text-blue-400 uppercase tracking-widest mb-3">Before → After</p>
                       <div className="grid grid-cols-2 gap-3 text-xs">
                         {[
