@@ -127,7 +127,7 @@ const AddProduct = () => {
             {/* Grid background */}
             <div className="fixed inset-0 pointer-events-none"
                 style={{
-                    backgroundImage: "radial-gradient(circle at 1px 1px, #dbeafe 1px, transparent 0)",
+                    backgroundImage: "radial-linear(circle at 1px 1px, #dbeafe 1px, transparent 0)",
                     backgroundSize: "32px 32px", opacity: 0.45
                 }}
             />
@@ -466,7 +466,7 @@ const AddProduct = () => {
                                     disabled={loading || success}
                                     whileHover={{ scale: (loading || success) ? 1 : 1.01 }}
                                     whileTap={{ scale: (loading || success) ? 1 : 0.98 }}
-                                    className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-black tracking-wide transition-all shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2"
+                                    className="w-full py-3.5 rounded-2xl bg-linear-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-black tracking-wide transition-all shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2"
                                 >
                                     {loading ? (
                                         <>

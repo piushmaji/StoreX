@@ -1,66 +1,64 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 const Timer = ({ endDate }) => {
     const calculateTimeLeft = () => {
-        const difference = new Date(endDate) - new Date()
-
-        if (difference <= 0) {
-            return {
-                days: 0,
-                hours: 0,
-                minutes: 0,
-                seconds: 0,
-                expired: true
-            }
-        }
-
+        const difference = new Date(endDate) - new Date();
+        if (difference <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0, expired: true };
         return {
             days: Math.floor(difference / (1000 * 60 * 60 * 24)),
             hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
             minutes: Math.floor((difference / 1000 / 60) % 60),
             seconds: Math.floor((difference / 1000) % 60),
-            expired: false
-        }
-    }
+            expired: false,
+        };
+    };
 
-    const [timeLeft, setTimeLeft] = useState(calculateTimeLeft())
+    const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
 
     useEffect(() => {
-        const timer = setInterval(() => {
-            setTimeLeft(calculateTimeLeft())
-        }, 1000)
-
-        return () => clearInterval(timer)
-    }, [endDate])
+        const timer = setInterval(() => setTimeLeft(calculateTimeLeft()), 1000);
+        return () => clearInterval(timer);
+    }, [endDate]);
 
     const timeData = [
-        { id: 1, value: timeLeft.days, label: "Days" },
-        { id: 2, value: timeLeft.hours, label: "Hour" },
-        { id: 3, value: timeLeft.minutes, label: "Min" },
-        { id: 4, value: timeLeft.seconds, label: "Sec" }
-    ]
+        { value: timeLeft.days, label: "D" },
+        { value: timeLeft.hours, label: "H" },
+        { value: timeLeft.minutes, label: "M" },
+        { value: timeLeft.seconds, label: "S" },
+    ];
 
     if (timeLeft.expired) {
         return (
-            <div className='text-red-500 font-semibold text-lg'>
-                Offer Expired!
-            </div>
-        )
+            <span className="text-red-400 font-semibold text-sm tracking-widest uppercase">
+                Offer Expired
+            </span>
+        );
     }
 
     return (
-        <div className='w-full grid grid-cols-4 items-center justify-items-center gap-4'>
-            {timeData.map((item) => (
-                <div
-                    key={item.id}
-                    className='lg:h-14 lg:w-14 h-12 w-12 bg-gray-300 flex flex-col items-center justify-center rounded-lg shadow-md'
-                >
-                    <h2 className='text-lg lg:text-xl font-bold'>{String(item.value).padStart(2, '0')}</h2>
-                    <h3 className='text-[10px] lg:text-xs text-gray-600'>{item.label}</h3>
-                </div>
+        <div className="flex items-center gap-1.5">
+            {timeData.map((item, idx) => (
+                <React.Fragment key={item.label}>
+                    {/* Time block */}
+                    <div className="flex flex-col items-center">
+                        <div className="h-10 w-10 bg-white/10 border border-white/15 rounded-lg flex items-center justify-center backdrop-blur-sm">
+                            <span className="text-white font-bold text-sm tabular-nums">
+                                {String(item.value).padStart(2, '0')}
+                            </span>
+                        </div>
+                        <span className="text-gray-500 text-[9px] mt-0.5 tracking-widest">
+                            {item.label}
+                        </span>
+                    </div>
+
+                    {/* Colon separator (not after last) */}
+                    {idx < timeData.length - 1 && (
+                        <span className="text-white/40 font-bold text-sm mb-3 select-none">:</span>
+                    )}
+                </React.Fragment>
             ))}
         </div>
-    )
-}
+    );
+};
 
-export default Timer
+export default Timer;

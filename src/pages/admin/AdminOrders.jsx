@@ -76,7 +76,7 @@ const OrderModal = ({ order, onClose, onStatusChange }) => {
         style={{ fontFamily: "'Sora', sans-serif" }}
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-5 flex items-center justify-between">
+        <div className="bg-linear-to-r from-blue-600 to-blue-500 px-6 py-5 flex items-center justify-between">
           <div>
             <p className="text-blue-100 text-[10px] font-bold tracking-widest uppercase">Order Details</p>
             <h2 className="text-white font-black text-xl mt-0.5">{order.id}</h2>
@@ -91,7 +91,7 @@ const OrderModal = ({ order, onClose, onStatusChange }) => {
           <div className="bg-slate-50 rounded-2xl p-4 space-y-2.5">
             <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">Customer</p>
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-black text-sm shadow">
+              <div className="w-10 h-10 rounded-xl bg-linear-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-black text-sm shadow">
                 {order.customer.name[0]}
               </div>
               <div>
@@ -266,7 +266,7 @@ const AdminOrderTable = () => {
           <div key={stat.label} className="bg-white rounded-2xl border border-slate-100 p-4 shadow-sm">
             <p className="text-xs font-semibold text-slate-400 mb-1">{stat.label}</p>
             <p className="text-2xl font-black text-slate-800">{stat.value}</p>
-            <div className={`mt-2 h-1 rounded-full bg-gradient-to-r ${stat.color} opacity-60`} style={{ width: `${(stat.value / orders.length) * 100}%` }} />
+            <div className={`mt-2 h-1 rounded-full bg-linear-to-r ${stat.color} opacity-60`} style={{ width: `${(stat.value / orders.length) * 100}%` }} />
           </div>
         ))}
       </div>
@@ -417,7 +417,7 @@ const AdminOrderTable = () => {
                     {/* Customer */}
                     <td className="px-4 py-4">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-black text-xs shadow-sm shrink-0">
+                        <div className="w-8 h-8 rounded-xl bg-linear-to-br from-blue-500 to-blue-600 flex items-center justify-center text-white font-black text-xs shadow-sm shrink-0">
                           {order.customer.name[0]}
                         </div>
                         <div>

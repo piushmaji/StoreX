@@ -1,162 +1,125 @@
-import ImgSlider from './ImgSlider'
+import React from 'react'
 import Deal from './Deal'
 import CategoryCards from './CategoryCards/CategoryCards'
 import SendInquiry from './SendInquiry'
-import RecomendedItems from './RecomendedItems'
 import ExtraService from './ExtraService'
 import Suppliers from './Suppliers'
+import ImgSlider from './ImgSlider'
+import RecomendedItems from './RecomendedItems'
+
+const womensCollectionData = {
+    id: 101,
+    title: "Women's Collection",
+    buttonText: "Shop Women's",
+    bgImage: "https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=1470&auto=format&fit=crop",
+    items: [
+        { id: 1, name: "Silk Blouse", img: "https://images.unsplash.com/photo-1550639524-a6f58345a90d?q=80&w=1200&auto=format&fit=crop", price: "2,499" },
+        { id: 2, name: "Wool Coat", img: "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?q=80&w=1200&auto=format&fit=crop", price: "4,899" },
+        { id: 3, name: "Minimalist Tote", img: "https://images.unsplash.com/photo-1584916201218-f4242ceb4809?q=80&w=1200&auto=format&fit=crop", price: "1,199" },
+        { id: 4, name: "Classic Heels", img: "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=1200&auto=format&fit=crop", price: "3,599" },
+        { id: 5, name: "Linen Dress", img: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=1200&auto=format&fit=crop", price: "2,599" },
+        { id: 6, name: "Cashmere Scarf", img: "https://images.unsplash.com/photo-1620610300405-1a8519fcbb88?q=80&w=1200&auto=format&fit=crop", price: "1,499" },
+        { id: 7, name: "Gold Plated Earrings", img: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=1200&auto=format&fit=crop", price: "999" },
+        { id: 8, name: "Pleated Skirt", img: "https://images.unsplash.com/photo-1582142337651-76077717d12f?q=80&w=1200&auto=format&fit=crop", price: "1,999" },
+    ],
+}
+
+const slides = [
+    { image: "https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=1470&auto=format&fit=crop" },
+    { image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=1470&auto=format&fit=crop" },
+    { image: "https://images.unsplash.com/photo-1445205170230-053b83016050?q=80&w=1470&auto=format&fit=crop" },
+];
+
+const mensCollectionData = {
+    id: 102,
+    title: "Men's Essentials",
+    buttonText: "Shop Men's",
+    bgImage: "https://images.unsplash.com/photo-1516257984-b1b4d707412e?q=80&w=1470&auto=format&fit=crop",
+    items: [
+        { id: 1, name: "Linen Shirt", img: "https://images.unsplash.com/photo-1596755094514-f87e32f85e2c?q=80&w=1200&auto=format&fit=crop", price: "1,899" },
+        { id: 2, name: "Leather Boots", img: "https://images.unsplash.com/photo-1608256246200-53e635b5b65f?q=80&w=1200&auto=format&fit=crop", price: "4,999" },
+        { id: 3, name: "Tailored Trousers", img: "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?q=80&w=1200&auto=format&fit=crop", price: "2,299" },
+        { id: 4, name: "Chronograph Watch", img: "https://images.unsplash.com/photo-1524805444758-089113d48a6d?q=80&w=1200&auto=format&fit=crop", price: "5,999" },
+        { id: 5, name: "Denim Jacket", img: "https://images.unsplash.com/photo-1576871337622-98d48d1cf531?q=80&w=1200&auto=format&fit=crop", price: "3,499" },
+        { id: 6, name: "Aviator Sunglasses", img: "https://images.unsplash.com/photo-1511499767150-a48a237f0083?q=80&w=1200&auto=format&fit=crop", price: "1,299" },
+        { id: 7, name: "Leather Belt", img: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=1200&auto=format&fit=crop", price: "899" },
+        { id: 8, name: "Oxford Shoes", img: "https://images.unsplash.com/photo-1614252339460-e171b1e60055?q=80&w=1200&auto=format&fit=crop", price: "3,999" },
+    ],
+}
+
+const clothingCategories = [
+    { id: 1, label: "NEW IN", href: "#" },
+    { id: 2, label: "WOMEN", href: "#" },
+    { id: 3, label: "MEN", href: "#" },
+    { id: 4, label: "ACCESSORIES", href: "#" },
+    { id: 5, label: "SALE", href: "#" },
+];
 
 const Home = () => {
-    const homeDecorData = {
-        id: 101,
-        title: "Home and Outdoor",
-        buttonText: "Source Now",
-        bgImage: "https://images.unsplash.com/photo-1616046229478-9901c5536a45?q=80&w=1480&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        items: [
-            {
-                id: 1,
-                name: "Soft chairs",
-                img: "https://static.vecteezy.com/system/resources/thumbnails/039/652/230/small/ai-generated-soft-armchair-soft-chair-soft-sofa-stylish-armchair-luxurious-armchair-luxurious-chair-soft-armchair-transparent-background-png.png",
-                price: "999",
-            },
-            {
-                id: 2,
-                name: "Sofa & chair",
-                img: "https://freepngimg.com/save/13099-furniture-png-image/1200x957",
-                price: "899",
-            },
-            {
-                id: 3,
-                name: "Kitchen dishes",
-                img: "https://png.pngtree.com/png-vector/20240408/ourmid/pngtree-large-metal-bowl-overflowing-with-colorful-kitchen-utensils-png-image_12270852.png",
-                price: "199",
-            },
-            {
-                id: 4,
-                name: "Smart watches",
-                img: "https://images.fonearena.com/blog/wp-content/uploads/2020/05/realme-smartwatch.png",
-                price: "599",
-            },
-            {
-                id: 5,
-                name: "Kitchen mixer",
-                img: "https://www.pngplay.com/wp-content/uploads/7/Mixer-Grinder-Kitchen-Background-PNG-Image.png",
-                price: "599",
-            },
-            {
-                id: 6,
-                name: "Juicer",
-                img: "https://png.pngtree.com/png-clipart/20240812/original/pngtree-juice-machine-full-of-juices-png-image_15753760.png",
-                price: "499",
-            },
-            {
-                id: 7,
-                name: "Home appliance",
-                img: "https://png.pngtree.com/png-clipart/20250417/original/pngtree-smart-home-and-kitchen-appliances-png-image_20843861.png",
-                price: "9999",
-            },
-            {
-                id: 8,
-                name: "Coffee maker",
-                img: "https://png.pngtree.com/png-clipart/20241203/original/pngtree-modern-coffee-maker-png-image_17483299.png",
-                price: "1999",
-            },
-        ],
-    }
-    const slides = [
-        {
-            image: "https://rukminim2.flixcart.com/fk-p-flap/3240/540/image/2ec5357fa1787447.jpg?q=60",
-        },
-        {
-            image: "https://rukminim2.flixcart.com/fk-p-flap/3240/540/image/cfde6a9e800a107a.png?q=60",
-        },
-        {
-            image: "https://rukminim2.flixcart.com/fk-p-flap/3240/540/image/265951683409e311.png?q=60",
-        },
-    ];
-    const electronicsGadgets = {
-        id: 102,
-        title: "Electronics and gadgets",
-        buttonText: "Source Now",
-        bgImage: "https://images.unsplash.com/photo-1623970405357-1eb737075953?q=80&w=1036&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        items: [
-            {
-                id: 1,
-                name: "Smart watches",
-                img: "https://www.boat-lifestyle.com/cdn/shop/files/WaveGenesisPro-FI_Orange01_fa9e528c-84c9-4a86-a0ed-6e31aba5364b.png?v=1697097677",
-                price: "899",
-            },
-            {
-                id: 2,
-                name: "Cameras",
-                img: "https://png.pngtree.com/png-vector/20240905/ourmid/pngtree-black-dslr-camera-with-large-lens-clipart-illustration-stock-photo-png-image_13758787.png",
-                price: "19999",
-            },
-            {
-                id: 3,
-                name: "Headphones",
-                img: "https://png.pngtree.com/png-vector/20250321/ourmid/pngtree-wireless-headphone-png-image_15830312.png",
-                price: "999",
-            },
-            {
-                id: 4,
-                name: "Play Station",
-                img: "https://wallpapers.com/images/featured/ps5-console-png-ywbv2gv3gfw23o3w.png",
-                price: "29999",
-            },
-            {
-                id: 5,
-                name: "Gaming set",
-                img: "https://png.pngtree.com/png-clipart/20241230/original/pngtree-vibrant-gaming-setup-neon-pink-desk-electric-blue-accents-ergonomic-ga-png-image_18316814.png",
-                price: "49999",
-            },
-            {
-                id: 6,
-                name: "Laptops & PC",
-                img: "https://www.freepnglogos.com/uploads/laptop-png/laptop-png-custom-safety-software-applications-terraine-27.png",
-                price: "39999",
-            },
-            {
-                id: 7,
-                name: "Smartphones",
-                img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRD4ptSLwnADJYa6U_VH2h768VC8B58ZfWHRg&s",
-                price: "9999",
-            },
-            {
-                id: 8,
-                name: "Electric kettle",
-                img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTt1gi9QEUOoH68eLIByEKgW5lIDznccR9teQ&s",
-                price: "499",
-            },
-        ],
-    }
+
     return (
-        <div className='relative w-full bg-gray-50 overflow-x-hidden '>
+        <div className="relative w-full bg-white overflow-x-hidden font-sans">
 
-            <div className='lg:px-18 lg:pt-8 py-4'>
-                {/* image slider page */}
-                <ImgSlider slides={slides} />
+            {/* ── Announcement Bar ─────────────────────────────────────── */}
+            <div className="w-full bg-gray-900 text-white text-center py-2 text-xs tracking-widest font-medium uppercase">
+                FREE DELIVERY ON ORDERS OVER ₹999 &nbsp;·&nbsp; NEW ARRIVALS EVERY FRIDAY
+            </div>
 
-                {/* Deal section page */}
-                <Deal />
+            {/* ── Category Nav Pill Row ─────────────────────────────────── */}
+            <nav className="flex items-center justify-center gap-6 py-4 border-b border-gray-100 px-4">
+                {clothingCategories.map(cat => (
+                    <a
+                        key={cat.id}
+                        href={cat.href}
+                        className={`text-xs font-semibold tracking-widest transition-colors duration-200 pb-1
+                            \${cat.label === "SALE"
+                                ? "text-blue-600 border-b-2 border-blue-600"
+                                : "text-gray-500 hover:text-gray-900 hover:border-b-2 hover:border-gray-900 border-transparent"
+                            }`}
+                    >
+                        {cat.label}
+                    </a>
+                ))}
+            </nav>
 
-                {/* Home and decor section */}
-                <CategoryCards {...homeDecorData} />
+            {/* ── Main content wrapper ──────────────────────────────────── */}
+            <div className="max-w-screen-2xl mx-auto space-y-12 pb-16">
 
-                {/* ELectronics and gadgets section */}
-                <CategoryCards {...electronicsGadgets} />
+                {/* Hero Slider */}
+                <section className="px-4 lg:px-8 mt-6">
+                    <ImgSlider slides={slides} />
+                </section>
 
-                {/* Send Inquiry section */}
-                <SendInquiry />
+                {/* Deals section */}
+                <section className="px-4 lg:px-8">
+                    <Deal />
+                </section>
 
-                {/* Recomended Items section */}
-                <RecomendedItems />
+                {/* Women's Category Cards */}
+                <section className="px-4 lg:px-8">
+                    <CategoryCards {...womensCollectionData} />
+                </section>
 
-                {/* Extra Service section */}
-                <ExtraService />
+                {/* Men's Category Cards */}
+                <section className="px-4 lg:px-8">
+                    <CategoryCards {...mensCollectionData} />
+                </section>
 
-                {/* Suppliers by region section  */}
-                <Suppliers />
+                {/* Send Inquiry */}
+                <section className="px-4 lg:px-8">
+                    <SendInquiry />
+                </section>
+
+                {/* Recommended Items */}
+                <section className="px-4 lg:px-8">
+                    <RecomendedItems />
+                </section>
+
+                {/* Extra Services & Suppliers wrapper */}
+                <div className="px-4 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-4 border-t border-gray-100 pt-12">
+                    <ExtraService />
+                    <Suppliers />
+                </div>
             </div>
         </div>
     )
