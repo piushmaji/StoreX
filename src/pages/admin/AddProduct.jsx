@@ -5,7 +5,7 @@ import {
     ArrowLeft, Type, AlignLeft, IndianRupee,
     Tag, Percent, Layers, Eye, EyeOff, ChevronDown,
     Plus, X, Image as ImageIcon, Sparkles, Upload, Star,
-    AlertCircle, CheckCircle2
+    AlertCircle, CheckCircle2, Palette, Ruler, ListTree, Sliders
 } from "lucide-react"
 import { useProduct } from "../../context/admin/ProductContext"
 
@@ -23,7 +23,7 @@ const inputCls = "w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2
 // ─── Main ─────────────────────────────────────────────────────
 const AddProduct = () => {
     const navigate = useNavigate()
-    const { addProduct,categories } = useProduct()
+    const { addProduct, categories } = useProduct()
     const fileInputRef = useRef()
 
     // ── form state ──
@@ -42,12 +42,53 @@ const AddProduct = () => {
         price: "",
         discount: "",
         stock: "",
+        sizes: [], 
+        colors: [], 
+        features: [],
+        specs: [], 
     })
 
     const set = (key, val) => {
         setForm(f => ({ ...f, [key]: val }))
         if (errors[key]) setErrors(e => ({ ...e, [key]: "" }))
     }
+
+    // ── Dynamic Array Handlers ──
+    const handleAddSize = (e) => {
+        if (e.key === 'Enter' && e.target.value.trim()) {
+            e.preventDefault();
+            const val = e.target.value.trim().toUpperCase();
+            if (!form.sizes.includes(val)) {
+                setForm(f => ({ ...f, sizes: [...f.sizes, val] }));
+            }
+            e.target.value = '';
+        }
+    };
+    const removeSize = (idx) => setForm(f => ({ ...f, sizes: f.sizes.filter((_, i) => i !== idx) }));
+
+    const addColor = () => setForm(f => ({ ...f, colors: [...f.colors, { name: "", hex: "#000000" }] }));
+    const updateColor = (idx, field, val) => {
+        const newCols = [...form.colors];
+        newCols[idx][field] = val;
+        setForm(f => ({ ...f, colors: newCols }));
+    }
+    const removeColor = (idx) => setForm(f => ({ ...f, colors: f.colors.filter((_, i) => i !== idx) }));
+
+    const addFeature = () => setForm(f => ({ ...f, features: [...f.features, ""] }));
+    const updateFeature = (idx, val) => {
+        const newFeats = [...form.features];
+        newFeats[idx] = val;
+        setForm(f => ({ ...f, features: newFeats }));
+    }
+    const removeFeature = (idx) => setForm(f => ({ ...f, features: f.features.filter((_, i) => i !== idx) }));
+
+    const addSpec = () => setForm(f => ({ ...f, specs: [...f.specs, { key: "", value: "" }] }));
+    const updateSpec = (idx, field, val) => {
+        const newSpecs = [...form.specs];
+        newSpecs[idx][field] = val;
+        setForm(f => ({ ...f, specs: newSpecs }));
+    }
+    const removeSpec = (idx) => setForm(f => ({ ...f, specs: f.specs.filter((_, i) => i !== idx) }));
 
     // ── image handlers ──
     const addFiles = (incoming) => {
@@ -85,8 +126,23 @@ const AddProduct = () => {
 
     // ── submit ──
     const handleSubmit = async () => {
-        if (!validate()) return
+        if (!validate()) {
+            // Scroll to top to see validation errors
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+        }
         setLoading(true)
+
+        // Clean up arrays/JSON to prevent empty blanks overriding good logic
+        const validColors = form.colors.filter(c => c.name.trim() !== "");
+        const validFeatures = form.features.filter(f => f.trim() !== "");
+        const validSpecs = form.specs.filter(s => s.key.trim() !== "" && s.value.trim() !== "");
+        
+        let specsObj = null;
+        if (validSpecs.length > 0) {
+            specsObj = validSpecs.reduce((acc, curr) => ({ ...acc, [curr.key.trim()]: curr.value.trim() }), {});
+        }
+
         try {
             await addProduct(
                 {
@@ -97,13 +153,18 @@ const AddProduct = () => {
                     stock: Number(form.stock),
                     category_id: category,
                     is_visible: visible,
+                    sizes: form.sizes.length > 0 ? form.sizes : null,
+                    colors: validColors.length > 0 ? validColors : null,
+                    features: validFeatures.length > 0 ? validFeatures : null,
+                    specs: specsObj
                 },
-                files   // File[] — ProductContext uploads these to Supabase Storage
+                files
             )
             setSuccess(true)
             setTimeout(() => navigate("/admin/products"), 1800)
         } catch (err) {
             setErrors(e => ({ ...e, submit: err.message || "Something went wrong" }))
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         } finally {
             setLoading(false)
         }
@@ -111,7 +172,7 @@ const AddProduct = () => {
 
     const handleReset = () => {
         previews.forEach(url => URL.revokeObjectURL(url))
-        setForm({ name: "", description: "", price: "", discount: "", stock: "" })
+        setForm({ name: "", description: "", price: "", discount: "", stock: "", sizes: [], colors: [], features: [], specs: [] })
         setCategory("")
         setFiles([])
         setPreviews([])
@@ -132,7 +193,7 @@ const AddProduct = () => {
                 }}
             />
 
-            <div className="relative max-w-5xl mx-auto space-y-6">
+            <div className="relative max-w-6xl mx-auto space-y-6">
 
                 {/* ══ HEADER ══ */}
                 <motion.div
@@ -214,76 +275,8 @@ const AddProduct = () => {
                                             ? <p className="flex items-center gap-1 text-[11px] text-red-500 font-medium"><AlertCircle size={10} />{errors.description}</p>
                                             : <span />
                                         }
-                                        <p className="text-[10px] text-slate-300 font-semibold">{form.description.length} / 1000</p>
+                                        <p className="text-[10px] text-slate-300 font-semibold">{form.description.length} / 2000</p>
                                     </div>
-                                </div>
-                            </div>
-                        </motion.div>
-
-                        {/* Card: Pricing */}
-                        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.1, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                            className="bg-white rounded-3xl border border-slate-100 shadow-[0_2px_20px_rgba(0,0,0,0.04)] overflow-hidden">
-                            <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-50">
-                                <div className="w-7 h-7 rounded-xl bg-blue-600 flex items-center justify-center shadow-md shadow-blue-500/30">
-                                    <IndianRupee size={13} className="text-white" />
-                                </div>
-                                <span className="text-[13px] font-extrabold text-slate-700">Pricing</span>
-                            </div>
-
-                            <div className="p-6 space-y-4">
-                                <div className="grid grid-cols-2 gap-4">
-                                    {/* Original Price */}
-                                    <div className="space-y-2">
-                                        <Label icon={IndianRupee} text="Original Price" required />
-                                        <div className="relative">
-                                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[13px] font-black text-slate-400">₹</span>
-                                            <input
-                                                type="number" min="0"
-                                                value={form.price}
-                                                onChange={e => set("price", e.target.value)}
-                                                placeholder="0.00"
-                                                className={`${inputCls} pl-8 ${errors.price ? "border-red-300" : ""}`}
-                                            />
-                                        </div>
-                                        {errors.price && <p className="flex items-center gap-1 text-[11px] text-red-500 font-medium"><AlertCircle size={10} />{errors.price}</p>}
-                                    </div>
-
-                                    {/* Discount Price */}
-                                    <div className="space-y-2">
-                                        <Label icon={Percent} text="Discount Price" />
-                                        <div className="relative">
-                                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[13px] font-black text-slate-400">₹</span>
-                                            <input
-                                                type="number" min="0"
-                                                value={form.discount}
-                                                onChange={e => set("discount", e.target.value)}
-                                                placeholder="0.00"
-                                                className={`${inputCls} pl-8 ${errors.discount ? "border-red-300" : ""}`}
-                                            />
-                                        </div>
-                                        {errors.discount && <p className="flex items-center gap-1 text-[11px] text-red-500 font-medium"><AlertCircle size={10} />{errors.discount}</p>}
-                                    </div>
-                                </div>
-
-                                {/* Live discount % badge */}
-                                {form.price && form.discount && !isNaN(form.price) && !isNaN(form.discount) && Number(form.discount) < Number(form.price) && (
-                                    <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
-                                        className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-2xl px-4 py-2.5">
-                                        <span className="text-sm font-black text-emerald-600">
-                                            {Math.round((1 - Number(form.discount) / Number(form.price)) * 100)}% OFF
-                                        </span>
-                                        <span className="text-[11px] text-emerald-500 font-semibold">
-                                            Customer saves ₹{(Number(form.price) - Number(form.discount)).toLocaleString()}
-                                        </span>
-                                    </motion.div>
-                                )}
-
-                                <div className="flex items-center gap-2 bg-blue-50 border border-blue-100 rounded-2xl px-4 py-3">
-                                    <Percent size={13} className="text-blue-500 shrink-0" />
-                                    <p className="text-[11px] text-blue-600 font-semibold">
-                                        Leave Discount Price empty if no sale is active.
-                                    </p>
                                 </div>
                             </div>
                         </motion.div>
@@ -367,13 +360,6 @@ const AddProduct = () => {
                                                         </div>
                                                     )}
 
-                                                    {/* Hover overlay */}
-                                                    <div className="absolute inset-0 bg-slate-900/30 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center gap-1.5">
-                                                        {i !== 0 && (
-                                                            <span className="text-[8px] font-bold text-white bg-blue-600 px-1.5 py-0.5 rounded-md">Set cover</span>
-                                                        )}
-                                                    </div>
-
                                                     {/* Remove */}
                                                     <button
                                                         onClick={e => { e.stopPropagation(); removeImage(i) }}
@@ -383,25 +369,131 @@ const AddProduct = () => {
                                                     </button>
                                                 </motion.div>
                                             ))}
-
-                                            {/* Add more tile */}
-                                            <motion.div
-                                                whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}
-                                                onClick={() => fileInputRef.current?.click()}
-                                                className="aspect-square rounded-xl border-2 border-dashed border-slate-200 hover:border-blue-300 bg-slate-50 hover:bg-blue-50/40 flex flex-col items-center justify-center cursor-pointer transition-all gap-1"
-                                            >
-                                                <Plus size={16} className="text-slate-300" />
-                                                <span className="text-[8px] font-bold text-slate-300">Add</span>
-                                            </motion.div>
                                         </motion.div>
                                     )}
                                 </AnimatePresence>
+                            </div>
+                        </motion.div>
 
-                                {previews.length > 0 && (
-                                    <p className="text-[11px] text-slate-400">
-                                        Click any image to set it as <span className="text-blue-500 font-semibold">cover photo</span>. Images are uploaded to Supabase Storage on publish.
-                                    </p>
-                                )}
+                        {/* Card: Variants & Options */}
+                        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.20, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                            className="bg-white rounded-3xl border border-slate-100 shadow-[0_2px_20px_rgba(0,0,0,0.04)] overflow-hidden">
+                            <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-50">
+                                <div className="w-7 h-7 rounded-xl bg-blue-600 flex items-center justify-center shadow-md shadow-blue-500/30">
+                                    <Ruler size={13} className="text-white" />
+                                </div>
+                                <span className="text-[13px] font-extrabold text-slate-700">Variants & Options</span>
+                            </div>
+
+                            <div className="p-6 space-y-6">
+                                {/* Sizes */}
+                                <div className="space-y-2">
+                                    <Label icon={Ruler} text="Available Sizes" />
+                                    <input
+                                        onKeyDown={handleAddSize}
+                                        placeholder="Type a size e.g. 'XL' and press Enter..."
+                                        className={inputCls}
+                                    />
+                                    <div className="pt-2 flex flex-wrap gap-2">
+                                        <AnimatePresence>
+                                            {form.sizes.map((s, idx) => (
+                                                <motion.span 
+                                                    key={idx}
+                                                    initial={{ opacity: 0, scale: 0.8 }}
+                                                    animate={{ opacity: 1, scale: 1 }}
+                                                    exit={{ opacity: 0, scale: 0.8 }}
+                                                    className="inline-flex items-center gap-1.5 bg-slate-100 border border-slate-200 text-slate-700 text-[11px] font-bold px-3 py-1.5 rounded-lg"
+                                                >
+                                                    {s}
+                                                    <button onClick={() => removeSize(idx)} className="hover:text-red-500 transition-colors">
+                                                        <X size={12} />
+                                                    </button>
+                                                </motion.span>
+                                            ))}
+                                        </AnimatePresence>
+                                    </div>
+                                </div>
+
+                                {/* Colors */}
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between pb-1">
+                                        <Label icon={Palette} text="Color Options" />
+                                        <button onClick={addColor} className="text-[11px] font-bold text-blue-500 hover:text-blue-600 flex items-center gap-1">
+                                            <Plus size={12} /> Add Color
+                                        </button>
+                                    </div>
+                                    <div className="space-y-3">
+                                        {form.colors.map((c, idx) => (
+                                            <div key={idx} className="flex gap-3 items-center">
+                                                <input type="color" value={c.hex} onChange={e => updateColor(idx, "hex", e.target.value)} className="w-12 h-11 rounded-xl cursor-pointer border-0 bg-transparent shrink-0" />
+                                                <input value={c.name} onChange={e => updateColor(idx, "name", e.target.value)} placeholder="Color Name (e.g. Midnight Blue)" className={inputCls} />
+                                                <button onClick={() => removeColor(idx)} className="w-11 h-11 shrink-0 flex items-center justify-center rounded-xl bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-600 transition-colors">
+                                                    <X size={16} />
+                                                </button>
+                                            </div>
+                                        ))}
+                                        {form.colors.length === 0 && <p className="text-[12px] text-slate-400 italic">No color options added.</p>}
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+
+                        {/* Card: Details & Specs */}
+                        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.25, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                            className="bg-white rounded-3xl border border-slate-100 shadow-[0_2px_20px_rgba(0,0,0,0.04)] overflow-hidden">
+                            <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-50">
+                                <div className="w-7 h-7 rounded-xl bg-blue-600 flex items-center justify-center shadow-md shadow-blue-500/30">
+                                    <Sliders size={13} className="text-white" />
+                                </div>
+                                <span className="text-[13px] font-extrabold text-slate-700">Details & Specifications</span>
+                            </div>
+
+                            <div className="p-6 space-y-8">
+                                {/* Features */}
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between pb-1">
+                                        <Label icon={ListTree} text="Product Features" />
+                                        <button onClick={addFeature} className="text-[11px] font-bold text-blue-500 hover:text-blue-600 flex items-center gap-1">
+                                            <Plus size={12} /> Add Feature
+                                        </button>
+                                    </div>
+                                    <div className="space-y-3">
+                                        {form.features.map((f, idx) => (
+                                            <div key={idx} className="flex gap-3 items-center">
+                                                <div className="w-2 h-2 rounded-full bg-slate-300 shrink-0" />
+                                                <input value={f} onChange={e => updateFeature(idx, e.target.value)} placeholder="e.g. Made from 100% recycled materials" className={inputCls} />
+                                                <button onClick={() => removeFeature(idx)} className="w-11 h-11 shrink-0 flex items-center justify-center rounded-xl bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-600 transition-colors">
+                                                    <X size={16} />
+                                                </button>
+                                            </div>
+                                        ))}
+                                        {form.features.length === 0 && <p className="text-[12px] text-slate-400 italic">No features added.</p>}
+                                    </div>
+                                </div>
+
+                                {/* Specs */}
+                                <div className="space-y-2">
+                                    <div className="flex items-center justify-between pb-1">
+                                        <Label icon={Sliders} text="Technical Specs" />
+                                        <button onClick={addSpec} className="text-[11px] font-bold text-blue-500 hover:text-blue-600 flex items-center gap-1">
+                                            <Plus size={12} /> Add Spec Row
+                                        </button>
+                                    </div>
+                                    <div className="space-y-3">
+                                        {form.specs.map((s, idx) => (
+                                            <div key={idx} className="flex gap-3 items-center">
+                                                <input value={s.key} onChange={e => updateSpec(idx, "key", e.target.value)} placeholder="e.g. Material" className={inputCls} />
+                                                <input value={s.value} onChange={e => updateSpec(idx, "value", e.target.value)} placeholder="e.g. 100% Cotton" className={inputCls} />
+                                                <button onClick={() => removeSpec(idx)} className="w-11 h-11 shrink-0 flex items-center justify-center rounded-xl bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-600 transition-colors">
+                                                    <X size={16} />
+                                                </button>
+                                            </div>
+                                        ))}
+                                        {form.specs.length === 0 && <p className="text-[12px] text-slate-400 italic">No specifications added.</p>}
+                                    </div>
+                                </div>
                             </div>
                         </motion.div>
                     </div>
@@ -455,7 +547,7 @@ const AddProduct = () => {
                                     {success && (
                                         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
                                             className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-bold px-3 py-2.5 rounded-xl">
-                                            <CheckCircle2 size={14} className="text-emerald-500" /> Product published! Redirecting...
+                                            <CheckCircle2 size={14} className="text-emerald-500" /> Save successful! Redir...
                                         </motion.div>
                                     )}
                                 </AnimatePresence>
@@ -471,7 +563,7 @@ const AddProduct = () => {
                                     {loading ? (
                                         <>
                                             <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                            Uploading & Saving...
+                                            Syncing Database...
                                         </>
                                     ) : (
                                         <>
@@ -480,16 +572,58 @@ const AddProduct = () => {
                                         </>
                                     )}
                                 </motion.button>
-
-                                <button
-                                    onClick={handleReset}
-                                    className="w-full py-2.5 rounded-2xl border border-slate-200 text-slate-400 text-[12.5px] font-semibold hover:bg-red-50 hover:text-red-400 hover:border-red-200 transition-all"
-                                >
-                                    Reset Form
-                                </button>
                             </div>
                         </motion.div>
-{/* Card: Category */}
+
+                        {/* Card: Pricing */}
+                        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.1, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                            className="bg-white rounded-3xl border border-slate-100 shadow-[0_2px_20px_rgba(0,0,0,0.04)] overflow-hidden">
+                            <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-50">
+                                <div className="w-7 h-7 rounded-xl bg-blue-600 flex items-center justify-center shadow-md shadow-blue-500/30">
+                                    <IndianRupee size={13} className="text-white" />
+                                </div>
+                                <span className="text-[13px] font-extrabold text-slate-700">Pricing</span>
+                            </div>
+
+                            <div className="p-6 space-y-4">
+                                <div className="grid grid-cols-2 gap-4">
+                                    {/* Original Price */}
+                                    <div className="space-y-2">
+                                        <Label icon={IndianRupee} text="Original Price" required />
+                                        <div className="relative">
+                                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[13px] font-black text-slate-400">₹</span>
+                                            <input
+                                                type="number" min="0"
+                                                value={form.price}
+                                                onChange={e => set("price", e.target.value)}
+                                                placeholder="0.00"
+                                                className={`${inputCls} pl-8 ${errors.price ? "border-red-300" : ""}`}
+                                            />
+                                        </div>
+                                        {errors.price && <p className="flex items-center gap-1 text-[11px] text-red-500 font-medium"><AlertCircle size={10} />{errors.price}</p>}
+                                    </div>
+
+                                    {/* Discount Price */}
+                                    <div className="space-y-2">
+                                        <Label icon={Percent} text="Discount Price" />
+                                        <div className="relative">
+                                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[13px] font-black text-slate-400">₹</span>
+                                            <input
+                                                type="number" min="0"
+                                                value={form.discount}
+                                                onChange={e => set("discount", e.target.value)}
+                                                placeholder="0.00"
+                                                className={`${inputCls} pl-8 ${errors.discount ? "border-red-300" : ""}`}
+                                            />
+                                        </div>
+                                        {errors.discount && <p className="flex items-center gap-1 text-[11px] text-red-500 font-medium"><AlertCircle size={10} />{errors.discount}</p>}
+                                    </div>
+                                </div>
+                            </div>
+                        </motion.div>
+
+                        {/* Card: Category */}
                         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.12, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                             className="bg-white rounded-3xl border border-slate-100 shadow-[0_2px_20px_rgba(0,0,0,0.04)] overflow-hidden">
@@ -500,7 +634,6 @@ const AddProduct = () => {
                                 <span className="text-[13px] font-extrabold text-slate-700">Category</span>
                                 <span className="text-blue-500 text-xs ml-auto">*</span>
                             </div>
-
                             <div className="p-5 space-y-4">
                                 {/* The Dropdown */}
                                 <div className="relative">
@@ -528,28 +661,6 @@ const AddProduct = () => {
                                         <AlertCircle size={10} />{errors.category}
                                     </p>
                                 )}
-
-                                {/* Dynamic Quick-Select Buttons */}
-                                <div>
-                                    <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">Quick Select</p>
-                                    <div className="flex flex-wrap gap-1.5">
-                                        {categories.map(c => (
-                                            <button 
-                                                key={c.id} 
-                                                onClick={() => { 
-                                                    setCategory(c.id); 
-                                                    if (errors.category) setErrors(er => ({ ...er, category: "" })) 
-                                                }}
-                                                className={`px-3 py-1.5 rounded-xl text-[11px] font-bold border transition-all duration-200
-                                                    ${category === c.id
-                                                        ? "bg-blue-600 text-white border-blue-600 shadow-sm shadow-blue-500/25"
-                                                        : "bg-white text-slate-500 border-slate-200 hover:border-blue-300 hover:text-blue-600"
-                                                    }`}>
-                                                {c.name}
-                                            </button>
-                                        ))}
-                                    </div>
-                                </div>
                             </div>
                         </motion.div>
 
