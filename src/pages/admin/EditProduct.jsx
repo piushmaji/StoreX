@@ -9,6 +9,7 @@ import {
   History, Eye, EyeOff, AlertTriangle
 } from "lucide-react"
 import { useProduct } from "../../context/admin/ProductContext"
+import Loader from "../../components/common/Loader/Loader"
 
 // ─── Helpers ──────────────────────────────────────────────────
 const inputCls = (hasError) =>
@@ -150,7 +151,6 @@ const DiscardModal = ({ onConfirm, onClose }) => (
       exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
       onClick={e => e.stopPropagation()}
       className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl"
-      style={{ fontFamily: "'Sora', sans-serif" }}
     >
       <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center mb-4">
         <AlertTriangle size={20} className="text-amber-500" />
@@ -174,7 +174,6 @@ const SuccessToast = ({ onClose }) => (
   <motion.div initial={{ opacity: 0, y: 24, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }}
     exit={{ opacity: 0, y: 12, scale: 0.95 }}
     className="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-white border border-emerald-200 px-5 py-4 rounded-2xl shadow-xl shadow-emerald-500/10"
-    style={{ fontFamily: "'Sora', sans-serif" }}
   >
     <div className="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0">
       <CheckCircle2 size={18} className="text-emerald-500" />
@@ -304,17 +303,10 @@ const EditProduct = () => {
   }
 
   // ── Loading skeleton ──
-  if (fetching) return (
-    <div className="min-h-screen bg-slate-50/50 p-6 flex items-center justify-center" style={{ fontFamily: "'Sora', sans-serif" }}>
-      <div className="flex flex-col items-center gap-3">
-        <div className="w-10 h-10 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-        <p className="text-slate-400 text-sm font-semibold">Loading product...</p>
-      </div>
-    </div>
-  )
+  if (fetching) return <Loader text="Loading product..." />
 
   return (
-    <div className="min-h-screen bg-slate-50/50 p-6" style={{ fontFamily: "'Sora', sans-serif" }}>
+    <div className="min-h-screen bg-slate-50/50 p-6">
       <div className="max-w-4xl mx-auto space-y-6">
 
         {/* ── Header ── */}

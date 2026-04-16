@@ -72,9 +72,9 @@ const Home = () => {
                         key={cat.id}
                         href={cat.href}
                         className={`text-xs font-semibold tracking-widest transition-colors duration-200 pb-1
-                            \${cat.label === "SALE"
+                            ${cat.label === "NEW IN"
                                 ? "text-blue-600 border-b-2 border-blue-600"
-                                : "text-gray-500 hover:text-gray-900 hover:border-b-2 hover:border-gray-900 border-transparent"
+                                : "text-gray-500 hover:text-gray-900 hover:border-b-2 hover:border-gray-900  border-transparent"
                             }`}
                     >
                         {cat.label}

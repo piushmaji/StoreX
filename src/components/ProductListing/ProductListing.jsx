@@ -3,15 +3,15 @@ import ProductCategory from './ProductCategory'
 
 const ProductListingPage = () => {
     return (
-        <div className='flex w-full min-h-screen lg:p-20 lg:pt-8 lg:pb-0 p-2 overflow-x-hidden gap-4 bg-gray-50'>
+        <div className='flex w-full min-h-screen lg:px-12 xl:px-20 lg:pt-8 bg-[#FAFAFA] gap-8'>
 
             {/* FilteredCategory/Side bar 20% width  */}
-            <div className=' hidden lg:block w-1/5 '>
+            <div className='hidden lg:block w-[280px] shrink-0 sticky top-8 h-fit'>
                 <FilteredCategory />
             </div>
 
             {/* ProductCategory 80% width */}
-            <div className='w-full lg:w-4/5 '>
+            <div className='flex-1 pb-16'>
                 <ProductCategory />
             </div>
         </div>

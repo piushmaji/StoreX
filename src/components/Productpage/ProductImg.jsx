@@ -1,10 +1,10 @@
 import { Check, Share2, ShoppingCart, Zap, RotateCcw, Lock, Truck, Minus, Plus, ChevronUp, ChevronDown, Ruler, Trophy, Wrench, Heart, X, MapPin, ArrowRight, Shield, Gift, Bell, CreditCard, Sparkles, Star } from "lucide-react"
 import { useEffect, useState } from "react"
-import products from "../../data/Products"
 import { useNavigate, useParams } from 'react-router-dom'
 import StarRating from "../common/Rating/StarRating"
 import { useCart } from "../../context/CartContext/CartContext"
 import WishListIcon from "../common/WishListIcon/WishListIcon"
+import { useProduct } from "../../context/admin/ProductContext"
 
 const SIZES = ['S', 'M', 'L', 'XL', 'XXL']
 
@@ -37,11 +37,13 @@ const UNIQUE_BENEFITS = [
 
 const ProductImg = () => {
     const { id } = useParams()
-    const product = products[id]
+    const { products } = useProduct()
     const { addToCart, isInCart } = useCart()
     const navigate = useNavigate()
 
-    const [activeImg, setActiveImg] = useState(product.images[0])
+    const product = products.find(p => p.id === id)
+
+    const [activeImg, setActiveImg] = useState('')
     const [quantity, setQuantity] = useState(1)
     const [selectedSize, setSelectedSize] = useState('XL')
     const [imgHovered, setImgHovered] = useState(false)
@@ -49,8 +51,12 @@ const ProductImg = () => {
     const [pincodeStatus, setPincodeStatus] = useState(null)
 
     useEffect(() => {
-        if (product?.images?.length) setActiveImg(product.images[0])
+        if (product?.image_urls?.length) setActiveImg(product.image_urls[0])
     }, [product])
+
+    if (!product) {
+        return <div className="py-20 text-center text-slate-400 font-bold uppercase tracking-widest text-sm">Loading Product...</div>
+    }
 
     const handleCartClick = () => {
         if (isInCart(product.id)) navigate('/cart')
@@ -68,6 +74,19 @@ const ProductImg = () => {
 
     const inCart = isInCart(product.id)
 
+    // Data Mapping for Supabase Structure
+    const variant = product.variants?.[0]
+    const price = variant?.price || 0
+    const discountPrice = variant?.discount_price
+    const hasDiscount = discountPrice && discountPrice < price
+    const salesPrice = hasDiscount ? discountPrice : price
+    const discountPercentage = hasDiscount ? Math.round(((price - discountPrice) / price) * 100) : 0
+    
+    const inStock = variant ? variant?.stock > 0 : true
+    const rating = product.rating || 0
+    const reviews = product.reviews || 0
+    const images = product.image_urls?.length ? product.image_urls : ['https://via.placeholder.com/400']
+
     return (
         <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200/50 border border-slate-100">
             <div className="max-w-8xl mx-auto px-6 py-8 lg:py-10">
@@ -78,7 +97,7 @@ const ProductImg = () => {
 
                         {/* Vertical thumbnail strip */}
                         <div className="hidden sm:flex flex-col gap-2 pt-1 ">
-                            {product.images.map((img, i) => (
+                            {images.map((img, i) => (
                                 <button
                                     key={i}
                                     onClick={() => setActiveImg(img)}
@@ -87,7 +106,7 @@ const ProductImg = () => {
                                         : 'ring-1 ring-gray-200 hover:ring-blue-300 opacity-70 hover:opacity-100'
                                         }`}
                                 >
-                                    <img src={img} alt={`thumb-${i}`} className="w-full h-full object-contain" />
+                                    <img src={img} alt={`thumb-${i}`} className="w-full h-full object-contain mix-blend-multiply" />
                                 </button>
                             ))}
                         </div>
@@ -100,9 +119,9 @@ const ProductImg = () => {
                         >
                             {/* Stock badge */}
                             <div className="absolute top-3 left-3 z-20">
-                                <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold ${product.inStock ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'}`}>
-                                    {product.inStock ? <Check size={11} /> : <X size={11} />}
-                                    {product.inStock ? 'In Stock' : 'Out of Stock'}
+                                <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-black tracking-widest uppercase ${inStock ? 'bg-emerald-500 text-white shadow-emerald-500/20 shadow-md' : 'bg-red-500 text-white shadow-red-500/20 shadow-md'}`}>
+                                    {inStock ? <Check size={11} strokeWidth={3} /> : <X size={11} strokeWidth={3} />}
+                                    {inStock ? 'In Stock' : 'Out of Stock'}
                                 </span>
                             </div>
 
@@ -111,29 +130,28 @@ const ProductImg = () => {
                                 <div className="sm:hidden bg-white/90 backdrop-blur-sm rounded-full shadow hover:scale-110 transition-all duration-200">
                                     <WishListIcon product={product} />
                                 </div>
-                                <button className="h-10 w-10  bg-white/90 backdrop-blur-sm rounded-full shadow hover:scale-110 transition-all duration-200 flex items-center justify-center">
-                                    <Share2 size={20} className="text-gray-500" />
+                                <button className="h-10 w-10  bg-white/90 backdrop-blur-sm shadow border border-slate-100 rounded-full hover:scale-110 transition-all duration-200 flex items-center justify-center">
+                                    <Share2 size={16} className="text-gray-500" />
                                 </button>
                             </div>
 
                             {/* Product Image */}
                             <img
-                                src={activeImg}
-                                alt={product.title}
-                                className={`w-full h-full object-contain p-6 transition-transform duration-500 ease-out ${imgHovered ? 'scale-110' : 'scale-100'}`}
-                                style={{ filter: 'drop-shadow(0 16px 32px rgba(59,130,246,0.12))' }}
+                                src={activeImg || images[0]}
+                                alt={product.name}
+                                className={`w-full h-full object-contain p-6 mix-blend-multiply transition-transform duration-500 ease-out ${imgHovered ? 'scale-110' : 'scale-100'}`}
                             />
                         </div>
 
                         {/* Mobile thumbnails — horizontal strip below */}
                         <div className="sm:hidden flex gap-2 p-1 overflow-x-auto no-scrollbar">
-                            {product.images.map((img, i) => (
+                            {images.map((img, i) => (
                                 <button
                                     key={i}
                                     onClick={() => setActiveImg(img)}
                                     className={`shrink-0 w-14 h-14 rounded-xl overflow-hidden p-1 bg-gray-50 transition-all duration-200 ${activeImg === img ? 'ring-2 ring-blue-500' : 'ring-1 ring-gray-200'}`}
                                 >
-                                    <img src={img} alt={`thumb-${i}`} className="w-full h-full object-contain" />
+                                    <img src={img} alt={`thumb-${i}`} className="w-full h-full object-contain mix-blend-multiply" />
                                 </button>
                             ))}
                         </div>
@@ -144,30 +162,34 @@ const ProductImg = () => {
 
                         {/* Title */}
                         <h1 className="text-3xl lg:text-[2.4rem] font-extrabold tracking-tight text-gray-900 leading-[1.08]">
-                            {product.title}
+                            {product.name}
                         </h1>
 
                         {/* Stars */}
                         <div className="flex flex-wrap items-center gap-2.5">
-                            <StarRating value={product.rating.stars} precision={0.5} readOnly size="small" />
-                            <span className="text-sm font-bold text-gray-900">{product.rating.score}/5</span>
-                            <span className="text-sm text-gray-400">({product.rating.reviews} Reviews)</span>
+                            <StarRating value={rating} precision={0.5} readOnly size="small" />
+                            <span className="text-sm font-bold text-gray-900">{rating.toFixed(1)}/5</span>
+                            <span className="text-sm text-gray-400">({reviews} Reviews)</span>
                         </div>
 
                         {/* Pricing */}
                         <div className="flex items-baseline gap-3 flex-wrap">
                             <span className="text-4xl font-black text-gray-900">
-                                ₹{product.pricing.salePrice}
+                                ₹{salesPrice.toLocaleString()}
                             </span>
-                            <span className="text-xl text-gray-400 line-through font-normal">
-                                ₹{product.pricing.originalPrice}
-                            </span>
-                            <span className="text-xs font-bold text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-full tracking-wide">
-                                {product.pricing.discountPercentage}% OFF
-                            </span>
+                            {hasDiscount && (
+                                <>
+                                    <span className="text-xl text-gray-400 line-through font-normal">
+                                        ₹{price.toLocaleString()}
+                                    </span>
+                                    <span className="text-[10px] font-black text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-md tracking-widest uppercase shadow-sm">
+                                        {discountPercentage}% OFF
+                                    </span>
+                                </>
+                            )}
                         </div>
 
-                        <div className="h-px bg-linear-to-r from-blue-200 via-blue-100 to-transparent" />
+                        <div className="h-px bg-slate-100" />
 
                         {/* Size Selector */}
                         <div className="space-y-3">
@@ -177,7 +199,7 @@ const ProductImg = () => {
                                     <button
                                         key={s}
                                         onClick={() => setSelectedSize(s)}
-                                        className={`w-14 py-2.5 rounded-full text-sm font-semibold border-2 transition-all duration-200 ${selectedSize === s
+                                        className={`w-14 py-2.5 rounded-xl text-sm font-black border-2 transition-all duration-200 ${selectedSize === s
                                             ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-300/60 scale-105'
                                             : 'bg-white border-gray-200 text-gray-600 hover:border-blue-400 hover:text-blue-600 hover:scale-105'
                                             }`}
@@ -189,28 +211,30 @@ const ProductImg = () => {
                         </div>
 
                         {/* Stock indicator */}
-                        <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_0_3px_rgba(16,185,129,0.2)]" />
-                            <span className="text-sm text-gray-600 font-medium">In stock · can be backordered</span>
-                        </div>
+                        {inStock && (
+                            <div className="flex items-center gap-2">
+                                <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_0_3px_rgba(16,185,129,0.2)]" />
+                                <span className="text-sm text-gray-600 font-medium tracking-wide">In stock · Dispatch within 24h</span>
+                            </div>
+                        )}
 
                         {/* Qty + CTA Buttons */}
                         <div className="flex flex-wrap items-center gap-3">
 
                             {/* Quantity */}
-                            <div className="flex items-center gap-2 bg-white border-2 border-gray-200 rounded-full px-4 py-2.5 shadow-sm">
+                            <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-[14px] px-3.5 py-2.5 shadow-[0_4px_16px_rgb(0,0,0,0.03)]">
                                 <button
                                     onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                                    className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-blue-100 hover:text-blue-600 text-gray-400 transition-all"
+                                    className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-500 transition-all font-bold"
                                 >
-                                    <Minus size={13} />
+                                    <Minus size={14} />
                                 </button>
-                                <span className="w-5 text-center font-bold text-gray-900 text-sm select-none">{quantity}</span>
+                                <span className="w-6 text-center font-black text-gray-900 text-sm select-none">{quantity}</span>
                                 <button
                                     onClick={() => setQuantity(q => q + 1)}
-                                    className="w-7 h-7 flex items-center justify-center rounded-full hover:bg-blue-100 hover:text-blue-600 text-gray-400 transition-all"
+                                    className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-500 transition-all font-bold"
                                 >
-                                    <Plus size={13} />
+                                    <Plus size={14} />
                                 </button>
                             </div>
 
@@ -218,29 +242,29 @@ const ProductImg = () => {
                             {!inCart ? (
                                 <button
                                     onClick={handleCartClick}
-                                    className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 active:scale-[0.97] text-white font-bold text-sm rounded-full px-7 py-3.5 shadow-lg shadow-blue-400/40 hover:shadow-xl hover:shadow-blue-400/50 transition-all duration-200"
+                                    className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white font-black uppercase tracking-wider text-[11px] rounded-[14px] px-7 py-4 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 transition-all duration-200 border-b-[3px] border-blue-800"
                                 >
-                                    <ShoppingCart size={17} />
+                                    <ShoppingCart size={15} strokeWidth={2.5} />
                                     Add to Cart
                                 </button>
                             ) : (
                                 /* Go to Cart — distinct green outline style */
                                 <button
                                     onClick={handleCartClick}
-                                    className="flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 active:scale-[0.97] text-white font-bold text-sm rounded-full px-7 py-3.5 shadow-lg shadow-emerald-400/40 hover:shadow-xl hover:shadow-emerald-400/50 transition-all duration-200"
+                                    className="flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] text-white font-black uppercase tracking-wider text-[11px] rounded-[14px] px-7 py-4 shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/40 transition-all duration-200 border-b-[3px] border-emerald-700"
                                 >
-                                    <ArrowRight size={17} />
+                                    <ArrowRight size={15} strokeWidth={2.5} />
                                     Go to Cart
                                 </button>
                             )}
 
                             {/* Wishlist */}
-                            <button className="hidden w-12 h-12 sm:flex items-center justify-center rounded-full border-2 border-gray-200 bg-white hover:border-red-200 hover:bg-red-50 transition-all duration-200 shrink-0">
+                            <button className="hidden w-[52px] h-[52px] sm:flex items-center justify-center rounded-[14px] border border-slate-200 bg-white hover:border-red-200 hover:bg-red-50 hover:-translate-y-0.5 shadow-sm transition-all duration-200 shrink-0">
                                 <WishListIcon product={product} />
                             </button>
                         </div>
 
-                        <div className="h-px bg-linear-to-r from-blue-200 via-blue-100 to-transparent" />
+                        <div className="h-px bg-slate-100 mt-2" />
 
                         {/* ── Pincode Checker ── */}
                         <div className="space-y-2">
@@ -260,16 +284,16 @@ const ProductImg = () => {
                                             setPincodeStatus(null)
                                         }}
                                         placeholder="Enter 6-digit pincode"
-                                        className="w-full text-sm font-medium border-2 border-gray-200 focus:border-blue-400 rounded-full px-4 py-2.5 outline-none transition-all duration-200 pr-10 placeholder:text-gray-300"
+                                        className="w-full text-sm font-semibold border border-slate-200 focus:border-blue-400 bg-slate-50/50 rounded-xl px-4 py-2.5 outline-none transition-all duration-200 pr-10 placeholder:text-gray-400"
                                     />
                                     {pincode.length === 6 && (
-                                        <MapPin size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-blue-400" />
+                                        <MapPin size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-blue-500" />
                                     )}
                                 </div>
                                 <button
                                     onClick={handlePincodeCheck}
                                     disabled={pincode.length !== 6 || pincodeStatus === 'checking'}
-                                    className="text-sm font-bold text-blue-600 hover:text-blue-800 disabled:text-gray-300 transition-colors px-1 py-2 disabled:cursor-not-allowed"
+                                    className="text-[11px] uppercase tracking-wider font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg px-4 disabled:bg-slate-100 disabled:text-gray-300 transition-colors py-3 disabled:cursor-not-allowed"
                                 >
                                     {pincodeStatus === 'checking' ? 'Checking…' : 'Check'}
                                 </button>
@@ -279,7 +303,7 @@ const ProductImg = () => {
                             {pincodeStatus === 'valid' && (
                                 <p className="text-xs font-semibold text-emerald-600 flex items-center gap-1.5 pl-1">
                                     <Check size={13} />
-                                    Delivery available · Estimated in 2–3 days · FREE shipping
+                                    Delivery available · Estimated in 2–3 days
                                 </p>
                             )}
                             {pincodeStatus === 'invalid' && (
@@ -290,19 +314,19 @@ const ProductImg = () => {
                             )}
                         </div>
 
-                        <div className="h-px bg-linear-to-r from-blue-200 via-blue-100 to-transparent" />
+                        <div className="h-px bg-slate-100" />
 
                         {/* ── Trust Badges ── */}
-                        <div className="grid grid-cols-3 gap-2.5">
+                        <div className="grid grid-cols-3 gap-2.5 mt-2">
                             {[
-                                { icon: <Truck size={15} className="text-white" />, bg: 'bg-blue-500', label: 'Free Delivery', sub: '2–3 Days' },
-                                { icon: <RotateCcw size={15} className="text-white" />, bg: 'bg-blue-500', label: 'Easy Returns', sub: '7 Days' },
-                                { icon: <Lock size={15} className="text-white" />, bg: 'bg-blue-500', label: 'Secure Pay', sub: '100% Safe' },
+                                { icon: <Truck size={16} className="text-blue-500" />, bg: 'bg-white', label: 'Free Delivery', sub: '2–3 Days' },
+                                { icon: <RotateCcw size={16} className="text-emerald-500" />, bg: 'bg-white', label: 'Easy Returns', sub: '7 Days' },
+                                { icon: <Shield size={16} className="text-violet-500" />, bg: 'bg-white', label: 'Secure Pay', sub: '100% Safe' },
                             ].map(({ icon, bg, label, sub }) => (
-                                <div key={label} className="flex flex-col items-center text-center p-3 bg-blue-50 rounded-2xl border border-blue-100 hover:shadow-xs hover:border-blue-200">
-                                    <div className={`${bg} p-2 rounded-xl mb-1.5 shadow-sm`}>{icon}</div>
-                                    <p className="text-xs font-bold text-gray-800">{label}</p>
-                                    <p className="text-[11px] text-gray-400">{sub}</p>
+                                <div key={label} className="flex flex-col items-center text-center p-3 sm:p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:shadow-md hover:border-slate-200 transition-all">
+                                    <div className={`${bg} p-2 rounded-xl mb-2 shadow-sm border border-slate-100`}>{icon}</div>
+                                    <p className="text-[11px] font-black tracking-wide text-slate-800 uppercase">{label}</p>
+                                    <p className="text-[10px] font-medium text-slate-400 mt-0.5">{sub}</p>
                                 </div>
                             ))}
                         </div>

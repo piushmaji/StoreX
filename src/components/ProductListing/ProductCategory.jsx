@@ -1,93 +1,144 @@
-import { ChevronLeft, ChevronRight, Heart, LayoutGrid, Menu } from 'lucide-react'
-import products from '../../data/Products'
-import { Link } from 'react-router-dom'
-import { Rating } from '@mui/material'
-import WishListIcon from '../common/WishListIcon/WishListIcon'
-import Pagination from './Pagination'
-import FilterBar from './FilterBar'
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { ShoppingCart, Star, Eye } from 'lucide-react';
+import { useProduct } from "../../context/admin/ProductContext";
+import WishListIcon from '../common/WishListIcon/WishListIcon';
+import Pagination from './Pagination';
+import FilterBar from './FilterBar';
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05 }
+  }
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, scale: 0.95, y: 20 },
+  show: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } }
+};
 
 const ProductCategory = () => {
-  const productArray = Object.values(products)
+    const { products } = useProduct();
 
-  return (
-    <div className='h-full flex flex-col justify-between gap-5'>
-      {/* Featured section  */}
-
-      <div>
-        <FilterBar count={productArray.length} />
-      </div>
-
-      {/* Main Product Category section  */}
-      <div className='flex flex-col flex-1 gap-2 md:gap-3'>
-
-        {/* Each Product Category section  */}
-        {productArray.map((product) => (
-          <div key={product.id} className='w-full sm:flex-row  border-none shadow-sm  border border-gray-300 rounded-lg  md:p-4 hover:cursor-pointer group  ease-out hover:-translate-y-1 relative group  flex flex-col bg-white p-4 transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)]'>
-            <Link
-              to={`${product.id}`}
-              target="_blank"
-              className='w-full'
-            >
-              <div className='w-full flex flex-col sm:flex-row gap-3 md:gap-4'>
-                {/* image  */}
-                <div className='w-full sm:w-1/3 lg:w-1/4 shrink-0'>
-                  <img className='h-48 sm:h-56 md:h-64 w-full object-contain' src={product.images[0]} alt={product.title} />
+    return (
+        <div className="w-full h-full flex flex-col gap-6">
+            
+            {/* Header & Filter Bar */}
+            <div className="flex flex-col gap-4">
+                <div className="flex items-center justify-between bg-white rounded-2xl p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100">
+                    <div>
+                        <h1 className="text-2xl font-black text-slate-800 tracking-tight">Our Collection</h1>
+                        <p className="text-xs text-slate-400 font-medium mt-1">Showing {products.length} premium products</p>
+                    </div>
                 </div>
-
-                <div className='flex flex-col sm:flex-1 justify-between w-full'>
-                  {/* Name  */}
-                  <div className='flex flex-col justify-evenly gap-3 md:gap-4'>
-                    <section>
-                      <h1 className='text-base md:text-lg line-clamp-2 font-semibold text-gray-900 leading-tight'>{product.title}</h1>
-                    </section>
-
-                    {/* price,old price and ratings  */}
-                    <section className='space-y-2'>
-                      <div className='flex gap-2 items-center flex-wrap'>
-                        <h2 className='md:text-xl text-2xl font-semibold  text-blue-600'>₹{product.pricing.salePrice}</h2>
-                        <h2 className='md:text-base text-sm
-text-gray-400
-line-through'>₹{product.pricing.originalPrice}</h2>
-                      </div>
-                      <div className='flex flex-wrap gap-3 md:gap-6 text-xs md:text-sm'>
-                        <div className='flex gap-2 items-center'>
-                          <Rating value={product.rating.stars} precision={0.5} readOnly size="small" />
-                          <h1 className='text-gray-500 text-sm'>{product.rating.score}</h1>
-                        </div>
-                        <li className='text-gray-400'>{product.rating.sold} Sold</li>
-                        <li className='bg-green-100 text-green-700 px-2 py-1 rounded text-[10px]'>{product.shipping.type}</li>
-                      </div>
-                    </section>
-
-                    {/* Description section and view more details   */}
-                    <section className='w-full lg:w-4/5 font-light flex flex-col gap-2 text-sm md:text-base'>
-                      <p className='line-clamp-2 md:line-clamp-3'>
-                        {product.description}{product.features[0]}.{product.features[1]}.{product.features[2]}
-                      </p>
-                      <ul>
-                        <li className="text-blue-500 font-semibold hover:text-blue-800 hover:cursor-pointer">View details</li>
-                      </ul>
-                    </section>
-                  </div>
-                </div>
-              </div>
-            </Link>
-
-            {/* Love React or wishlist section */}
-            <div className='absolute top-3 right-3 sm:relative sm:top-auto sm:right-auto h-10 w-10 p-2 flex items-center justify-center bg-white rounded-lg shadow-lg border border-gray-400 text-blue-600 shrink-0'>
-              <WishListIcon product={product} />
+                <FilterBar count={products.length} />
             </div>
-          </div>
-        ))}
-      </div>
 
-      {/* Next Page section  */}
+            {/* Product Grid */}
+            <motion.div 
+               variants={containerVariants} 
+               initial="hidden" 
+               animate="show" 
+               className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6"
+            >
+                {products.map((product) => {
+                    // Extract data from variants if available
+                    const variant = product.variants?.[0];
+                    const price = variant?.price || 0;
+                    const discountPrice = variant?.discount_price;
+                    const hasDiscount = discountPrice && discountPrice < price;
 
-      <div className='py-4'>
-        <Pagination />
-      </div>
-    </div>
-  )
-}
+                    const rating = product.rating || 0;
+                    const image = product.image_urls?.[0] || 'https://via.placeholder.com/300';
 
-export default ProductCategory
+                    return (
+                        <motion.div 
+                           key={product.id} 
+                           variants={cardVariants}
+                           className="group relative bg-white rounded-3xl p-3 border border-slate-100 hover:border-blue-200 shadow-sm hover:shadow-[0_20px_40px_rgb(0,0,0,0.06)] transition-all duration-500 flex flex-col"
+                        >
+                            {/* Image Section */}
+                            <div className="relative aspect-4/5 rounded-2xl bg-slate-50 overflow-hidden mb-4">
+                                <Link to={`${product.id}`} className="absolute inset-0 z-10 block">
+                                    <img 
+                                        src={image} 
+                                        alt={product.name} 
+                                        className="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]" 
+                                    />
+                                </Link>
+                                
+                                {/* Badges */}
+                                <div className="absolute top-3 left-3 z-20 flex flex-col gap-2">
+                                    {hasDiscount && (
+                                        <span className="bg-red-500 text-white text-[10px] font-black px-2.5 py-1 rounded-lg uppercase tracking-wider shadow-md">
+                                            Sale
+                                        </span>
+                                    )}
+                                </div>
+                                
+                                {/* Wishlist */}
+                                <div className="absolute top-3 right-3 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-x-2 group-hover:translate-x-0">
+                                    <div className="w-9 h-9 bg-white/90 backdrop-blur-md rounded-xl flex items-center justify-center shadow-lg border border-slate-100 text-slate-400 hover:text-red-500 transition-colors">
+                                        <WishListIcon product={product} />
+                                    </div>
+                                </div>
+
+                                {/* Quick View Overlay */}
+                                <div className="absolute bottom-3 inset-x-3 z-20 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-300">
+                                    <Link to={`${product.id}`} className="w-full bg-white/95 backdrop-blur-md text-blue-600 text-xs font-black py-3 rounded-xl flex items-center justify-center gap-2 shadow-lg hover:shadow-blue-500/20 shadow-black/5 border border-slate-100 hover:bg-blue-600 hover:text-white transition-all">
+                                        <Eye size={14} /> Quick View
+                                    </Link>
+                                </div>
+                            </div>
+
+                            {/* Details Section */}
+                            <div className="flex-1 flex flex-col px-2">
+                                <div className="flex items-center justify-between mb-2">
+                                    <span className="text-[9px] font-extrabold text-blue-500 uppercase tracking-widest bg-blue-50 px-2 py-0.5 rounded-md">
+                                        {product.category?.name || "Tech Devices"}
+                                    </span>
+                                    <div className="flex items-center gap-1 bg-slate-50 px-1.5 py-0.5 rounded-md">
+                                        <Star fill="currentColor" className="text-amber-400" size={10} />
+                                        <span className="text-[10px] font-bold text-slate-600">{Number(rating).toFixed(1)}</span>
+                                    </div>
+                                </div>
+
+                                <Link to={`${product.id}`} className="group-hover:text-blue-600 transition-colors mt-1">
+                                    <h2 className="text-sm font-black text-slate-800 line-clamp-2 leading-snug">
+                                        {product.name}
+                                    </h2>
+                                </Link>
+
+                                <div className="mt-auto pt-4 pb-1 flex items-end justify-between">
+                                    <div className="flex flex-col">
+                                        {hasDiscount && (
+                                            <span className="text-[10px] text-slate-400 font-bold line-through decoration-slate-300">
+                                                ₹{price.toLocaleString()}
+                                            </span>
+                                        )}
+                                        <span className="text-lg font-black text-slate-900 tracking-tight">
+                                            ₹{hasDiscount ? discountPrice.toLocaleString() : price.toLocaleString()}
+                                        </span>
+                                    </div>
+                                    <button className="w-10 h-10 bg-slate-900 hover:bg-blue-600 text-white rounded-[14px] flex items-center justify-center transition-all duration-300 shadow-md hover:shadow-blue-500/30 hover:-translate-y-1 active:translate-y-0">
+                                        <ShoppingCart size={15} />
+                                    </button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    );
+                })}
+            </motion.div>
+
+            {/* Pagination */}
+            <div className="mt-8 mb-4 w-full flex justify-center bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+                <Pagination />
+            </div>
+        </div>
+    );
+};
+
+export default ProductCategory;

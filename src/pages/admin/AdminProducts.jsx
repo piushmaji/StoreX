@@ -31,7 +31,6 @@ const DeleteModal = ({ product, onConfirm, onClose }) => (
       transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
       onClick={e => e.stopPropagation()}
       className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl"
-      style={{ fontFamily: "'Sora', sans-serif" }}
     >
       <div className="w-12 h-12 rounded-2xl bg-red-50 flex items-center justify-center mb-4">
         <Trash2 size={20} className="text-red-500" />
@@ -239,7 +238,7 @@ const AdminProducts = () => {
   const activeFilters = [categoryFilter !== "all", stockFilter !== "all", visibilityFilter !== "all"].filter(Boolean).length
 
   return (
-    <div className="p-6 space-y-5" style={{ fontFamily: "'Sora', sans-serif" }}>
+    <div className="p-6 space-y-5">
 
       {/* ── Header ── */}
       <div className="flex items-center justify-between">

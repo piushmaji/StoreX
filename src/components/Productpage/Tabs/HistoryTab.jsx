@@ -34,8 +34,8 @@ const CustomTooltip = ({ active, payload, label }) => {
   )
 }
 
-export default function PriceHistoryChart() {
-  const currentPrice = 2699
+export default function PriceHistoryChart({ product }) {
+  const currentPrice = product?.variants?.[0]?.discount_price || product?.variants?.[0]?.price || 2699
   const [active, setActive] = useState("1Y")
 
   const data = ALL_DATA.slice(-(FILTERS.find(f => f.label === active).slice))

@@ -73,7 +73,6 @@ const OrderModal = ({ order, onClose, onStatusChange }) => {
         transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
         onClick={e => e.stopPropagation()}
         className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden"
-        style={{ fontFamily: "'Sora', sans-serif" }}
       >
         {/* Header */}
         <div className="bg-linear-to-r from-blue-600 to-blue-500 px-6 py-5 flex items-center justify-between">
@@ -241,7 +240,7 @@ const AdminOrderTable = () => {
   )
 
   return (
-    <div className="p-6 space-y-5" style={{ fontFamily: "'Sora', sans-serif" }}>
+    <div className="p-6 space-y-5">
 
       {/* ── Header ── */}
       <div className="flex items-center justify-between">

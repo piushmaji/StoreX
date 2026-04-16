@@ -270,7 +270,7 @@ const ReviewsTab = ({ product }) => {
       {/* ── Summary ── */}
       <div className="flex gap-5 p-4 bg-gray-50 rounded-2xl">
         <div className="flex flex-col items-center justify-center gap-1 shrink-0 w-24">
-          <span className="text-4xl font-black text-gray-900">{product?.rating?.score ?? avg}</span>
+          <span className="text-4xl font-black text-gray-900">{product?.rating?.score ?? product?.rating ?? avg}</span>
           <Stars n={Math.round(avg)} size={12} />
           <span className="text-[10px] text-gray-400">{reviews.length} reviews</span>
         </div>
