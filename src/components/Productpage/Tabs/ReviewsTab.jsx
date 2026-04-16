@@ -36,7 +36,7 @@ const ReviewImagePopup = ({ review, startIdx, onClose }) => {
         </button>
 
         {/* Image */}
-        <div className="relative bg-gray-950 aspect-[4/3] overflow-hidden">
+        <div className="relative bg-gray-950 aspect-4/3 overflow-hidden">
           <img
             src={imgs[idx]}
             alt=""
