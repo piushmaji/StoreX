@@ -1,55 +1,6 @@
 import { useState } from "react"
 import { Star, Upload, X, ZoomIn, ChevronLeft, ChevronRight, Camera, Check, Image, ChevronDown, ChevronUp } from "lucide-react"
 
-const MOCK_REVIEWS = [
-  {
-    id: 1, user: "Arjun M.", avatar: "AM", avatarBg: "bg-blue-500",
-    rating: 5, date: "12 Feb 2026", verified: true,
-    caption: "Absolutely love the quality! Fits perfectly.",
-    images: [
-      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80",
-      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&q=80",
-    ]
-  },
-  {
-    id: 2, user: "Priya S.", avatar: "PS", avatarBg: "bg-rose-500",
-    rating: 4, date: "8 Feb 2026", verified: true,
-    caption: "Great product, color is exactly as shown.",
-    images: ["https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=600&q=80"]
-  },
-  {
-    id: 3, user: "Rahul K.", avatar: "RK", avatarBg: "bg-emerald-500",
-    rating: 5, date: "5 Feb 2026", verified: false,
-    caption: "Wore this to the gym, super comfortable and stylish!",
-    images: [
-      "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=600&q=80",
-      "https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=600&q=80",
-      "https://images.unsplash.com/photo-1581092795360-fd1ca04f0952?w=600&q=80",
-    ]
-  },
-  {
-    id: 4, user: "Sneha D.", avatar: "SD", avatarBg: "bg-violet-500",
-    rating: 3, date: "1 Feb 2026", verified: true,
-    caption: "Decent product. Stitching could be better.",
-    images: ["https://images.unsplash.com/photo-1539185441755-769473a23570?w=600&q=80"]
-  },
-  {
-    id: 5, user: "Vikram J.", avatar: "VJ", avatarBg: "bg-amber-500",
-    rating: 5, date: "28 Jan 2026", verified: true,
-    caption: "Best purchase of the month, very happy!",
-    images: [
-      "https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=600&q=80",
-      "https://images.unsplash.com/photo-1585386959984-a4155224a1ad?w=600&q=80",
-    ]
-  },
-  {
-    id: 6, user: "Meera R.", avatar: "MR", avatarBg: "bg-pink-500",
-    rating: 4, date: "22 Jan 2026", verified: false,
-    caption: "Stylish and lightweight. Will buy again.",
-    images: ["https://images.unsplash.com/photo-1600185365926-3a2ce3cdb9eb?w=600&q=80"]
-  },
-]
-
 const Stars = ({ count, size = 12 }) => (
   <div className="flex items-center gap-0.5">
     {[1, 2, 3, 4, 5].map(i => (
@@ -57,6 +8,8 @@ const Stars = ({ count, size = 12 }) => (
     ))}
   </div>
 )
+
+const COLORS = ['bg-blue-500', 'bg-rose-400', 'bg-emerald-500', 'bg-violet-500', 'bg-amber-500']
 
 // ─── Lightbox — shows image + reviewer card side by side ─────────────────────
 const Lightbox = ({ images, startIndex, review, onClose }) => {
@@ -152,16 +105,36 @@ const Lightbox = ({ images, startIndex, review, onClose }) => {
 // ═══ MAIN GalleryTab ══════════════════════════════════════════════════════════
 const PHOTO_LIMIT = 8
 
-const GalleryTab = ({ extraReviews = [] }) => {
-  const allReviews = [...extraReviews, ...MOCK_REVIEWS]
+const GalleryTab = ({ product }) => {
   const [expanded, setExpanded] = useState(true)
   const [showAll, setShowAll] = useState(false)
   const [lightbox, setLightbox] = useState(null)
 
-  // Flatten to { review, src, imgIdx }
+  // Map product dynamically from database
+  const allReviews = Array.isArray(product?.reviews) 
+    ? product.reviews.map((r, i) => {
+        const d = new Date(r.created_at)
+        const dateStr = isNaN(d) ? 'Recent' : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+        
+        return {
+          id: r.id,
+          user: 'Verified Buyer',
+          avatar: 'VB',
+          avatarBg: COLORS[i % COLORS.length],
+          rating: r.rating || 5,
+          date: dateStr,
+          verified: true,
+          caption: r.review_text || '',
+          images: r.review_images || []
+        }
+      })
+    : []
+
+  // Flatten to { review, src, imgIdx } only for reviews that actually have images
   const allImages = allReviews.flatMap(r =>
     r.images.map((src, i) => ({ review: r, src, imgIdx: i }))
   )
+  
   const totalPhotos = allImages.length
   const avgRating = allReviews.length
     ? (allReviews.reduce((a, r) => a + r.rating, 0) / allReviews.length).toFixed(1)

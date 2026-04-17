@@ -1,15 +1,8 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Star, X, CheckCircle, ThumbsUp, Camera, ZoomIn, Pencil, ChevronLeft, ChevronRight } from 'lucide-react'
 
-const SEED = [
-  { id: 1, name: 'Arjun M.', avatar: 'AM', color: 'bg-blue-500', rating: 5, date: 'Jan 15', verified: true, body: 'Outstanding quality. Fits perfectly and looks exactly like the photos. Very happy with this purchase!', helpful: 24, images: ["https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&q=80"] },
-  { id: 2, name: 'Priya S.', avatar: 'PS', color: 'bg-rose-400', rating: 4, date: 'Jan 8', verified: true, body: 'Great value. Material feels premium. Size runs small — go one up.', helpful: 18, images: [] },
-  { id: 3, name: 'Sneha K.', avatar: 'SK', color: 'bg-violet-500', rating: 5, date: 'Dec 20', verified: true, body: 'Genuinely impressed. Craftsmanship is top notch. Will buy again for sure.', helpful: 31, images: ["https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=500&q=80", "https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=500&q=80"] },
-  { id: 4, name: 'Rohan D.', avatar: 'RD', color: 'bg-slate-400', rating: 3, date: 'Dec 28', verified: false, body: 'Decent for the price. Color slightly different from photos online.', helpful: 9, images: [] },
-]
-
 const LABELS = ['', 'Poor', 'Fair', 'Good', 'Great', 'Excellent!']
-const BREAKDOWN = [{ s: 5, p: 68 }, { s: 4, p: 18 }, { s: 3, p: 8 }, { s: 2, p: 4 }, { s: 1, p: 2 }]
+const COLORS = ['bg-blue-500', 'bg-rose-400', 'bg-emerald-500', 'bg-violet-500', 'bg-amber-500']
 
 const Stars = ({ n, size = 13 }) => (
   <div className="flex gap-0.5">
@@ -36,7 +29,7 @@ const ReviewImagePopup = ({ review, startIdx, onClose }) => {
         </button>
 
         {/* Image */}
-        <div className="relative bg-gray-950 aspect-4/3 overflow-hidden">
+        <div className="relative bg-gray-950 aspect-[4/3] overflow-hidden">
           <img
             src={imgs[idx]}
             alt=""
@@ -244,21 +237,52 @@ const Card = ({ r, onImageClick }) => {
 
 // ═══ MAIN ═════════════════════════════════════════════════════════════════════
 const ReviewsTab = ({ product }) => {
-  const [reviews, setReviews] = useState(SEED)
+  const [reviews, setReviews] = useState([])
   const [filter, setFilter] = useState(0)
   const [showAll, setShowAll] = useState(false)
   const [popup, setPopup] = useState(false)
   const [imgPopup, setImgPopup] = useState(null) // { review, idx }
   const [toast, setToast] = useState(false)
 
-  const avg = (reviews.reduce((a, r) => a + r.rating, 0) / reviews.length).toFixed(1)
-  const filtered = filter ? reviews.filter(r => r.rating === filter) : reviews
+  // Sync DB reviews mapping with local state format
+  useEffect(() => {
+    if (product?.reviews) {
+      const mapped = product.reviews.map((r, i) => {
+         const d = new Date(r.created_at)
+         const dateStr = isNaN(d) ? 'Recent' : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+         
+         return {
+           id: r.id,
+           name: 'Verified Buyer', // Can be replaced when User model linked
+           avatar: 'VB',
+           color: COLORS[i % COLORS.length],
+           rating: r.rating || 5, 
+           date: dateStr,
+           verified: true,
+           body: r.review_text || '',
+           helpful: 0,
+           images: r.review_images || []
+         }
+      })
+      setReviews(mapped)
+    }
+  }, [product])
+
+  const trueAvg = product?.rating?.score ?? product?.rating ?? 0
+  const avg = reviews.length > 0 ? (reviews.reduce((a, r) => a + r.rating, 0) / reviews.length).toFixed(1) : trueAvg ? trueAvg.toFixed(1) : 0
+  
+  const breakdown = [5, 4, 3, 2, 1].map(s => {
+    const count = reviews.filter(r => Math.round(r.rating) === s).length
+    const p = reviews.length > 0 ? Math.round((count / reviews.length) * 100) : 0
+    return { s, p }
+  })
+
+  const filtered = filter ? reviews.filter(r => Math.round(r.rating) === filter) : reviews
   const visible = showAll ? filtered : filtered.slice(0, 3)
 
   const handleSubmit = ({ name, rating, body, images }) => {
     const initials = name.trim().split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2)
-    const colors = ['bg-blue-500', 'bg-rose-400', 'bg-emerald-500', 'bg-violet-500', 'bg-amber-500']
-    setReviews(p => [{ id: Date.now(), name, avatar: initials, color: colors[Math.floor(Math.random() * colors.length)], rating, date: 'Now', verified: false, body, helpful: 0, images }, ...p])
+    setReviews(p => [{ id: Date.now(), name, avatar: initials, color: COLORS[Math.floor(Math.random() * COLORS.length)], rating, date: 'Now', verified: false, body, helpful: 0, images }, ...p])
     setPopup(false)
     setToast(true)
     setTimeout(() => setToast(false), 3000)
@@ -270,12 +294,12 @@ const ReviewsTab = ({ product }) => {
       {/* ── Summary ── */}
       <div className="flex gap-5 p-4 bg-gray-50 rounded-2xl">
         <div className="flex flex-col items-center justify-center gap-1 shrink-0 w-24">
-          <span className="text-4xl font-black text-gray-900">{product?.rating?.score ?? product?.rating ?? avg}</span>
+          <span className="text-4xl font-black text-gray-900">{avg}</span>
           <Stars n={Math.round(avg)} size={12} />
           <span className="text-[10px] text-gray-400">{reviews.length} reviews</span>
         </div>
         <div className="flex-1 flex flex-col gap-1.5 justify-center">
-          {BREAKDOWN.map(({ s, p }) => (
+          {breakdown.map(({ s, p }) => (
             <div key={s} className="flex items-center gap-2">
               <span className="text-[10px] text-gray-400 w-2">{s}</span>
               <Star size={9} className="text-amber-400 fill-amber-400" />
@@ -342,5 +366,4 @@ const ReviewsTab = ({ product }) => {
     </div>
   )
 }
-
 export default ReviewsTab

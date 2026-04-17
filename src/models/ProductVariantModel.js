@@ -11,10 +11,10 @@ export class ProductVariant {
     discount_price
   }) {
     this.id = id;
-    this.product_id = product_id;
-    this.size = size;
-    this.color = color;
-    this.stock = stock ?? 0;
+    this.product_id = product_id || null;
+    this.size = size || null;
+    this.color = color || null;
+    this.stock = stock ? Number(stock) : 0;
     this.price = Number(price);
     this.discount_price = discount_price ? Number(discount_price) : null;
   }

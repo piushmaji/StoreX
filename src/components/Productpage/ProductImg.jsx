@@ -6,7 +6,6 @@ import { useCart } from "../../context/CartContext/CartContext"
 import WishListIcon from "../common/WishListIcon/WishListIcon"
 import { useProduct } from "../../context/admin/ProductContext"
 
-const SIZES = ['S', 'M', 'L', 'XL', 'XXL']
 
 const UNIQUE_BENEFITS = [
     {
@@ -45,14 +44,11 @@ const ProductImg = () => {
 
     const [activeImg, setActiveImg] = useState('')
     const [quantity, setQuantity] = useState(1)
-    const [selectedSize, setSelectedSize] = useState('XL')
+    const [selectedSize, setSelectedSize] = useState('')
+    const [selectedColor, setSelectedColor] = useState('')
     const [imgHovered, setImgHovered] = useState(false)
     const [pincode, setPincode] = useState('')
     const [pincodeStatus, setPincodeStatus] = useState(null)
-
-    useEffect(() => {
-        if (product?.image_urls?.length) setActiveImg(product.image_urls[0])
-    }, [product])
 
     if (!product) {
         return <div className="py-20 text-center text-slate-400 font-bold uppercase tracking-widest text-sm">Loading Product...</div>
@@ -76,6 +72,7 @@ const ProductImg = () => {
 
     // Data Mapping for Supabase Structure
     const variant = product.variants?.[0]
+
     const price = variant?.price || 0
     const discountPrice = variant?.discount_price
     const hasDiscount = discountPrice && discountPrice < price
@@ -84,8 +81,17 @@ const ProductImg = () => {
     
     const inStock = variant ? variant?.stock > 0 : true
     const rating = product.rating || 0
-    const reviews = product.reviews || 0
+    // If product.reviews is populated with foreign key objects, safely measure length instead of blindly interpolating
+    const reviewsCount = Array.isArray(product.reviews) ? product.reviews.length : (product.reviews || 0)
     const images = product.image_urls?.length ? product.image_urls : ['https://via.placeholder.com/400']
+    
+    const currentImg = activeImg || images[0]
+    
+    // Extract unique sizes from variants
+    const availableSizes = product.variants ? [...new Set(product.variants.map(v => v.size).filter(Boolean))] : [];
+   
+    // Extract unique colors from variants
+    const availableColors = product.variants ? [...new Set(product.variants.map(v => v.color).filter(Boolean))]:[];
 
     return (
         <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200/50 border border-slate-100">
@@ -101,7 +107,7 @@ const ProductImg = () => {
                                 <button
                                     key={i}
                                     onClick={() => setActiveImg(img)}
-                                    className={`w-16 h-16 rounded-xl overflow-hidden p-1.5 bg-gray-50 transition-all duration-200 shrink-0 ${activeImg === img
+                                    className={`w-16 h-16 rounded-xl overflow-hidden p-1.5 bg-gray-50 transition-all duration-200 shrink-0 ${currentImg === img
                                         ? 'ring-2 ring-blue-500 ring-offset-1 shadow-md shadow-blue-100'
                                         : 'ring-1 ring-gray-200 hover:ring-blue-300 opacity-70 hover:opacity-100'
                                         }`}
@@ -137,7 +143,7 @@ const ProductImg = () => {
 
                             {/* Product Image */}
                             <img
-                                src={activeImg || images[0]}
+                                src={currentImg}
                                 alt={product.name}
                                 className={`w-full h-full object-contain p-6 mix-blend-multiply transition-transform duration-500 ease-out ${imgHovered ? 'scale-110' : 'scale-100'}`}
                             />
@@ -149,7 +155,7 @@ const ProductImg = () => {
                                 <button
                                     key={i}
                                     onClick={() => setActiveImg(img)}
-                                    className={`shrink-0 w-14 h-14 rounded-xl overflow-hidden p-1 bg-gray-50 transition-all duration-200 ${activeImg === img ? 'ring-2 ring-blue-500' : 'ring-1 ring-gray-200'}`}
+                                    className={`shrink-0 w-14 h-14 rounded-xl overflow-hidden p-1 bg-gray-50 transition-all duration-200 ${currentImg === img ? 'ring-2 ring-blue-500' : 'ring-1 ring-gray-200'}`}
                                 >
                                     <img src={img} alt={`thumb-${i}`} className="w-full h-full object-contain mix-blend-multiply" />
                                 </button>
@@ -169,7 +175,7 @@ const ProductImg = () => {
                         <div className="flex flex-wrap items-center gap-2.5">
                             <StarRating value={rating} precision={0.5} readOnly size="small" />
                             <span className="text-sm font-bold text-gray-900">{rating.toFixed(1)}/5</span>
-                            <span className="text-sm text-gray-400">({reviews} Reviews)</span>
+                            <span className="text-sm text-gray-400">({reviewsCount} Reviews)</span>
                         </div>
 
                         {/* Pricing */}
@@ -195,7 +201,7 @@ const ProductImg = () => {
                         <div className="space-y-3">
                             <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">Select Size</p>
                             <div className="flex flex-wrap gap-2.5">
-                                {SIZES.map(s => (
+                                {availableSizes.map(s => (
                                     <button
                                         key={s}
                                         onClick={() => setSelectedSize(s)}
@@ -209,6 +215,32 @@ const ProductImg = () => {
                                 ))}
                             </div>
                         </div>
+
+                        {/* Color Selector */}
+                        {availableColors.length > 0 && (
+                            <div className="space-y-3 mt-5">
+                                <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">Select Color</p>
+                                <div className="flex flex-wrap gap-3">
+                                    {availableColors.map(c => {
+                                        // A simple helper to ensure a valid background color regardless of casing or named value
+                                        const bgColor = c.toLowerCase()
+                                        return (
+                                            <button
+                                                key={c}
+                                                onClick={() => setSelectedColor(c)}
+                                                className={`relative w-10 h-10 rounded-full shadow-sm transition-all duration-200 ${
+                                                    selectedColor === c
+                                                        ? 'scale-110 ring-2 ring-blue-600 ring-offset-2 border-2 border-white'
+                                                        : 'border-2 border-gray-100 hover:scale-105 hover:ring-2 hover:ring-gray-300 hover:ring-offset-2'
+                                                }`}
+                                                style={{ backgroundColor: bgColor }}
+                                                title={c}
+                                            />
+                                        )
+                                    })}
+                                </div>
+                            </div>
+                        )}
 
                         {/* Stock indicator */}
                         {inStock && (

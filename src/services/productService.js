@@ -7,7 +7,8 @@ export const getProducts = async () => {
     .select(`
       *,
       product_variants (*),
-      categories (*)
+      categories (*),
+      product_reviews (*)
     `);
 
   if (error) throw error;
@@ -16,6 +17,7 @@ export const getProducts = async () => {
     const product = new Product(item);
     product.variants = item.product_variants || [];
     product.category = item.categories || null;
+    product.reviews = item.product_reviews || [];
     return product;
   });
 };
