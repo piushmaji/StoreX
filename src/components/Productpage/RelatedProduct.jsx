@@ -4,12 +4,14 @@ import { ShoppingCart, TrendingUp } from 'lucide-react'
 import WishListIcon from "../common/WishListIcon/WishListIcon"
 import { useCart } from "../../context/CartContext/CartContext"
 import { useProduct } from "../../context/admin/ProductContext"
+import { useAuth } from "../../context/Auth/AuthContext"
 
 const RelatedProduct = () => {
     const { id } = useParams()
     const { products } = useProduct()
     const [featured, setFeatured] = useState([])
-    const { addToCart, isInCart } = useCart()
+    const { handleAddToCart, isInCart } = useCart()
+    const { user } = useAuth()
 
     useEffect(() => {
         if (!products.length) return
@@ -40,6 +42,7 @@ const RelatedProduct = () => {
                     const hasDiscount = discountPrice && discountPrice < price
                     const salesPrice = hasDiscount ? discountPrice : price
                     const img = item.image_urls?.[0] || 'https://via.placeholder.com/300'
+                    const itemInCart = isInCart(item.id)
 
                     return (
                         <div
@@ -80,11 +83,14 @@ const RelatedProduct = () => {
 
                                 {/* Add to Cart */}
                                 <button
-                                    onClick={() => addToCart(item)}
+                                    onClick={() => {
+                                        if (!user) return
+                                        handleAddToCart(user.id, item.id, variant?.id)
+                                    }}
                                     className="flex items-center justify-center gap-1.5 bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white text-xs font-semibold rounded-xl px-3 py-2.5 transition-all duration-200 hover:shadow-md hover:shadow-blue-200 active:scale-95"
                                 >
                                     <ShoppingCart size={14} />
-                                    {isInCart(item.id) ? 'In Cart' : 'Add to Cart'}
+                                    {itemInCart ? 'In Cart' : 'Add to Cart'}
                                 </button>
                             </div>
                         </div>

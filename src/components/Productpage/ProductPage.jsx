@@ -1,7 +1,7 @@
 import ProductImg from "./ProductImg"
 import ProductDesc from "./ProductDesc"
 import RelatedProduct from "./RelatedProduct"
-import GalleryTab from "./Tabs/GalleryTab"
+
 const ProductPage = () => {
 
     return (

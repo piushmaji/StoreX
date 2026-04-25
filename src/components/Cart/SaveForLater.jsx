@@ -1,17 +1,20 @@
 import { ShoppingCart, X, Heart } from 'lucide-react'
 import { useSaveForLater } from '../../context/SaveForLater/SaveForLater'
 import { useCart } from '../../context/CartContext/CartContext'
+import { useAuth } from '../../context/Auth/AuthContext'
 
 const SaveForLater = ({ onMoveToCart }) => {
 
     const { removeFromSaved, savedItem } = useSaveForLater()
-
-    const { addToCart, removeItem } = useCart()
+    const { handleAddToCart } = useCart()
+    const { user } = useAuth()
 
     if (savedItem.length === 0) return null
 
     const handleMoveToCart = (item) => {
-        addToCart(item)
+        if (!user) return
+        const variant = item.variants?.[0]
+        handleAddToCart(user.id, item.id, variant?.id)
         removeFromSaved(item.id)
     }
 
@@ -27,7 +30,10 @@ const SaveForLater = ({ onMoveToCart }) => {
             {/* Horizontal scroll */}
             <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar">
                 {savedItem.map(item => {
-                    const off = Math.round((1 - item.pricing.salePrice / item.pricing.originalPrice) * 100)
+                    const variant = item.variants?.[0]
+                    const salePrice = variant?.discount_price || variant?.price || 0
+                    const originalPrice = variant?.price || 0
+                    const off = originalPrice > salePrice ? Math.round(((originalPrice - salePrice) / originalPrice) * 100) : 0
                     return (
                         <div
                             key={item.id}
@@ -36,8 +42,8 @@ const SaveForLater = ({ onMoveToCart }) => {
                             {/* Image */}
                             <div className="relative bg-gray-50 h-36 flex items-center justify-center overflow-hidden">
                                 <img
-                                    src={item.images[0]}
-                                    alt={item.title}
+                                    src={item.image_urls?.[0] || 'https://via.placeholder.com/300'}
+                                    alt={item.name}
                                     className="h-full w-full object-contain p-3 group-hover:scale-105 transition-transform duration-300"
                                 />
                                 {/* Discount badge */}
@@ -55,10 +61,10 @@ const SaveForLater = ({ onMoveToCart }) => {
 
                             {/* Info */}
                             <div className="p-3 flex flex-col gap-2 flex-1">
-                                <p className="text-[11px] text-gray-500 font-medium line-clamp-2 leading-tight">{item.title}</p>
+                                <p className="text-[11px] text-gray-500 font-medium line-clamp-2 leading-tight">{item.name}</p>
                                 <div className="flex items-baseline gap-1.5 mt-auto">
-                                    <span className="text-sm font-extrabold text-gray-900">₹{item.pricing.salePrice.toLocaleString()}</span>
-                                    <span className="text-[10px] text-gray-400 line-through">₹{item.pricing.originalPrice.toLocaleString()}</span>
+                                    <span className="text-sm font-extrabold text-gray-900">₹{salePrice.toLocaleString()}</span>
+                                    {originalPrice > salePrice && <span className="text-[10px] text-gray-400 line-through">₹{originalPrice.toLocaleString()}</span>}
                                 </div>
 
                                 {/* Add to cart */}

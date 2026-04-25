@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useNavigate } from "react-router-dom"
 import {
@@ -6,8 +6,10 @@ import {
     ChevronRight, ShieldCheck, Truck, Tag, Lock,
     ArrowLeft, Pencil, Zap, Building2
 } from "lucide-react"
+import { useCart } from "../context/CartContext/CartContext"
+import { useAuth } from "../context/Auth/AuthContext"
 
-// ─── Mock Data ────────────────────────────────────────────────────────────────
+// ─── Mock Data (addresses & payment — to be replaced with user profile later) ─
 const ADDRESSES = [
     { id: 1, tag: "Home", name: "Aryan Sharma", line: "42, Sector 15, Near Metro Station", city: "Faridabad, Haryana — 121007", phone: "+91 98765 43210", default: true },
     { id: 2, tag: "Work", name: "Aryan Sharma", line: "Plot 5, Cyber Hub, DLF Phase 2", city: "Gurugram, Haryana — 122002", phone: "+91 91234 56789", default: false },
@@ -19,17 +21,6 @@ const PAYMENT = [
     { id: "cod", label: "Cash on Delivery", sub: "Pay when it arrives", icon: Package },
     { id: "emi", label: "No-cost EMI", sub: "0% interest · All banks", icon: Building2 },
 ]
-
-const ITEMS = [
-    { id: 1, name: "Thermal Full Sleeve Base Layer", variant: "XL · Dark Green", price: 599, qty: 1, img: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=100&q=80" },
-    { id: 2, name: "Denim Trucker Jacket", variant: "L · Classic Blue", price: 1699, qty: 1, img: "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=100&q=80" },
-    { id: 3, name: "Premium Fleece Pullover Hoodie", variant: "M · Burgundy", price: 999, qty: 1, img: "https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=100&q=80" },
-    { id: 4, name: "Windcheater Shell Jacket", variant: "L · Olive", price: 1399, qty: 1, img: "https://images.unsplash.com/photo-1544923246-77307dd654cb?w=100&q=80" },
-]
-
-const subtotal = ITEMS.reduce((s, i) => s + i.price * i.qty, 0)
-const discount = 200
-const total = subtotal - discount
 
 // ─── Step Bar ─────────────────────────────────────────────────────────────────
 const STEPS = ["Delivery", "Payment", "Review"]
@@ -171,9 +162,11 @@ const PayCard = ({ method, selected, onSelect }) => {
 }
 
 // ─── Order Summary Sidebar ────────────────────────────────────────────────────
-const Summary = ({ step, onPlace }) => {
+const Summary = ({ step, onPlace, cartItems, subtotal }) => {
     const [coupon, setCoupon] = useState("")
     const [applied, setApplied] = useState(false)
+    const discount = applied ? Math.round(subtotal * 0.1) : 0
+    const total = subtotal - discount
 
     return (
         <div className="sticky top-6 space-y-3">
@@ -181,22 +174,29 @@ const Summary = ({ step, onPlace }) => {
 
                 {/* Items */}
                 <div className="px-5 pt-5 pb-4 space-y-3 border-b border-gray-50">
-                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">{ITEMS.length} Items</p>
-                    {ITEMS.map(item => (
-                        <div key={item.id} className="flex items-center gap-3">
-                            <div className="relative shrink-0">
-                                <img src={item.img} className="w-11 h-11 rounded-lg object-cover border border-gray-100" />
-                                <span className="absolute -top-1 -right-1 w-4 h-4 bg-blue-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
-                                    {item.qty}
-                                </span>
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">{cartItems.length} Items</p>
+                    {cartItems.map(item => {
+                        const product = item.products
+                        const variant = item.product_variants
+                        const price = variant?.discount_price || variant?.price || 0
+                        const img = product?.image_urls?.[0] || 'https://via.placeholder.com/100'
+                        const variantLabel = [variant?.size, variant?.color].filter(Boolean).join(' · ')
+                        return (
+                            <div key={item.id} className="flex items-center gap-3">
+                                <div className="relative shrink-0">
+                                    <img src={img} className="w-11 h-11 rounded-lg object-cover border border-gray-100" />
+                                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-blue-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+                                        {item.quantity}
+                                    </span>
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-xs font-semibold text-gray-700 truncate">{product?.name}</p>
+                                    {variantLabel && <p className="text-[10px] text-gray-400">{variantLabel}</p>}
+                                </div>
+                                <p className="text-xs font-bold text-gray-800 shrink-0">₹{(price * item.quantity).toLocaleString()}</p>
                             </div>
-                            <div className="flex-1 min-w-0">
-                                <p className="text-xs font-semibold text-gray-700 truncate">{item.name}</p>
-                                <p className="text-[10px] text-gray-400">{item.variant}</p>
-                            </div>
-                            <p className="text-xs font-bold text-gray-800 shrink-0">₹{item.price.toLocaleString()}</p>
-                        </div>
-                    ))}
+                        )
+                    })}
                 </div>
 
                 {/* Coupon */}
@@ -223,7 +223,7 @@ const Summary = ({ step, onPlace }) => {
                         </button>
                     </div>
                     {applied && (
-                        <p className="text-[11px] text-emerald-600 font-semibold mt-1.5 ml-1">✓ ₹200 off applied</p>
+                        <p className="text-[11px] text-emerald-600 font-semibold mt-1.5 ml-1">✓ 10% off applied!</p>
                     )}
                 </div>
 
@@ -237,10 +237,12 @@ const Summary = ({ step, onPlace }) => {
                         <span>Delivery</span>
                         <span className="font-semibold text-emerald-500">FREE</span>
                     </div>
-                    <div className="flex justify-between text-xs text-gray-500">
-                        <span>Discount</span>
-                        <span className="font-semibold text-emerald-500">−₹{discount}</span>
-                    </div>
+                    {applied && (
+                        <div className="flex justify-between text-xs text-gray-500">
+                            <span>Discount (10%)</span>
+                            <span className="font-semibold text-emerald-500">−₹{discount.toLocaleString()}</span>
+                        </div>
+                    )}
                     <div className="pt-2.5 border-t border-gray-100 flex justify-between items-center">
                         <span className="font-bold text-gray-900 text-sm">Total</span>
                         <span className="font-black text-xl text-blue-600">₹{total.toLocaleString()}</span>
@@ -291,9 +293,16 @@ const Summary = ({ step, onPlace }) => {
 // ─── Main Page ────────────────────────────────────────────────────────────────
 const CheckoutPage = () => {
     const navigate = useNavigate()
+    const { cartItems, totalPrice, loadCart } = useCart()
+    const { user } = useAuth()
     const [step, setStep] = useState(0)
     const [addr, setAddr] = useState(1)
     const [pay, setPay] = useState("card")
+
+    // Load cart on mount
+    useEffect(() => {
+        if (user?.id) loadCart(user.id)
+    }, [user])
 
     const selectedAddr = ADDRESSES.find(a => a.id === addr)
     const selectedPay = PAYMENT.find(p => p.id === pay)
@@ -319,7 +328,7 @@ const CheckoutPage = () => {
                     </button>
                     <div>
                         <h1 className="text-xl font-black text-gray-900">Checkout</h1>
-                        <p className="text-xs text-gray-400">{ITEMS.length} items · ₹{total.toLocaleString()} payable</p>
+                        <p className="text-xs text-gray-400">{cartItems.length} items · ₹{totalPrice.toLocaleString()} payable</p>
                     </div>
                 </div>
 
@@ -436,18 +445,25 @@ const CheckoutPage = () => {
                                 </Card>
 
                                 {/* Items review */}
-                                <Card title={`${ITEMS.length} Items`} icon={Package}>
+                                <Card title={`${cartItems.length} Items`} icon={Package}>
                                     <div className="px-4 py-3 space-y-2">
-                                        {ITEMS.map(item => (
-                                            <div key={item.id} className="flex items-center gap-3 p-2.5 bg-gray-50 rounded-xl">
-                                                <img src={item.img} className="w-11 h-11 rounded-lg object-cover shrink-0" />
-                                                <div className="flex-1 min-w-0">
-                                                    <p className="text-xs font-semibold text-gray-700 truncate">{item.name}</p>
-                                                    <p className="text-[10px] text-gray-400">{item.variant}</p>
+                                        {cartItems.map(item => {
+                                            const product = item.products
+                                            const variant = item.product_variants
+                                            const price = variant?.discount_price || variant?.price || 0
+                                            const img = product?.image_urls?.[0] || 'https://via.placeholder.com/100'
+                                            const variantLabel = [variant?.size, variant?.color].filter(Boolean).join(' · ')
+                                            return (
+                                                <div key={item.id} className="flex items-center gap-3 p-2.5 bg-gray-50 rounded-xl">
+                                                    <img src={img} className="w-11 h-11 rounded-lg object-cover shrink-0" />
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="text-xs font-semibold text-gray-700 truncate">{product?.name}</p>
+                                                        {variantLabel && <p className="text-[10px] text-gray-400">{variantLabel}</p>}
+                                                    </div>
+                                                    <p className="text-xs font-bold text-gray-800 shrink-0">₹{(price * item.quantity).toLocaleString()}</p>
                                                 </div>
-                                                <p className="text-xs font-bold text-gray-800 shrink-0">₹{item.price.toLocaleString()}</p>
-                                            </div>
-                                        ))}
+                                            )
+                                        })}
                                     </div>
                                 </Card>
 
@@ -459,7 +475,7 @@ const CheckoutPage = () => {
                                         className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
                                     >
                                         <Lock className="w-3.5 h-3.5" />
-                                        Place Order · ₹{total.toLocaleString()}
+                                        Place Order · ₹{totalPrice.toLocaleString()}
                                     </motion.button>
                                 </div>
                             </motion.div>
@@ -469,7 +485,7 @@ const CheckoutPage = () => {
 
                     {/* Right — Summary */}
                     <div className="hidden lg:block">
-                        <Summary step={step} onPlace={() => navigate("/order-confirmation")} />
+                        <Summary step={step} onPlace={() => navigate("/order-confirmation")} cartItems={cartItems} subtotal={totalPrice} />
                     </div>
                 </div>
             </div>

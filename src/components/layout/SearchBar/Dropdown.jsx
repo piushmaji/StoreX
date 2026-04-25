@@ -49,10 +49,10 @@ const Dropdown = ({ data, query, close }) => {
                             >
                                 {/* Thumbnail */}
                                 <div className="w-9 h-9 rounded-lg bg-gray-100 overflow-hidden shrink-0">
-                                    {item.images?.[0] && (
+                                    {item.image_urls?.[0] && (
                                         <img
-                                            src={item.images[0]}
-                                            alt={item.title}
+                                            src={item.image_urls[0]}
+                                            alt={item.name}
                                             className="w-full h-full object-cover"
                                         />
                                     )}
@@ -61,15 +61,19 @@ const Dropdown = ({ data, query, close }) => {
                                 <div className="flex-1 min-w-0">
                                     <p className="text-sm font-medium text-gray-800 truncate group-hover:text-blue-700 transition-colors">
                                         {/* Highlight matching query */}
-                                        {item.title.split(new RegExp(`(${query})`, 'gi')).map((part, j) =>
+                                        {item.name.split(new RegExp(`(${query})`, 'gi')).map((part, j) =>
                                             part.toLowerCase() === query.toLowerCase()
                                                 ? <span key={j} className="text-blue-600 font-bold">{part}</span>
                                                 : part
                                         )}
                                     </p>
-                                    {item.pricing?.salePrice && (
-                                        <p className="text-xs text-gray-400">₹{item.pricing.salePrice.toLocaleString()}</p>
-                                    )}
+                                    {(() => {
+                                        const variant = item.variants?.[0]
+                                        const price = variant?.discount_price || variant?.price
+                                        return price ? (
+                                            <p className="text-xs text-gray-400">₹{price.toLocaleString()}</p>
+                                        ) : null
+                                    })()}
                                 </div>
 
                                 <ArrowUpRight className="w-3.5 h-3.5 text-gray-300 group-hover:text-blue-500 transition-colors shrink-0" />

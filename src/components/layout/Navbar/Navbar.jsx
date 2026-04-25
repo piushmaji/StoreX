@@ -5,7 +5,7 @@ import storex from "../../../assets/images/Logo/storex.png"
 import SideDrawer from './SideDrawer'
 import { useCart } from '../../../context/CartContext/CartContext'
 import { useState } from 'react'
-import products from '../../../data/Products'
+import { useProduct } from '../../../context/admin/ProductContext'
 import Dropdown from '../SearchBar/Dropdown'
 import { useAuth } from '../../../context/Auth/AuthContext'
 
@@ -16,8 +16,8 @@ const NAV_LINKS = [
 
 const Navbar = () => {
     const navigate = useNavigate()
-    const items = Object.values(products)
-    const { cartItem } = useCart()
+    const { products } = useProduct()
+    const { cartItems } = useCart()
     const { user,profile } = useAuth()
     const location = useLocation()
 
@@ -25,8 +25,8 @@ const Navbar = () => {
     const [show, setShow] = useState(false)
     const [focused, setFocused] = useState(false)
 
-    const filtered = items.filter(p =>
-        p.title.toLowerCase().includes(query.toLowerCase())
+    const filtered = products.filter(p =>
+        p.name?.toLowerCase().includes(query.toLowerCase())
     )
 
     const { scrollY } = useScroll()
@@ -157,13 +157,13 @@ const Navbar = () => {
                                         size={18}
                                         strokeWidth={isActive("/cart") ? 2.5 : 1.5}
                                     />
-                                    {cartItem.length > 0 && (
+                                    {cartItems.length > 0 && (
                                         <motion.div
                                             initial={{ scale: 0 }}
                                             animate={{ scale: 1 }}
                                             className="absolute -top-2 -right-2 w-4 h-4 bg-blue-600 text-white text-[9px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-sm"
                                         >
-                                            {cartItem.length > 9 ? "9+" : cartItem.length}
+                                            {cartItems.length > 9 ? "9+" : cartItems.length}
                                         </motion.div>
                                     )}
                                 </div>

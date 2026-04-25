@@ -15,9 +15,6 @@ export const getProducts = async () => {
 
   return data.map(item => {
     const product = new Product(item);
-    product.variants = item.product_variants || [];
-    product.category = item.categories || null;
-    product.reviews = item.product_reviews || [];
     return product;
   });
 };

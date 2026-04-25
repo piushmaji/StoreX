@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Heart, ShoppingCart, Star, ArrowRight } from 'lucide-react';
 import WishListIcon from '../common/WishListIcon/WishListIcon';
-import { useCart } from "../../context/CartContext/CartContext"
 
 const products = [
     { id: 1, title: "Cashmere Turtleneck", price: 249.99, originalPrice: 299.00, description: "Ultra-soft 100% cashmere sweater for cold days.", img: "https://images.unsplash.com/photo-1574824874457-3aedfcbcbd3a?q=80&w=800&auto=format&fit=crop", rating: 4.8, reviews: 128, badge: "Bestseller", category: "Women" },
@@ -42,7 +41,6 @@ const RecomendedItems = () => {
     const [activeFilter, setActiveFilter] = useState("All");
     const [wishlist, setWishlist] = useState([]);
     const [addedToCart, setAddedToCart] = useState([]);
-    const { addToCart } = useCart();
 
     const filtered = activeFilter === "All"
         ? products
@@ -57,7 +55,7 @@ const RecomendedItems = () => {
     };
 
     const handleAddToCart = (product) => {
-        if(addToCart) addToCart(product);
+        // Visual feedback only — these are demo products, not real Supabase items
         setAddedToCart(prev => [...prev, product.id]);
         setTimeout(() => {
             setAddedToCart(prev => prev.filter(i => i !== product.id));

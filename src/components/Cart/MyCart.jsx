@@ -3,10 +3,12 @@ import { useCart } from '../../context/CartContext/CartContext'
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { useSaveForLater } from '../../context/SaveForLater/SaveForLater'
+import { useAuth } from '../../context/Auth/AuthContext'
 
 const MyCart = () => {
-    const { cartItem, updateQty, totalPrice, removeItem } = useCart()
+    const { cartItems, totalPrice, handleRemoveFromCart, handleUpdateQty } = useCart()
     const { addToSaved } = useSaveForLater()
+    const { user } = useAuth()
 
     const [coupon, setCoupon] = useState('')
     const [couponApplied, setCouponApplied] = useState(false)
@@ -17,8 +19,14 @@ const MyCart = () => {
     const navigate = useNavigate()
 
     const handleMoveToLater = (item) => {
-        addToSaved(item)
-        removeItem(item.id)
+        // Save the product data for SaveForLater (uses localStorage)
+        addToSaved({
+            id: item.product_id,
+            name: item.products?.name,
+            image_urls: item.products?.image_urls,
+            variants: [item.product_variants],
+        })
+        handleRemoveFromCart(user.id, item.id)
     }
 
     return (
@@ -28,7 +36,7 @@ const MyCart = () => {
             <div className="flex items-center justify-between">
                 <div>
                     <h1 className="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">My Cart
-                        <span className="ml-2 text-sm font-bold text-gray-400 align-middle">({cartItem.length})</span>
+                        <span className="ml-2 text-sm font-bold text-gray-400 align-middle">({cartItems.length})</span>
                     </h1>
                 </div>
                 <Link to="/product" className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-gray-400 hover:text-blue-600 transition-colors">
@@ -41,80 +49,85 @@ const MyCart = () => {
 
                 {/* ── Cart Items ── */}
                 <div className="flex-1 w-full flex flex-col gap-3">
-                    {cartItem.map((item) => (
+                    {cartItems.map((item) => {
+                        const product = item.products
+                        const variant = item.product_variants
+                        const itemPrice = variant?.discount_price || variant?.price || 0
+                        const image = product?.image_urls?.[0] || 'https://via.placeholder.com/150'
 
+                        return (
+                            <div key={item.id} className="bg-white rounded-2xl border border-gray-100 hover:border-blue-100 hover:shadow-lg hover:shadow-slate-100 transition-all duration-200 p-3 sm:p-4 flex gap-3 sm:gap-4 group">
 
-                        <div key={item.id} className="bg-white rounded-2xl border border-gray-100 hover:border-blue-100 hover:shadow-lg hover:shadow-slate-100 transition-all duration-200 p-3 sm:p-4 flex gap-3 sm:gap-4 group">
-
-                            {/* Product image */}
-                            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-slate-50 flex items-center justify-center shrink-0 overflow-hidden">
-                                <img
-                                    src={item.images[0]}
-                                    alt={item.title}
-                                    className="w-full h-full object-contain p-1.5 group-hover:scale-105 transition-transform duration-300"
-                                />
-                            </div>
-
-                            {/* Details */}
-                            <div className="flex-1 min-w-0 flex flex-col justify-between gap-1.5">
-
-                                {/* Title + price */}
-                                <div className="flex items-start justify-between gap-2">
-                                    <h2 className="text-sm font-bold text-gray-900 line-clamp-2 leading-snug flex-1">
-                                        {item.title}
-                                    </h2>
-                                    <span className="text-base font-black text-gray-900 shrink-0 whitespace-nowrap">
-                                        ₹{item.pricing.salePrice}
-                                    </span>
+                                {/* Product image */}
+                                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl bg-slate-50 flex items-center justify-center shrink-0 overflow-hidden">
+                                    <img
+                                        src={image}
+                                        alt={product?.name}
+                                        className="w-full h-full object-contain p-1.5 group-hover:scale-105 transition-transform duration-300"
+                                    />
                                 </div>
 
-                                {/* Specs */}
-                                <div className="flex flex-wrap gap-x-2 gap-y-0.5">
-                                    {[`${item.sizes}`, `${item.details?.material}`, `${item.specs?.certificate}`].filter(Boolean).map((t, i) => (
-                                        <span key={i} className="text-[11px] text-gray-400">{t}</span>
-                                    ))}
-                                </div>
+                                {/* Details */}
+                                <div className="flex-1 min-w-0 flex flex-col justify-between gap-1.5">
 
-                                {/* Actions */}
-                                <div className="flex items-center gap-1.5 flex-wrap mt-0.5">
-
-                                    {/* Qty stepper */}
-                                    <div className="flex items-center bg-gray-100 rounded-xl h-8 overflow-hidden">
-                                        <button
-                                            onClick={() => item.quantity > 1 && updateQty(item.id, item.quantity - 1)}
-                                            className="w-8 h-full flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
-                                        >
-                                            <Minus size={12} />
-                                        </button>
-                                        <span className="w-7 text-center text-xs font-bold text-gray-800 select-none">{item.quantity}</span>
-                                        <button
-                                            onClick={() => updateQty(item.id, item.quantity + 1)}
-                                            className="w-8 h-full flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
-                                        >
-                                            <Plus size={12} />
-                                        </button>
+                                    {/* Title + price */}
+                                    <div className="flex items-start justify-between gap-2">
+                                        <h2 className="text-sm font-bold text-gray-900 line-clamp-2 leading-snug flex-1">
+                                            {product?.name}
+                                        </h2>
+                                        <span className="text-base font-black text-gray-900 shrink-0 whitespace-nowrap">
+                                            ₹{(itemPrice * item.quantity).toLocaleString()}
+                                        </span>
                                     </div>
 
-                                    <div className="w-px h-4 bg-gray-200" />
+                                    {/* Specs */}
+                                    <div className="flex flex-wrap gap-x-2 gap-y-0.5">
+                                        {[variant?.size, variant?.color].filter(Boolean).map((t, i) => (
+                                            <span key={i} className="text-[11px] text-gray-400">{t}</span>
+                                        ))}
+                                    </div>
 
-                                    <button
-                                        onClick={() => handleMoveToLater(item)}
-                                        className="inline-flex items-center gap-1 text-xs font-semibold transition-colors text-gray-500 hover:text-rose-500"
-                                    >
-                                        <Heart size={12} />
-                                        Save For Later
-                                    </button>
+                                    {/* Actions */}
+                                    <div className="flex items-center gap-1.5 flex-wrap mt-0.5">
 
-                                    <button
-                                        onClick={() => removeItem(item.id)}
-                                        className="inline-flex items-center gap-1 text-xs font-semibold text-gray-400 hover:text-red-500 transition-colors ml-auto"
-                                    >
-                                        <Trash2 size={12} /> Remove
-                                    </button>
+                                        {/* Qty stepper */}
+                                        <div className="flex items-center bg-gray-100 rounded-xl h-8 overflow-hidden">
+                                            <button
+                                                onClick={() => item.quantity > 1 && handleUpdateQty(user.id, item.id, item.quantity - 1)}
+                                                className="w-8 h-full flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
+                                            >
+                                                <Minus size={12} />
+                                            </button>
+                                            <span className="w-7 text-center text-xs font-bold text-gray-800 select-none">{item.quantity}</span>
+                                            <button
+                                                onClick={() => handleUpdateQty(user.id, item.id, item.quantity + 1)}
+                                                className="w-8 h-full flex items-center justify-center text-gray-500 hover:bg-gray-200 transition-colors"
+                                            >
+                                                <Plus size={12} />
+                                            </button>
+                                        </div>
+
+                                        <div className="w-px h-4 bg-gray-200" />
+
+                                        <button
+                                            onClick={() => handleMoveToLater(item)}
+                                            className="inline-flex items-center gap-1 text-xs font-semibold transition-colors text-gray-500 hover:text-rose-500"
+                                        >
+                                            <Heart size={12} />
+                                            Save For Later
+                                        </button>
+
+                                        <button
+                                            onClick={() => handleRemoveFromCart(user.id, item.id)}
+                                            className="inline-flex items-center gap-1 text-xs font-semibold text-gray-400 hover:text-red-500 transition-colors ml-auto"
+                                        >
+                                            <Trash2 size={12} /> Remove
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        )
+                    })}
                 </div>
 
                 {/* ── Order Summary ── */}
@@ -153,7 +166,7 @@ const MyCart = () => {
 
                         <div className="flex flex-col gap-2.5">
                             <div className="flex justify-between items-center">
-                                <span className="text-sm text-gray-500">Subtotal <span className="text-gray-400 text-xs">({cartItem.length} items)</span></span>
+                                <span className="text-sm text-gray-500">Subtotal <span className="text-gray-400 text-xs">({cartItems.length} items)</span></span>
                                 <span className="text-sm font-bold text-gray-900">₹{totalPrice.toLocaleString()}</span>
                             </div>
                             <div className="flex justify-between items-center">

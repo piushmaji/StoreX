@@ -5,6 +5,7 @@ import StarRating from "../common/Rating/StarRating"
 import { useCart } from "../../context/CartContext/CartContext"
 import WishListIcon from "../common/WishListIcon/WishListIcon"
 import { useProduct } from "../../context/admin/ProductContext"
+import { useAuth } from "../../context/Auth/AuthContext"
 
 
 const UNIQUE_BENEFITS = [
@@ -37,7 +38,8 @@ const UNIQUE_BENEFITS = [
 const ProductImg = () => {
     const { id } = useParams()
     const { products } = useProduct()
-    const { addToCart, isInCart } = useCart()
+    const { handleAddToCart, isInCart, loadCart } = useCart()
+    const { user } = useAuth()
     const navigate = useNavigate()
 
     const product = products.find(p => p.id === id)
@@ -50,13 +52,67 @@ const ProductImg = () => {
     const [pincode, setPincode] = useState('')
     const [pincodeStatus, setPincodeStatus] = useState(null)
 
+    // Load cart when user is available
+    useEffect(() => {
+        if (user?.id) loadCart(user.id)
+    }, [user])
+
     if (!product) {
         return <div className="py-20 text-center text-slate-400 font-bold uppercase tracking-widest text-sm">Loading Product...</div>
     }
 
-    const handleCartClick = () => {
-        if (isInCart(product.id)) navigate('/cart')
-        else addToCart(product)
+    // Data Mapping for Supabase Structure
+    const variant = product.variants?.[0]
+
+    const price = variant?.price || 0
+    const discountPrice = variant?.discount_price
+    const hasDiscount = discountPrice && discountPrice < price
+    const salesPrice = hasDiscount ? discountPrice : price
+    const discountPercentage = hasDiscount ? Math.round(((price - discountPrice) / price) * 100) : 0
+
+    const inStock = variant ? variant?.stock > 0 : true
+    const rating = product.rating || 0
+    // If product.reviews is populated with foreign key objects, safely measure length instead of blindly interpolating
+    const reviewsCount = Array.isArray(product.product_reviews) ? product.product_reviews.length : (product.reviews || 0)
+    const images = product.image_urls?.length ? product.image_urls : ['https://via.placeholder.com/400']
+
+    const currentImg = activeImg || images[0]
+
+    // Extract unique sizes from variants
+    const availableSizes = product.variants ? [...new Set(product.variants.map(v => v.size).filter(Boolean))] : [];
+
+    // Extract unique colors from variants
+    const availableColors = product.variants ? [...new Set(product.variants.map(v => v.color).filter(Boolean))] : [];
+
+    // Find Selected variant based on size and color
+    const selectedVariant = product.variants?.find(v => v.size === selectedSize && v.color === selectedColor) || variant
+
+    // Check if this product is already in cart
+    const inCart = isInCart(product.id)
+
+    // Handle Add to Cart click
+    const handleCartClick = async () => {
+        if (inCart) {
+            navigate('/cart')
+            return
+        }
+
+        if (!user) {
+            navigate('/login')
+            return
+        }
+
+        if (availableSizes.length > 0 && !selectedSize) {
+            alert("Please select a size")
+            return
+        }
+
+        if (availableColors.length > 0 && !selectedColor) {
+            alert("Please select a color")
+            return
+        }
+
+        await handleAddToCart(user.id, product.id, selectedVariant?.id, quantity)
     }
 
     const handlePincodeCheck = () => {
@@ -67,31 +123,6 @@ const ProductImg = () => {
             setPincodeStatus(valid ? 'valid' : 'invalid')
         }, 800)
     }
-
-    const inCart = isInCart(product.id)
-
-    // Data Mapping for Supabase Structure
-    const variant = product.variants?.[0]
-
-    const price = variant?.price || 0
-    const discountPrice = variant?.discount_price
-    const hasDiscount = discountPrice && discountPrice < price
-    const salesPrice = hasDiscount ? discountPrice : price
-    const discountPercentage = hasDiscount ? Math.round(((price - discountPrice) / price) * 100) : 0
-    
-    const inStock = variant ? variant?.stock > 0 : true
-    const rating = product.rating || 0
-    // If product.reviews is populated with foreign key objects, safely measure length instead of blindly interpolating
-    const reviewsCount = Array.isArray(product.reviews) ? product.reviews.length : (product.reviews || 0)
-    const images = product.image_urls?.length ? product.image_urls : ['https://via.placeholder.com/400']
-    
-    const currentImg = activeImg || images[0]
-    
-    // Extract unique sizes from variants
-    const availableSizes = product.variants ? [...new Set(product.variants.map(v => v.size).filter(Boolean))] : [];
-   
-    // Extract unique colors from variants
-    const availableColors = product.variants ? [...new Set(product.variants.map(v => v.color).filter(Boolean))]:[];
 
     return (
         <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200/50 border border-slate-100">
@@ -270,7 +301,7 @@ const ProductImg = () => {
                                 </button>
                             </div>
 
-                            {/* Add to Cart — solid blue */}
+                            {/* Add to Cart / Go to Cart */}
                             {!inCart ? (
                                 <button
                                     onClick={handleCartClick}
@@ -282,7 +313,7 @@ const ProductImg = () => {
                             ) : (
                                 /* Go to Cart — distinct green outline style */
                                 <button
-                                    onClick={handleCartClick}
+                                    onClick={() => navigate('/cart')}
                                     className="flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] text-white font-black uppercase tracking-wider text-[11px] rounded-[14px] px-7 py-4 shadow-lg shadow-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/40 transition-all duration-200 border-b-[3px] border-emerald-700"
                                 >
                                     <ArrowRight size={15} strokeWidth={2.5} />

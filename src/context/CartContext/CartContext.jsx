@@ -1,66 +1,112 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import toast from "react-hot-toast";
+import {
+  getCart,
+  addToCart,
+  removeFromCart,
+  updateCartItemQty,
+  clearCartItems,
+} from "../../services/cart/cartService";
 
-export const CartContext = createContext(null)
+const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
+  const [cart, setCart] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-    const [cartItem, setCartItem] = useState(() => {
-        const saved = localStorage.getItem("cart");
-        return saved ? JSON.parse(saved) : [];
-    })
-    useEffect(() => {
+  // ── Derived: cart items array (from Supabase join) ──
+  const cartItems = cart?.cart_items || [];
 
-        localStorage.setItem("cart", JSON.stringify(cartItem))
+  // ── Derived: total price ──
+  const totalPrice = cartItems.reduce((sum, item) => {
+    const variant = item.product_variants;
+    const price = variant?.discount_price || variant?.price || 0;
+    return sum + price * item.quantity;
+  }, 0);
 
-    }, [cartItem])
-
-    const addToCart = (product) => {
-        setCartItem((prev) => {
-            const exist = prev.find((item) => item.id === product.id)
-
-            if (exist) {
-                return prev.map((item) =>
-                    item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
-                )
-            }
-
-            return [
-                ...prev,
-                {
-                    ...product,
-                    quantity: 1,
-                }
-            ]
-        })
-
-        toast.success("Added To Cart 🛒")
+  // ── Load cart from Supabase ──
+  const loadCart = async (userId) => {
+    if (!userId) return;
+    setLoading(true);
+    try {
+      const data = await getCart(userId);
+      setCart(data);
+    } catch (err) {
+      console.error("Failed to load cart:", err);
+    } finally {
+      setLoading(false);
     }
+  };
 
-    const totalPrice = cartItem.reduce(
-        (total, item) => total + item.pricing.salePrice * item.quantity, 0
-    )
-    const updateQty = (id, qty) => {
-        if (qty < 1) return;
-        setCartItem((prev) =>
-            prev.map((item) =>
-                item.id === id ? { ...item, quantity: qty } : item)
-        )
+  // ── Add to cart → refresh ──
+  const handleAddToCart = async (userId, productId, variantId, quantity = 1) => {
+    try {
+      await addToCart(userId, productId, variantId, quantity);
+      await loadCart(userId);
+      toast.success("Added to cart! 🛒");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to add item");
     }
-    const removeItem = (id) => {
+  };
 
-        setCartItem((prev) =>
-            prev.filter((item) => item.id !== id)
-        )
+  // ── Remove from cart → refresh ──
+  const handleRemoveFromCart = async (userId, cartItemId) => {
+    try {
+      await removeFromCart(cartItemId);
+      await loadCart(userId);
+      toast.error("Removed from cart");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to remove item");
     }
-    const isInCart = ((id) => {
-        return cartItem.some(item => item.id === id)
-    })
+  };
 
-    return <CartContext.Provider value={{ cartItem, setCartItem, addToCart, updateQty, totalPrice, removeItem, isInCart }}>
-        {children}
+  // ── Update quantity → refresh ──
+  const handleUpdateQty = async (userId, cartItemId, newQty) => {
+    try {
+      await updateCartItemQty(cartItemId, newQty);
+      await loadCart(userId);
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to update quantity");
+    }
+  };
+
+  // ── Check if a product is in cart ──
+  const isInCart = (productId) => {
+    return cartItems.some((item) => item.product_id === productId);
+  };
+
+  // ── Clear entire cart → refresh ──
+  const handleClearCart = async (userId) => {
+    if (!cart?.id) return;
+    try {
+      await clearCartItems(cart.id);
+      await loadCart(userId);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  return (
+    <CartContext.Provider
+      value={{
+        cart,
+        cartItems,
+        totalPrice,
+        loading,
+        loadCart,
+        handleAddToCart,
+        handleRemoveFromCart,
+        handleUpdateQty,
+        isInCart,
+        handleClearCart,
+      }}
+    >
+      {children}
     </CartContext.Provider>
-}
+  );
+};
 
-
-export const useCart = () => useContext(CartContext)
+export const useCart = () => useContext(CartContext);

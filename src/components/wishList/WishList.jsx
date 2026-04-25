@@ -1,13 +1,17 @@
 import { Trash2, ShoppingBag, Heart, ShoppingCart } from "lucide-react"
 import { useWishList } from "../../context/WishListContext/WishListContext"
 import { useCart } from '../../context/CartContext/CartContext'
+import { useAuth } from '../../context/Auth/AuthContext'
 
 const WishList = () => {
     const { wishList, removeWishListItem } = useWishList()
-    const { addToCart } = useCart()
+    const { handleAddToCart } = useCart()
+    const { user } = useAuth()
 
     const handleMove = (item) => {
-        addToCart(item)
+        if (!user) return
+        const variant = item.variants?.[0]
+        handleAddToCart(user.id, item.id, variant?.id)
         removeWishListItem(item.id)
     }
 
@@ -24,9 +28,10 @@ const WishList = () => {
             {/* ── Grid ── */}
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
                 {wishList.map((item) => {
-                    const sale = item.pricing?.salePrice
-                    const original = item.pricing?.originalPrice
-                    const off = item.pricing?.discountPercentage
+                    const variant = item.variants?.[0]
+                    const sale = variant?.discount_price || variant?.price
+                    const original = variant?.price
+                    const off = sale && original && sale < original ? Math.round(((original - sale) / original) * 100) : null
 
                     return (
                         <div
@@ -36,8 +41,8 @@ const WishList = () => {
                             {/* Image */}
                             <div className="relative bg-gray-50 aspect-square flex items-center justify-center overflow-hidden p-3">
                                 <img
-                                    src={item.images?.[0]}
-                                    alt={item.title}
+                                    src={item.image_urls?.[0] || 'https://via.placeholder.com/300'}
+                                    alt={item.name}
                                     className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
                                 />
 
@@ -60,7 +65,7 @@ const WishList = () => {
                             {/* Info */}
                             <div className="flex flex-col gap-2 p-3 flex-1">
                                 <p className="text-[11px] sm:text-xs font-semibold text-gray-700 line-clamp-2 leading-snug">
-                                    {item.title}
+                                    {item.name}
                                 </p>
 
                                 {/* Pricing */}
