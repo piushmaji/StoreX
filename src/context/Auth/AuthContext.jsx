@@ -1,125 +1,103 @@
-import { createContext, useContext, useEffect, useState } from "react"
-import supabase from "../../lib/Supabase/Supabase"
-import { useNavigate } from "react-router-dom"
+import { createContext, useContext, useEffect, useState } from "react";
+import supabase from "../../lib/Supabase/Supabase";
 
-const AuthContext = createContext()
+const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [session, setSession] = useState(null);
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    const [user, setUser] = useState(null)
-    const [session, setSession] = useState(null)
-    const [profile, setProfile] = useState(null)
-    const [loading, setLoading] = useState(true)
+  // 🔹 Auth listener
+  useEffect(() => {
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+        setLoading(false);
+      },
+    );
 
-    const navigate = useNavigate()
+    return () => listener.subscription.unsubscribe();
+  }, []);
 
-    // CREATE PROFILE IF NOT EXISTS
-    const createProfile = async (user) => {
-        const { error } = await supabase
-            .from("profiles")
-            .insert([{
-                id: user.id,
-                email: user.email,
-                role: "user"
-            }])
+  // 🔹 Fetch profile (auto created via DB trigger)
+  useEffect(() => {
+    if (!user) {
+      setProfile(null);
+      return;
+    }
 
-        if (error && error.code !== "23505") {
-            console.error("Profile creation error:", error.message)
+    setLoading(true);
+
+    supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", user.id)
+      .maybeSingle()
+      .then(({ data, error }) => {
+        if (error) {
+          console.error("Profile fetch error:", error);
         }
+        setProfile(data || null);
+        setLoading(false);
+      });
+  }, [user]);
+
+  // 🔹 Signup (full_name goes to metadata → trigger will store it)
+  const signup = async (email, password, fullName) => {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+        },
+      },
+    });
+
+    return { data, error };
+  };
+
+  // 🔹 Login
+  const login = async (email, password) => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    return { data, error };
+  };
+
+  // 🔹 Google Login
+  const loginWithGoogle = async () => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: window.location.origin,
+      },
+    });
+
+    return { data, error };
+  };
+
+  // 🔹 Logout
+  const logout = async () => {
+    const { error } = await supabase.auth.signOut();
+
+    if (!error) {
+      setUser(null);
+      setSession(null);
+      setProfile(null);
     }
 
-    // Auth state listener
-    useEffect(() => {
+    return { error };
+  };
 
-        const { data: listener } = supabase.auth.onAuthStateChange(
-            (_event, session) => {
-                setSession(session)
-                setUser(session?.user ?? null)
-                if (!session) {
-                    setProfile(null)
-                }
-                setLoading(false)
-            }
-        )
-
-        return () => listener.subscription.unsubscribe()
-
-    }, [])
-
-    // Profile fetch — runs when user changes
-    useEffect(() => {
-        if (!user) return
-
-        supabase
-            .from("profiles")
-            .select("*")
-            .eq("id", user.id)
-            .maybeSingle()
-            .then(({ data, error }) => {
-                if (data) setProfile(data)
-            })
-
-    }, [user])
-
-    // SIGNUP
-    const signup = async (email, password) => {
-        const { data, error } = await supabase.auth.signUp({ email, password })
-        if (error) return { error }
-        if (data?.user) await createProfile(data.user)
-        return { data }
-    }
-
-    // LOGIN
-    const login = async (email, password) => {
-        const { data, error } = await supabase.auth.signInWithPassword({ email, password })
-        if (error) return { error }
-        return { data }
-    }
-
-    // GOOGLE LOGIN
-    const loginWithGoogle = async () => {
-        const { data, error } = await supabase.auth.signInWithOAuth({
-            provider: "google",
-            options: { redirectTo: window.location.origin }
-        })
-        return { data, error }
-    }
-
-    // RESET PASSWORD
-    const resetPassword = async (email) => {
-        const { data, error } = await supabase.auth.resetPasswordForEmail(email)
-        return { data, error }
-    }
-
-    // VERIFY RECOVERY OTP
-    const verifyRecoveryOtp = async (email, token) => {
-        const { data, error } = await supabase.auth.verifyOtp({
-            email,
-            token,
-            type: 'recovery'
-        })
-        return { data, error }
-    }
-
-    // UPDATE PASSWORD
-    const updatePassword = async (newPassword) => {
-        const { data, error } = await supabase.auth.updateUser({ password: newPassword })
-        return { data, error }
-    }
-
-    // LOGOUT
-    const logout = async () => {
-        const { error } = await supabase.auth.signOut()
-        if (!error) {
-            setUser(null)
-            setSession(null)
-            setProfile(null)
-            navigate("/")
-        }
-        return { error }
-    }
-
-    const value = {
+  return (
+    <AuthContext.Provider
+      value={{
         user,
         session,
         profile,
@@ -127,17 +105,13 @@ export const AuthProvider = ({ children }) => {
         signup,
         login,
         loginWithGoogle,
-        resetPassword,
-        verifyRecoveryOtp,
-        updatePassword,
         logout,
-    }
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+};
 
-    return (
-        <AuthContext.Provider value={value}>
-            {children}
-        </AuthContext.Provider>
-    )
-}
-
-export const useAuth = () => useContext(AuthContext)
+// 🔹 Hook
+export const useAuth = () => useContext(AuthContext);

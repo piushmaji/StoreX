@@ -111,17 +111,17 @@ const GalleryTab = ({ product }) => {
   const [lightbox, setLightbox] = useState(null)
 
   // Map product dynamically from database
-  const allReviews = Array.isArray(product?.reviews) 
-    ? product.reviews.map((r, i) => {
+  const allReviews = Array.isArray(product?.product_reviews) 
+    ? product.product_reviews.map((r, i) => {
         const d = new Date(r.created_at)
-        const dateStr = isNaN(d) ? 'Recent' : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+        const dateStr = isNaN(d.getTime()) ? 'Recent' : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
         
         return {
           id: r.id,
           user: 'Verified Buyer',
           avatar: 'VB',
           avatarBg: COLORS[i % COLORS.length],
-          rating: r.rating || 5,
+          rating: r.rating || 0,
           date: dateStr,
           verified: true,
           caption: r.review_text || '',
