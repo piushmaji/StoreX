@@ -2,7 +2,7 @@ import { Heart, Search, ShoppingCart, Store, UserRound, Sparkles } from 'lucide-
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
 import { useLocation, Link, useNavigate } from "react-router-dom"
 import storex from "../../../assets/images/Logo/storex.png"
-import SideDrawer from './SideDrawer'
+// SideDrawer removed — replaced by MobileBottomNav
 import { useCart } from '../../../context/CartContext/CartContext'
 import { useState } from 'react'
 import { useProduct } from '../../../context/admin/ProductContext'
@@ -44,10 +44,7 @@ const Navbar = () => {
             <div className="grid grid-cols-12 w-full lg:px-16 xl:px-20 lg:py-3 p-2 gap-3 items-center">
 
                 {/* ── Brand ── */}
-                <div className="flex h-full lg:col-span-2 col-span-6 items-center gap-2.5">
-                    <div className="md:hidden">
-                        <SideDrawer />
-                    </div>
+                <div className="flex h-full lg:col-span-2 col-span-12 items-center gap-2.5">
 
                     <Link to="/" className="flex items-center gap-2.5 group">
                         <div className="relative">
@@ -108,7 +105,7 @@ const Navbar = () => {
                 </div>
 
                 {/* ── Nav Icons ── */}
-                <div className="flex items-center justify-end lg:col-span-3 col-span-6 lg:order-3">
+                <div className="hidden md:flex items-center justify-end lg:col-span-3 col-span-6 lg:order-3">
                     <div className="flex items-center gap-1">
 
                         {/* Store + Wishlist */}
@@ -142,8 +139,8 @@ const Navbar = () => {
                             </Link>
                         ))}
 
-                        {/* Cart */}
-                        <Link to="/cart">
+                        {/* Cart — hidden on mobile, bottom nav handles it */}
+                        <Link to="/cart" className="hidden md:block">
                             <motion.div
                                 whileHover={{ y: -1 }}
                                 whileTap={{ scale: 0.94 }}
