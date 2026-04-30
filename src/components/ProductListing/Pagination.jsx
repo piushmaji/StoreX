@@ -1,14 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 
-const Pagination = () => {
-    const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(10);
+const Pagination = ({
+    currentPage,
+    setCurrentPage,
+    totalItems,
+    totalPages,
+    itemsPerPage,
+    setItemsPerPage
+}) => {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
 
-    const totalItems = 50; // Example total count
-    const pages = [1, 2, 3, 4, 5];
+    // Generate page numbers (simple array for now)
+    const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
     // Perfection detail: Close dropdown when clicking outside
     useEffect(() => {
@@ -49,7 +54,7 @@ const Pagination = () => {
                                 {[10, 25, 50].map((num) => (
                                     <button
                                         key={num}
-                                        onClick={() => { setItemsPerPage(num); setIsOpen(false); }}
+                                        onClick={() => { setItemsPerPage(num); setCurrentPage(1); setIsOpen(false); }}
                                         className={`block w-full px-4 py-2.5 text-left text-sm transition-colors ${itemsPerPage === num ? 'bg-blue-50 text-blue-600 font-bold' : 'hover:bg-gray-50 text-gray-700'
                                             }`}
                                     >

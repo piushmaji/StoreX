@@ -9,6 +9,9 @@ import { useProduct } from '../../../context/admin/ProductContext'
 import Dropdown from '../SearchBar/Dropdown'
 import { useAuth } from '../../../context/Auth/AuthContext'
 
+
+import cart from "../../../assets/Icons/cart.gif"
+
 const NAV_LINKS = [
     { to: "/product", label: "Store", Icon: Store },
     { to: "/wishlist", label: "Wishlist", Icon: Heart },
@@ -150,10 +153,7 @@ const Navbar = () => {
                                     }`}
                             >
                                 <div className="relative">
-                                    <ShoppingCart
-                                        size={18}
-                                        strokeWidth={isActive("/cart") ? 2.5 : 1.5}
-                                    />
+                                    <img src={cart} className="w-[20px] h-[20px] object-contain" alt="Cart" />
                                     {cartItems.length > 0 && (
                                         <motion.div
                                             initial={{ scale: 0 }}

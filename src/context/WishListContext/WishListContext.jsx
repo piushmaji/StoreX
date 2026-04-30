@@ -1,56 +1,93 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import supabase from "../../lib/Supabase/Supabase";
+import {
+  getWishlistItems,
+  addToWishlist,
+  removeFromWishlist,
+} from "../../services/wishlistService/wishListService";
 
-
-export const WishListContext = createContext(null)
-
+export const WishListContext = createContext(null);
 
 export const WishListProvider = ({ children }) => {
+  const [wishList, setWishList] = useState([]);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
+  // 🔹 Load user + wishlist
+  useEffect(() => {
+    const init = async () => {
+      const { data } = await supabase.auth.getUser();
+      const currentUser = data.user;
 
-    const [wishList, setWishList] = useState(() => {
+      setUser(currentUser);
 
-        const saved = localStorage.getItem("liked");
-        return saved ? JSON.parse(saved) : [];
-    })
+      if (currentUser) {
+        const items = await getWishlistItems(currentUser.id);
+        setWishList(items);
+      }
 
-    useEffect(() => {
+      setLoading(false);
+    };
 
-        localStorage.setItem("liked", JSON.stringify(wishList))
+    init();
+  }, []);
 
-    }, [wishList])
-
-
-    const toggleWishList = ((product) => {
-        setWishList((prev) => {
-            const exist = prev.find((item) => item.id === product.id);
-
-            if (exist) {
-                toast.error('Removed from Wishlist 💔')
-                return prev.filter((item) => item.id !== product.id)
-            }
-            else {
-                toast.success("Added to Wishlist ❤️");
-                return [...prev, product];
-            }
-
-        })
-    })
-
-    const isInWishList = ((id) => {
-        return wishList.some(item => item.id === id)
-    })
-
-    const removeWishListItem = (id) => {
-        setWishList((prev) =>
-            prev.filter((item) => item.id !== id)
-        )
+  // 🔹 Toggle wishlist
+  const toggleWishList = async (product) => {
+    if (!user) {
+      toast.error("Please login first");
+      return;
     }
 
-    return <WishListContext.Provider value={{ wishList, setWishList, toggleWishList, isInWishList, removeWishListItem }}>
-        {children}
+    const productId = product.id;
+
+    const exists = wishList.some((item) => item.id === productId);
+
+    if (exists) {
+      await removeFromWishlist(user.id, productId);
+
+      setWishList((prev) =>
+        prev.filter((item) => item.id !== productId),
+      );
+
+      toast.error("Removed from Wishlist 💔");
+    } else {
+      const newItem = await addToWishlist(user.id, productId);
+
+      setWishList((prev) => [...prev, newItem]);
+
+      toast.success("Added to Wishlist ❤️");
+    }
+  };
+
+  // 🔹 Check
+  const isInWishList = (productId) => {
+    return wishList.some((item) => item.id === productId);
+  };
+
+  // 🔹 Remove directly
+  const removeWishListItem = async (productId) => {
+    if (!user) return;
+
+    await removeFromWishlist(user.id, productId);
+
+    setWishList((prev) => prev.filter((item) => item.id !== productId));
+  };
+
+  return (
+    <WishListContext.Provider
+      value={{
+        wishList,
+        toggleWishList,
+        isInWishList,
+        removeWishListItem,
+        loading,
+      }}
+    >
+      {children}
     </WishListContext.Provider>
-}
+  );
+};
 
-
-export const useWishList = () => useContext(WishListContext)
+export const useWishList = () => useContext(WishListContext);

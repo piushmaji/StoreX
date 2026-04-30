@@ -6,7 +6,7 @@ import {
   removeFromCart,
   updateCartItemQty,
   clearCartItems,
-} from "../../services/cart/cartService";
+} from "../../services/cartService/cartService";
 
 const CartContext = createContext();
 
