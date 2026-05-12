@@ -18,6 +18,7 @@ const MobileBottomNav = () => {
   const { cartItems } = useCart();
   const { user, profile } = useAuth();
 
+  
   const isActive = (path) => {
     if (path === "/") return location.pathname === "/";
     return location.pathname.startsWith(path);
