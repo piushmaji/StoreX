@@ -5,7 +5,7 @@ import {
   getWishlistItems,
   addToWishlist,
   removeFromWishlist,
-} from "../../services/wishlistService/wishListService";
+} from "../../services/wishlistService/wishlistService";
 
 export const WishListContext = createContext(null);
 
