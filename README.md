@@ -2,7 +2,7 @@
 
 <div align="center">
 
-<img src="./src/assets/images/Logo/storex.png" alt="StoreX Logo" width="200"/>
+<img src="./src/assets/images/Logo/storex.svg" alt="StoreX Logo" width="200"/>
 
 **A modern, responsive e-commerce platform built with React and Tailwind CSS**
 
@@ -38,6 +38,7 @@
 StoreX is a full-featured e-commerce platform designed to provide an excellent shopping experience. Built with modern web technologies, it offers a clean, intuitive interface for browsing products, viewing deals, and connecting with suppliers.
 
 ### 🔗 Live Application
+
 **Production URL**: [https://storexpi.vercel.app/](https://storexpi.vercel.app/)
 
 ---
@@ -47,33 +48,50 @@ StoreX is a full-featured e-commerce platform designed to provide an excellent s
 <div align="center">
 
 ### Desktop View
+
 ![Desktop Homepage](./public/screenshots/desktop-home.png)
-*Homepage with hero slider and featured deals*
+_Homepage with hero slider and featured deals_
 
 ### Mobile View
+
 <img src="./public/screenshots/mobilehome.png" alt="Mobile Homepage" width="300"/>
 
-*Responsive mobile interface*
+_Responsive mobile interface_
 
 ### Product Listing
+
 ![Product Listing](./public/screenshots/listing.png)
-*Browse products*
+_Browse products_
 
 ### Product Section
+
 ![Product Section](./public/screenshots/product.png)
-*Product Section*
+_Product Section_
+
+### Price History Section
+
+![History](./public/screenshots/history.png)
+_Check price history from product listing pages_
+
+### Related Products Section
+
+![Related Products](./public/screenshots/related-product.png)
+_Check related products from product listing pages_
 
 ### Add To Cart Section
+
 ![Add To Cart](./public/screenshots/cart.png)
-*Add to cart section*
+_Add to cart section_
 
 ### Wishlist Section
+
 ![Wishlist](./public/screenshots/Wishlist.png)
-*Add Your Wishlist from product listing pages*
+_Add Your Wishlist from product listing pages_
 
 ### My Profile Section
+
 ![Profile](./public/screenshots/profile.png)
-*Edit My profile section*
+_Edit My profile section_
 
 </div>
 
@@ -82,12 +100,14 @@ StoreX is a full-featured e-commerce platform designed to provide an excellent s
 ## ✨ Features
 
 ### 🎨 User Interface
+
 - ✅ **Fully Responsive Design** - Seamless experience on mobile, tablet, and desktop
 - ✅ **Modern UI/UX** - Clean design with Tailwind CSS utilities
 - ✅ **Smooth Navigation** - Intuitive menu and search functionality
 - ✅ **Interactive Elements** - Hover effects and smooth transitions
 
 ### 🛒 Shopping Features
+
 - ✅ **Product Categories** - Browse Home & Outdoor, Electronics & Gadgets
 - ✅ **Deal Countdown** - Time-limited offers with live countdown timer
 - ✅ **Product Recommendations** - Curated items based on categories
@@ -95,6 +115,7 @@ StoreX is a full-featured e-commerce platform designed to provide an excellent s
 - ✅ **Wishlist** - Save favorite products
 
 ### 💼 Business Features
+
 - ✅ **Quote Request System** - Send inquiries to suppliers
 - ✅ **Supplier Directory** - Browse suppliers by region with flags
 - ✅ **Extra Services** - Custom sourcing, shipping, and inspection
@@ -104,15 +125,16 @@ StoreX is a full-featured e-commerce platform designed to provide an excellent s
 
 ## 🛠️ Tech Stack
 
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| **React** | 18.x | Frontend UI Library |
-| **Vite** | 5.x | Build Tool & Dev Server |
-| **Tailwind CSS** | 3.x | Utility-First CSS Framework |
-| **Lucide React** | Latest | Icon Library |
-| **JavaScript (ES6+)** | - | Programming Language |
+| Technology            | Version | Purpose                     |
+| --------------------- | ------- | --------------------------- |
+| **React**             | 18.x    | Frontend UI Library         |
+| **Vite**              | 5.x     | Build Tool & Dev Server     |
+| **Tailwind CSS**      | 3.x     | Utility-First CSS Framework |
+| **Lucide React**      | Latest  | Icon Library                |
+| **JavaScript (ES6+)** | -       | Programming Language        |
 
 ### Additional Libraries
+
 - `lucide-react` - Modern icon components
 - React hooks (useState, useEffect) - State management
 
@@ -187,18 +209,21 @@ storex/
 ### Prerequisites
 
 Ensure you have the following installed:
+
 - **Node.js** (v16 or higher) - [Download](https://nodejs.org/)
 - **npm** or **yarn** - Package manager
 
 ### Installation Steps
 
 #### 1️⃣ Clone the Repository
+
 ```bash
 git clone https://github.com/piushmaji/storex.git
 cd storex
 ```
 
 #### 2️⃣ Install Dependencies
+
 ```bash
 # Using npm
 npm install
@@ -208,6 +233,7 @@ yarn install
 ```
 
 #### 3️⃣ Start Development Server
+
 ```bash
 # Using npm
 npm run dev
@@ -219,6 +245,7 @@ yarn dev
 The application will open at `http://localhost:5173`
 
 #### 4️⃣ Build for Production
+
 ```bash
 # Using npm
 npm run build
@@ -230,6 +257,7 @@ yarn build
 Build output will be in the `dist/` folder
 
 #### 5️⃣ Preview Production Build
+
 ```bash
 # Using npm
 npm run preview
@@ -240,21 +268,23 @@ yarn preview
 
 ### Available Scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start development server with hot reload |
-| `npm run build` | Build optimized production bundle |
-| `npm run preview` | Preview production build locally |
-| `npm run lint` | Run ESLint to check code quality |
+| Command           | Description                              |
+| ----------------- | ---------------------------------------- |
+| `npm run dev`     | Start development server with hot reload |
+| `npm run build`   | Build optimized production bundle        |
+| `npm run preview` | Preview production build locally         |
+| `npm run lint`    | Run ESLint to check code quality         |
 
 ---
 
 ## 📚 Components Documentation
 
 ### Navigation
+
 - **Navbar** - Main navigation with logo, search, cart, and menu
 
 ### Home Page Sections
+
 - **ImgSlider** - Hero carousel with featured products
 - **Deal** - Time-sensitive offers with countdown
 - **CategoryCards** - Product category navigation
@@ -292,14 +322,17 @@ npm run build
 ### Common Issues
 
 **Issue: Images not loading**
+
 - Check image paths in `public/img/` folder
 - Ensure correct import paths in components
 
 **Issue: Build fails**
+
 - Clear `node_modules` and reinstall: `rm -rf node_modules && npm install`
 - Clear Vite cache: `rm -rf .vite`
 
 **Issue: Styles not applying**
+
 - Verify Tailwind CSS is properly configured
 - Check `tailwind.config.js` content paths
 
