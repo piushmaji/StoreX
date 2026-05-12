@@ -5,7 +5,7 @@ import { Twitter } from 'lucide-react'
 import { Youtube } from 'lucide-react'
 
 
-import storex from '../../../assets/images/Logo/storex.png'
+import storex from '../../../assets/images/Logo/storex.svg'
 import appleApp from '../../../assets/images/Footer/appleApp.svg'
 import playStore from '../../../assets/images/Footer/playStore.svg'
 

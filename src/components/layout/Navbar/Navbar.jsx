@@ -1,7 +1,8 @@
 import { Heart, Search, ShoppingCart, Store, UserRound, Sparkles } from 'lucide-react'
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
 import { useLocation, Link, useNavigate } from "react-router-dom"
-import storex from "../../../assets/images/Logo/storex.png"
+import storex from "../../../assets/images/Logo/storex.svg"
+import storex2 from "../../../assets/images/Logo/namelogo.svg"
 // SideDrawer removed — replaced by MobileBottomNav
 import { useCart } from '../../../context/CartContext/CartContext'
 import { useState } from 'react'
@@ -48,23 +49,15 @@ const Navbar = () => {
 
                 {/* ── Brand ── */}
                 <div className="w-full lg:w-auto flex items-center justify-center lg:justify-start">
-                    <Link to="/" className="flex items-center gap-2.5 group">
-                        <div className="relative">
-                            <div className="absolute inset-0 bg-blue-500 rounded-xl blur-sm opacity-0 group-hover:opacity-30 transition-all duration-300" />
-                            <img
-                                className="relative md:h-9 md:w-9 h-7 w-7 border-2 border-blue-500 md:rounded-xl rounded-lg p-1 bg-white transition-transform duration-200 group-hover:scale-105"
-                                src={storex}
-                                alt="StoreX"
-                            />
-                        </div>
-                        <div className="flex flex-col">
-                            <span className="md:text-xl text-lg font-black text-blue-600 tracking-tight leading-none">
-                                StoreX
-                            </span>
-                            <span className="hidden md:block text-[9px] text-blue-400 font-semibold tracking-[0.15em] uppercase leading-none mt-0.5">
-                                Shop Smarter
-                            </span>
-                        </div>
+                    <Link to="/" className="flex flex-col items-center lg:items-start group px-2 py-1 rounded-xl transition-all hover:bg-blue-50/50">
+                        <img
+                            className="h-7 md:h-8 w-auto object-contain transition-transform duration-300 group-hover:scale-[1.03]"
+                            src={storex2}
+                            alt="StoreX Logo"
+                        />
+                        <span className="hidden md:block text-[9px] text-blue-500 font-extrabold tracking-[0.3em] uppercase leading-none mt-1 ml-1 opacity-90 transition-opacity duration-300 group-hover:opacity-100">
+                            Shop Smarter
+                        </span>
                     </Link>
                 </div>
 
