@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getPaginatedProducts } from '../services/productService';
 
-export const usePaginatedProducts = (initialLimit = 10) => {
+export const usePaginatedProducts = (initialLimit = 10, activeFilters = {}) => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -9,11 +9,11 @@ export const usePaginatedProducts = (initialLimit = 10) => {
     const [totalItems, setTotalItems] = useState(0);
     const [itemsPerPage, setItemsPerPage] = useState(initialLimit);
 
-    const fetchPage = useCallback(async (page, limit) => {
+    const fetchPage = useCallback(async (page, limit, filters) => {
         setLoading(true);
         setError(null);
         try {
-            const { data, count } = await getPaginatedProducts({ page, limit });
+            const { data, count } = await getPaginatedProducts({ page, limit, filters });
             setProducts(data);
             setTotalItems(count);
             setCurrentPage(page);
@@ -27,8 +27,16 @@ export const usePaginatedProducts = (initialLimit = 10) => {
     }, []);
 
     useEffect(() => {
-        fetchPage(currentPage, itemsPerPage);
-    }, [currentPage, itemsPerPage, fetchPage]);
+        // We reset to page 1 whenever filters change to avoid empty pages
+        fetchPage(1, itemsPerPage, activeFilters);
+    }, [itemsPerPage, fetchPage, JSON.stringify(activeFilters)]);
+
+    // Separate useEffect for pure pagination without filter changes
+    useEffect(() => {
+        fetchPage(currentPage, itemsPerPage, activeFilters);
+        // We do not include activeFilters dependency here to prevent double fetch
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentPage]);
 
     return {
         products,

@@ -21,7 +21,7 @@ const cardVariants = {
   show: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } }
 };
 
-const ProductCategory = () => {
+const ProductCategory = ({ activeFilters }) => {
     const { 
         products, 
         loading, 
@@ -31,7 +31,7 @@ const ProductCategory = () => {
         setItemsPerPage, 
         totalItems, 
         totalPages 
-    } = usePaginatedProducts(10);
+    } = usePaginatedProducts(10, activeFilters);
 
     return (
         <div className="w-full h-full flex flex-col gap-6">
