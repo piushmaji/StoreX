@@ -19,7 +19,7 @@ const FilterBar = ({ count, onOpenFilters, viewMode, setViewMode }) => {
             {/* Right side: View Toggles & Mobile Filter */}
             <div className="flex items-center gap-3">
                 {/* View Toggle Group */}
-                <div className="hidden sm:flex items-center p-1 bg-gray-100 rounded-lg border border-gray-200">
+                <div className="flex items-center p-1 bg-gray-100 rounded-lg border border-gray-200">
                     <button
                         onClick={() => setViewMode('grid')}
                         className={`p-1.5 rounded-md transition-all ${viewMode === 'grid'

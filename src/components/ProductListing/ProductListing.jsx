@@ -51,7 +51,7 @@ const ProductListingPage = () => {
                         </div>
                         
                         {/* Drawer Content */}
-                        <div className="flex-1 overflow-y-auto p-4 no-scrollbar">
+                        <div className="flex-1 overflow-y-auto p-4 pb-28 no-scrollbar">
                             <FilteredCategory 
                                activeFilters={activeFilters} 
                                onApplyFilters={(filters) => {
