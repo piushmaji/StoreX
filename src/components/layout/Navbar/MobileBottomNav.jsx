@@ -1,13 +1,19 @@
-import { Home, Store, Heart, ShoppingCart, UserRound } from "lucide-react";
+import { Home, Store, Heart, UserRound } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useCart } from "../../../context/CartContext/CartContext";
 import { useAuth } from "../../../context/Auth/AuthContext";
 
+import cartGif from "../../../assets/Icons/cart.gif";
+
+const CartImage = ({ size }) => (
+    <img src={cartGif} alt="Cart" style={{ width: size, height: size }} className="object-contain" />
+);
+
 const NAV_ITEMS = [
   { to: "/", label: "Home", Icon: Home },
   { to: "/product", label: "Store", Icon: Store },
-  { to: "/cart", label: "Cart", Icon: ShoppingCart, showBadge: true },
+  { to: "/cart", label: "Cart", Icon: CartImage, showBadge: true },
   { to: "/wishlist", label: "Wishlist", Icon: Heart },
   { to: "/profile", label: "Profile", Icon: UserRound, authRequired: true },
 ];
@@ -37,7 +43,7 @@ const MobileBottomNav = () => {
   };
 
   return (
-    <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50">
+    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50">
       {/* Frosted glass background */}
       <div className="relative bg-white/80 backdrop-blur-xl border-t border-blue-100/60 shadow-[0_-4px_20px_rgba(37,99,235,0.06)]">
         {/* Safe area spacer for notched phones */}

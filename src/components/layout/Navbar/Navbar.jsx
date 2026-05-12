@@ -108,7 +108,7 @@ const Navbar = () => {
                 </div>
 
                 {/* ── Nav Icons ── */}
-                <div className="hidden md:flex items-center justify-end lg:col-span-3 col-span-6 lg:order-3">
+                <div className="hidden lg:flex items-center justify-end lg:col-span-3 col-span-6 lg:order-3">
                     <div className="flex items-center gap-1">
 
                         {/* Store + Wishlist */}
@@ -117,7 +117,7 @@ const Navbar = () => {
                                 <motion.div
                                     whileHover={{ y: -1 }}
                                     whileTap={{ scale: 0.94 }}
-                                    className={`relative hidden md:flex flex-col items-center px-3 py-2 rounded-xl cursor-pointer transition-all duration-200 ${isActive(to)
+                                    className={`relative flex flex-col items-center px-3 py-2 rounded-xl cursor-pointer transition-all duration-200 ${isActive(to)
                                         ? "bg-blue-50 text-blue-600"
                                         : "text-gray-500 hover:bg-gray-50 hover:text-blue-500"
                                         }`}
@@ -143,7 +143,7 @@ const Navbar = () => {
                         ))}
 
                         {/* Cart — hidden on mobile, bottom nav handles it */}
-                        <Link to="/cart" className="hidden md:block">
+                        <Link to="/cart">
                             <motion.div
                                 whileHover={{ y: -1 }}
                                 whileTap={{ scale: 0.94 }}
@@ -183,7 +183,7 @@ const Navbar = () => {
                                 <motion.div
                                     whileHover={{ y: -1 }}
                                     whileTap={{ scale: 0.94 }}
-                                    className={`relative hidden md:flex flex-col items-center px-3 py-2 rounded-xl cursor-pointer transition-all duration-200 ${isActive("/profile")
+                                    className={`relative flex flex-col items-center px-3 py-2 rounded-xl cursor-pointer transition-all duration-200 ${isActive("/profile")
                                         ? "bg-blue-50 text-blue-600"
                                         : "text-gray-500 hover:bg-gray-50 hover:text-blue-500"
                                         }`}
@@ -209,7 +209,7 @@ const Navbar = () => {
                                 whileHover={{ y: -1 }}
                                 whileTap={{ scale: 0.96 }}
                                 onClick={() => navigate("/login")}
-                                className="hidden md:flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all shadow-md shadow-blue-500/20 ml-1"
+                                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all shadow-md shadow-blue-500/20 ml-1"
                             >
                                 <UserRound size={14} />
                                 Sign In

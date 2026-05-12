@@ -18,7 +18,7 @@ const Section = ({ title, children, defaultOpen = true }) => {
                     className={`w-3.5 h-3.5 text-blue-300 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
                 />
             </button>
-            <div className={`overflow-hidden transition-all duration-300 ease-in-out ${open ? "max-h-96 opacity-100 mt-3 overflow-y-auto custom-scrollbar" : "max-h-0 opacity-0"}`}>
+            <div className={`overflow-hidden transition-all duration-300 ease-in-out ${open ? "max-h-96 opacity-100 mt-3 overflow-y-auto no-scrollbar" : "max-h-0 opacity-0"}`}>
                 {children}
             </div>
         </div>
@@ -166,7 +166,7 @@ const FilteredCategory = ({ activeFilters, onApplyFilters }) => {
             </div>
 
             {/* Filter Body - Scrollable */}
-            <div className="px-5 overflow-y-auto custom-scrollbar flex-1 pb-4">
+            <div className="px-5 overflow-y-auto no-scrollbar flex-1 pb-4">
                 {isLoading ? (
                     <div className="flex flex-col items-center justify-center py-12 text-blue-400">
                         <Loader2 className="w-8 h-8 animate-spin mb-2" />

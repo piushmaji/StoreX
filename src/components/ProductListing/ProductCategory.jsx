@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ShoppingCart, Star, Eye } from 'lucide-react';
@@ -21,7 +21,7 @@ const cardVariants = {
   show: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } }
 };
 
-const ProductCategory = ({ activeFilters }) => {
+const ProductCategory = ({ activeFilters, onOpenMobileFilters }) => {
     const { 
         products, 
         loading, 
@@ -32,6 +32,8 @@ const ProductCategory = ({ activeFilters }) => {
         totalItems, 
         totalPages 
     } = usePaginatedProducts(10, activeFilters);
+
+    const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
 
     return (
         <div className="w-full h-full flex flex-col gap-6">
@@ -44,7 +46,7 @@ const ProductCategory = ({ activeFilters }) => {
                         <p className="text-xs text-slate-400 font-medium mt-1">Showing {totalItems} premium products</p>
                     </div>
                 </div>
-                <FilterBar count={totalItems} />
+                <FilterBar count={totalItems} onOpenFilters={onOpenMobileFilters} viewMode={viewMode} setViewMode={setViewMode} />
             </div>
 
             {/* Product Grid */}
@@ -52,7 +54,9 @@ const ProductCategory = ({ activeFilters }) => {
                variants={containerVariants} 
                initial="hidden" 
                animate="show" 
-               className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6"
+               className={viewMode === 'grid' 
+                   ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" 
+                   : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"}
             >
                 {loading ? (
                     // Render Skeletons
