@@ -3,7 +3,6 @@ import Deal from "./Deal";
 import CategoryCards from "./CategoryCards/CategoryCards";
 import SendInquiry from "./SendInquiry";
 import ExtraService from "./ExtraService";
-import Suppliers from "./Suppliers";
 import ImgSlider from "./ImgSlider";
 import RecomendedItems from "./RecomendedItems";
 import { getFeaturedProducts } from "../../services/productService";
@@ -19,7 +18,7 @@ const womensCollectionData = {
     {
       id: 1,
       name: "Silk Blouse",
-      img: "https://images.unsplash.com/photo-1550639524-a6f58345a90d?q=80&w=1200&auto=format&fit=crop",
+      img: "https://images.unsplash.com/photo-1674384613407-43e021208955?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       price: "2,499",
     },
     {
@@ -92,7 +91,7 @@ const mensCollectionData = {
     {
       id: 1,
       name: "Linen Shirt",
-      img: "https://images.unsplash.com/photo-1596755094514-f87e32f85e2c?q=80&w=1200&auto=format&fit=crop",
+      img: "https://images.unsplash.com/photo-1772583435302-354ee9fb7f09?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       price: "1,899",
     },
     {
@@ -215,11 +214,10 @@ const Home = () => {
           <CategoryCards {...mensCollectionData} />
         </section>
 
-        {/* 6 & 7. Extra Services & Suppliers wrapper */}
-        <div className="px-4 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-4 border-t border-gray-100 pt-12">
+        {/* 6. Extra Services (Member Perks) */}
+        <section className="px-4 lg:px-8 border-t border-gray-100 pt-12">
           <ExtraService />
-          <Suppliers />
-        </div>
+        </section>
 
         {/* 8. Send Inquiry / Query */}
         <section className="px-4 lg:px-8">

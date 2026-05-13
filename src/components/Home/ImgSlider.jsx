@@ -103,7 +103,7 @@ const ImgSlider = ({ slides }) => {
             </div>
 
             {/* ── Prev / Next Buttons ───────────────────────────────── */}
-            <div className="absolute right-6 sm:right-16 lg:right-24 bottom-12 z-20 flex gap-4 hidden sm:flex">
+            <div className="absolute right-6 sm:right-16 lg:right-24 bottom-12 z-20 flex gap-4 sm:flex">
                 <button
                     onClick={prevSlide}
                     aria-label="Previous slide"
