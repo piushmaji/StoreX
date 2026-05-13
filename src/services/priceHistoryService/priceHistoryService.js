@@ -1,4 +1,4 @@
-import supabase from "../../lib/supabase/Supabase";
+import supabase from "../../lib/Supabase/Supabase";
 
 export async function getPriceHistory(productId) {
   const { data, error } = await supabase
