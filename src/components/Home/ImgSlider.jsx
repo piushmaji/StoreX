@@ -50,8 +50,7 @@ const ImgSlider = ({ slides }) => {
     const meta = slides_meta[index] ?? slides_meta[0];
 
     return (
-        <div className="relative w-full overflow-hidden rounded-2xl group shadow-sm bg-gray-100"
-            style={{ aspectRatio: "16/6", minHeight: "260px", maxHeight: "560px" }}>
+        <div className="relative w-full h-full overflow-hidden group bg-gray-900">
 
             {/* ── Slide Images ──────────────────────────────────────── */}
             {slides.map((slide, i) => (
@@ -63,81 +62,99 @@ const ImgSlider = ({ slides }) => {
                     <img
                         src={slide.image}
                         alt={`Slide ${i + 1}`}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover object-center"
                         style={{
                             transform: i === index ? "scale(1.05)" : "scale(1)",
-                            transition: "transform 8s ease-out",
+                            transition: "transform 10s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
                         }}
                     />
-                    {/* Cinematic linear overlay */}
-                    <div className="absolute inset-0 bg-linear-to-r from-black/60 via-black/20 to-transparent" />
+                    {/* Very subtle gradient for text legibility, keeping image crisp */}
+                    <div className="absolute inset-0 bg-black/20" />
+                    <div className="absolute inset-0 bg-linear-to-r from-black/40 via-transparent to-transparent" />
                 </div>
             ))}
 
             {/* ── Editorial Text Overlay ────────────────────────────── */}
             <div
                 key={index} // Force re-render animation
-                className="absolute inset-0 z-10 flex flex-col justify-center px-10 lg:px-20 pointer-events-none"
-                style={{
-                    animation: "fadeSlideIn 0.8s cubic-bezier(0.22,1,0.36,1) forwards",
-                }}
+                className="absolute inset-0 z-10 flex flex-col justify-center px-6 sm:px-16 lg:px-24 pointer-events-none max-w-screen-2xl mx-auto w-full"
             >
-                <p className="text-xs lg:text-sm tracking-[0.2em] text-white/80 mb-3 font-semibold uppercase">
-                    {meta.sub}
-                </p>
-                <h1
-                    className="text-3xl lg:text-6xl font-black text-white mb-6 leading-[1.1] tracking-tight drop-shadow-sm"
-                    style={{ whiteSpace: "pre-line", fontFamily: "'Inter', sans-serif" }}
+                <div 
+                    className="max-w-xl"
+                    style={{ animation: "fadeUpIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards" }}
                 >
-                    {meta.heading}
-                </h1>
-                <a
-                    href="#"
-                    className="pointer-events-auto inline-flex items-center gap-2 self-start bg-white text-gray-900 text-xs lg:text-sm font-bold tracking-widest px-6 py-3.5 rounded-full hover:bg-blue-600 hover:text-white hover:scale-105 active:scale-95 transition-all duration-300 shadow-xl"
-                >
-                    {meta.cta} →
-                </a>
+                    <p className="text-[10px] sm:text-xs lg:text-sm tracking-[0.4em] text-white/80 mb-6 font-medium uppercase">
+                        {meta.sub}
+                    </p>
+                    <h1
+                        className="text-4xl sm:text-6xl lg:text-7xl font-light text-white mb-10 leading-[1.1] tracking-tight"
+                        style={{ whiteSpace: "pre-line" }}
+                    >
+                        {meta.heading}
+                    </h1>
+                    <a
+                        href="#"
+                        className="pointer-events-auto inline-flex items-center gap-4 self-start text-white text-xs lg:text-sm font-medium tracking-[0.15em] uppercase border-b border-white/40 pb-2 hover:border-white transition-all duration-300 group"
+                    >
+                        {meta.cta} 
+                        <ArrowRight size={16} strokeWidth={1.5} className="group-hover:translate-x-2 transition-transform duration-300" />
+                    </a>
+                </div>
             </div>
 
             {/* ── Prev / Next Buttons ───────────────────────────────── */}
-            <button
-                onClick={prevSlide}
-                aria-label="Previous slide"
-                className="absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 z-20 h-10 w-10 lg:h-12 lg:w-12 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white hover:text-gray-900 transition-all duration-300 opacity-0 group-hover:opacity-100"
-            >
-                <ArrowLeft size={20} />
-            </button>
-            <button
-                onClick={nextSlide}
-                aria-label="Next slide"
-                className="absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 z-20 h-10 w-10 lg:h-12 lg:w-12 flex items-center justify-center rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white hover:text-gray-900 transition-all duration-300 opacity-0 group-hover:opacity-100"
-            >
-                <ArrowRight size={20} />
-            </button>
+            <div className="absolute right-6 sm:right-16 lg:right-24 bottom-12 z-20 flex gap-4 hidden sm:flex">
+                <button
+                    onClick={prevSlide}
+                    aria-label="Previous slide"
+                    className="h-12 w-12 flex items-center justify-center rounded-full border border-white/30 text-white hover:bg-white hover:text-black transition-all duration-500 hover:scale-105"
+                >
+                    <ArrowLeft size={18} strokeWidth={1.5} />
+                </button>
+                <button
+                    onClick={nextSlide}
+                    aria-label="Next slide"
+                    className="h-12 w-12 flex items-center justify-center rounded-full border border-white/30 text-white hover:bg-white hover:text-black transition-all duration-500 hover:scale-105"
+                >
+                    <ArrowRight size={18} strokeWidth={1.5} />
+                </button>
+            </div>
 
             {/* ── Dot Indicators ────────────────────────────────────── */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2.5 bg-black/20 backdrop-blur-sm px-4 py-2 rounded-full">
+            <div className="absolute bottom-12 left-6 sm:left-16 lg:left-24 z-20 flex items-center gap-3">
                 {slides.map((_, i) => (
                     <button
                         key={i}
                         onClick={() => goTo(i, i > index ? "next" : "prev")}
                         aria-label={`Go to slide ${i + 1}`}
-                        className="transition-all duration-500 rounded-full"
+                        className="transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] relative overflow-hidden"
                         style={{
-                            width: i === index ? "32px" : "8px",
-                            height: "8px",
-                            background: i === index ? "#ffffff" : "rgba(255,255,255,0.4)",
-                            boxShadow: i === index ? "0 0 10px rgba(255,255,255,0.5)" : "none"
+                            width: i === index ? "48px" : "24px",
+                            height: "2px",
+                            background: "rgba(255,255,255,0.3)"
                         }}
-                    />
+                    >
+                        {/* Progress bar effect for active dot */}
+                        {i === index && (
+                            <div className="absolute inset-0 bg-white" 
+                                style={{ 
+                                    animation: "progress 4s linear forwards"
+                                }} 
+                            />
+                        )}
+                    </button>
                 ))}
             </div>
 
             {/* ── CSS animation keyframe ────────────────────────────── */}
             <style>{`
-                @keyframes fadeSlideIn {
-                    from { opacity: 0; transform: translateY(24px); }
+                @keyframes fadeUpIn {
+                    from { opacity: 0; transform: translateY(30px); }
                     to   { opacity: 1; transform: translateY(0); }
+                }
+                @keyframes progress {
+                    from { width: 0%; }
+                    to { width: 100%; }
                 }
             `}</style>
         </div>

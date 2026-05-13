@@ -121,7 +121,7 @@ const ProductCategory = ({ activeFilters, onOpenMobileFilters }) => {
                   {/* Image Section */}
                   <div className="relative aspect-4/5 rounded-2xl bg-slate-50 overflow-hidden mb-4">
                     <Link
-                      to={`${product.id}`}
+                      to={`/products/${product.slug || product.id}`}
                       className="absolute inset-0 z-10 block"
                     >
                       <img
@@ -150,7 +150,7 @@ const ProductCategory = ({ activeFilters, onOpenMobileFilters }) => {
                     {/* Quick View Overlay */}
                     <div className="absolute bottom-3 inset-x-3 z-20 opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-300">
                       <Link
-                        to={`${product.id}`}
+                        to={`/products/${product.slug || product.id}`}
                         className="w-full bg-white/95 backdrop-blur-md text-blue-600 text-xs font-black py-3 rounded-xl flex items-center justify-center gap-2 shadow-lg hover:shadow-blue-500/20 shadow-black/5 border border-slate-100 hover:bg-blue-600 hover:text-white transition-all"
                       >
                         <Eye size={14} /> Quick View
@@ -177,7 +177,7 @@ const ProductCategory = ({ activeFilters, onOpenMobileFilters }) => {
                     </div>
 
                     <Link
-                      to={`${product.id}`}
+                      to={`/products/${product.slug || product.id}`}
                       className="group-hover:text-blue-600 transition-colors mt-1"
                     >
                       <h2 className="text-sm font-black text-slate-800 line-clamp-2 leading-snug">

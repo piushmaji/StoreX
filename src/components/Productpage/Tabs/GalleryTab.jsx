@@ -1,5 +1,6 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Star, Upload, X, ZoomIn, ChevronLeft, ChevronRight, Camera, Check, Image, ChevronDown, ChevronUp } from "lucide-react"
+import { fetchReviewerProfiles } from "../../../services/productService"
 
 const Stars = ({ count, size = 12 }) => (
   <div className="flex items-center gap-0.5">
@@ -12,10 +13,13 @@ const Stars = ({ count, size = 12 }) => (
 const COLORS = ['bg-blue-500', 'bg-rose-400', 'bg-emerald-500', 'bg-violet-500', 'bg-amber-500']
 
 // ─── Lightbox — shows image + reviewer card side by side ─────────────────────
-const Lightbox = ({ images, startIndex, review, onClose }) => {
-  const [idx, setIdx] = useState(startIndex)
-  const prev = () => setIdx(i => (i - 1 + images.length) % images.length)
-  const next = () => setIdx(i => (i + 1) % images.length)
+const Lightbox = ({ allImages, initialIndex, onClose }) => {
+  const [idx, setIdx] = useState(initialIndex)
+  const prev = () => setIdx(i => (i - 1 + allImages.length) % allImages.length)
+  const next = () => setIdx(i => (i + 1) % allImages.length)
+
+  const currentItem = allImages[idx]
+  const review = currentItem.review
 
   return (
     <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
@@ -26,29 +30,29 @@ const Lightbox = ({ images, startIndex, review, onClose }) => {
         {/* ── Image side ── */}
         <div className="relative flex-1 bg-gray-950 min-h-65 flex items-center justify-center">
           <img
-            src={images[idx]}
+            src={currentItem.src}
             alt=""
             className="w-full h-full object-contain max-h-[55vh] sm:max-h-[88vh]"
           />
 
-          {images.length > 1 && (
+          {allImages.length > 1 && (
             <>
-              <button onClick={prev} className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/20 hover:bg-white/40 rounded-full flex items-center justify-center text-white transition-all">
+              <button onClick={prev} className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/20 hover:bg-white/40 rounded-full flex items-center justify-center text-white transition-all z-10">
                 <ChevronLeft size={16} />
               </button>
-              <button onClick={next} className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/20 hover:bg-white/40 rounded-full flex items-center justify-center text-white transition-all">
+              <button onClick={next} className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/20 hover:bg-white/40 rounded-full flex items-center justify-center text-white transition-all z-10">
                 <ChevronRight size={16} />
               </button>
               {/* Dot indicators */}
-              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1">
-                {images.map((_, i) => (
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1 max-w-[80%] flex-wrap justify-center z-10">
+                {allImages.map((_, i) => (
                   <button key={i} onClick={() => setIdx(i)} className={`h-1 rounded-full transition-all ${i === idx ? 'bg-white w-5' : 'bg-white/40 w-1.5'}`} />
                 ))}
               </div>
             </>
           )}
 
-          <button onClick={onClose} className="absolute top-3 right-3 w-7 h-7 bg-white/20 hover:bg-white/40 rounded-full flex items-center justify-center text-white transition-all">
+          <button onClick={onClose} className="absolute top-3 right-3 w-7 h-7 bg-white/20 hover:bg-white/40 rounded-full flex items-center justify-center text-white transition-all z-10">
             <X size={14} />
           </button>
         </div>
@@ -57,9 +61,13 @@ const Lightbox = ({ images, startIndex, review, onClose }) => {
         <div className="w-full sm:w-60 flex flex-col p-4 gap-3 overflow-y-auto border-l border-gray-100">
           {/* Reviewer */}
           <div className="flex items-center gap-2.5">
-            <div className={`w-9 h-9 rounded-full ${review.avatarBg} flex items-center justify-center text-white text-xs font-bold shrink-0`}>
-              {review.avatar}
-            </div>
+            {review.avatarUrl ? (
+              <img src={review.avatarUrl} alt="" className="w-9 h-9 rounded-full object-cover shrink-0" />
+            ) : (
+              <div className={`w-9 h-9 rounded-full ${review.avatarBg} flex items-center justify-center text-white text-xs font-bold shrink-0`}>
+                {review.avatar}
+              </div>
+            )}
             <div>
               <div className="flex items-center gap-1 flex-wrap">
                 <p className="text-sm font-bold text-gray-900">{review.user}</p>
@@ -80,15 +88,18 @@ const Lightbox = ({ images, startIndex, review, onClose }) => {
           )}
 
           {/* Thumbnail strip if multiple images */}
-          {images.length > 1 && (
+          {review.images.length > 1 && (
             <div className="mt-auto pt-3 border-t border-gray-100">
               <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">More from this review</p>
               <div className="flex gap-1.5 flex-wrap">
-                {images.map((img, i) => (
+                {review.images.map((img, i) => (
                   <button
                     key={i}
-                    onClick={() => setIdx(i)}
-                    className={`w-12 h-12 rounded-lg overflow-hidden transition-all shrink-0 ${i === idx ? 'ring-2 ring-blue-500 ring-offset-1' : 'opacity-50 hover:opacity-80'}`}
+                    onClick={() => {
+                      const newIdx = allImages.findIndex(item => item.review.id === review.id && item.imgIdx === i);
+                      if (newIdx !== -1) setIdx(newIdx);
+                    }}
+                    className={`w-12 h-12 rounded-lg overflow-hidden transition-all shrink-0 ${i === currentItem.imgIdx ? 'ring-2 ring-blue-500 ring-offset-1' : 'opacity-50 hover:opacity-80'}`}
                   >
                     <img src={img} alt="" className="w-full h-full object-cover" />
                   </button>
@@ -109,6 +120,19 @@ const GalleryTab = ({ product }) => {
   const [expanded, setExpanded] = useState(true)
   const [showAll, setShowAll] = useState(false)
   const [lightbox, setLightbox] = useState(null)
+  const [reviewerProfiles, setReviewerProfiles] = useState({})
+
+  useEffect(() => {
+    if (!product?.product_reviews?.length) return;
+    const userIds = [...new Set(product.product_reviews.map(r => r.user_id).filter(Boolean))];
+    if (userIds.length > 0) {
+      fetchReviewerProfiles(userIds).then(profilesMap => {
+        if (Object.keys(profilesMap).length > 0) {
+          setReviewerProfiles(profilesMap);
+        }
+      });
+    }
+  }, [product])
 
   // Map product dynamically from database
   const allReviews = Array.isArray(product?.product_reviews) 
@@ -116,10 +140,16 @@ const GalleryTab = ({ product }) => {
         const d = new Date(r.created_at)
         const dateStr = isNaN(d.getTime()) ? 'Recent' : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
         
+        const profile = reviewerProfiles[r.user_id] || {};
+        const name = profile.name || 'Verified Buyer';
+        const avatarUrl = profile.avatarUrl || null;
+        const avatar = name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) || 'VB';
+
         return {
           id: r.id,
-          user: 'Verified Buyer',
-          avatar: 'VB',
+          user: name,
+          avatar: avatar,
+          avatarUrl: avatarUrl,
           avatarBg: COLORS[i % COLORS.length],
           rating: r.rating || 0,
           date: dateStr,
@@ -193,7 +223,7 @@ const GalleryTab = ({ product }) => {
                   className="relative aspect-square rounded-xl overflow-hidden bg-gray-100 cursor-pointer group"
                   onClick={() => isLast
                     ? setShowAll(true)
-                    : setLightbox({ review: item.review, startIndex: item.imgIdx })
+                    : setLightbox({ initialIndex: idx })
                   }
                 >
                   <img
@@ -207,9 +237,13 @@ const GalleryTab = ({ product }) => {
                     <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-2">
                       {/* Reviewer name on hover */}
                       <div className="flex items-center gap-1">
-                        <div className={`w-4 h-4 rounded-full ${item.review.avatarBg} flex items-center justify-center text-white text-[7px] font-bold shrink-0`}>
-                          {item.review.avatar}
-                        </div>
+                        {item.review.avatarUrl ? (
+                          <img src={item.review.avatarUrl} alt="" className="w-4 h-4 rounded-full object-cover shrink-0" />
+                        ) : (
+                          <div className={`w-4 h-4 rounded-full ${item.review.avatarBg} flex items-center justify-center text-white text-[7px] font-bold shrink-0`}>
+                            {item.review.avatar}
+                          </div>
+                        )}
                         <p className="text-white text-[10px] font-semibold truncate leading-none">{item.review.user}</p>
                       </div>
                     </div>
@@ -246,9 +280,8 @@ const GalleryTab = ({ product }) => {
       {/* Lightbox */}
       {lightbox && (
         <Lightbox
-          images={lightbox.review.images}
-          startIndex={lightbox.startIndex}
-          review={lightbox.review}
+          allImages={allImages}
+          initialIndex={lightbox.initialIndex}
           onClose={() => setLightbox(null)}
         />
       )}

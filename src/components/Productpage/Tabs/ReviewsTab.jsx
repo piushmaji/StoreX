@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../../context/Auth/AuthContext";
-import { addReview, fetchReviewerNames } from "../../../services/productService";
+import { addReview, fetchReviewerProfiles } from "../../../services/productService";
 
 const LABELS = ["", "Poor", "Fair", "Good", "Great", "Excellent!"];
 const COLORS = [
@@ -114,11 +114,15 @@ const ReviewImagePopup = ({ review, startIdx, onClose }) => {
         <div className="p-5 flex flex-col gap-3">
           {/* User row */}
           <div className="flex items-center gap-3">
-            <div
-              className={`${review.color} w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-extrabold shrink-0 shadow-md`}
-            >
-              {review.avatar}
-            </div>
+            {review.avatarUrl ? (
+              <img src={review.avatarUrl} alt="" className="w-10 h-10 rounded-full object-cover shrink-0 shadow-md" />
+            ) : (
+              <div
+                className={`${review.color} w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-extrabold shrink-0 shadow-md`}
+              >
+                {review.avatar}
+              </div>
+            )}
             <div className="flex-1">
               <div className="flex items-center gap-2">
                 <span className="text-sm font-extrabold text-gray-900">
@@ -311,11 +315,15 @@ const Card = ({ r, onImageClick }) => {
   return (
     <div className="py-4 border-b border-gray-100 last:border-0">
       <div className="flex items-start gap-3">
-        <div
-          className={`${r.color} w-8 h-8 rounded-full flex items-center justify-center text-white text-[11px] font-bold shrink-0`}
-        >
-          {r.avatar}
-        </div>
+        {r.avatarUrl ? (
+          <img src={r.avatarUrl} alt="" className="w-8 h-8 rounded-full object-cover shrink-0" />
+        ) : (
+          <div
+            className={`${r.color} w-8 h-8 rounded-full flex items-center justify-center text-white text-[11px] font-bold shrink-0`}
+          >
+            {r.avatar}
+          </div>
+        )}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <span className="text-sm font-bold text-gray-900">{r.name}</span>
@@ -383,22 +391,24 @@ const ReviewsTab = ({ product }) => {
     const rawReviews = product.product_reviews;
 
     // Step 1: Map reviews immediately with "User" placeholder
-    const mapReview = (r, i, nameOverride) => {
+    const mapReview = (r, i, profileOverride) => {
       const d = new Date(r.created_at);
       const dateStr = isNaN(d.getTime())
         ? "Recent"
         : d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-      const name = nameOverride || "User";
+      const name = profileOverride?.name || "User";
+      const avatarUrl = profileOverride?.avatarUrl || null;
       const avatar = name
         .split(" ")
         .map((n) => n[0])
         .join("")
-        .toUpperCase();
+        .toUpperCase().slice(0, 2);
 
       return {
         id: r.id,
         name,
         avatar,
+        avatarUrl,
         color: COLORS[i % COLORS.length],
         rating: r.rating || 0,
         date: dateStr,
@@ -415,9 +425,9 @@ const ReviewsTab = ({ product }) => {
     // Step 2: Fetch real names in background (non-blocking)
     const userIds = [...new Set(rawReviews.map((r) => r.user_id).filter(Boolean))];
     if (userIds.length > 0) {
-      fetchReviewerNames(userIds).then((namesMap) => {
-        if (Object.keys(namesMap).length > 0) {
-          setReviews(rawReviews.map((r, i) => mapReview(r, i, namesMap[r.user_id])));
+      fetchReviewerProfiles(userIds).then((profilesMap) => {
+        if (Object.keys(profilesMap).length > 0) {
+          setReviews(rawReviews.map((r, i) => mapReview(r, i, profilesMap[r.user_id])));
         }
       });
     }

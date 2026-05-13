@@ -35,14 +35,10 @@ const UNIQUE_BENEFITS = [
     },
 ]
 
-const ProductImg = () => {
-    const { id } = useParams()
-    const { products } = useProduct()
+const ProductImg = ({ product }) => {
     const { handleAddToCart, isInCart, loadCart } = useCart()
     const { user } = useAuth()
     const navigate = useNavigate()
-
-    const product = products.find(p => p.id === id)
 
     const [activeImg, setActiveImg] = useState('')
     const [quantity, setQuantity] = useState(1)
@@ -56,10 +52,6 @@ const ProductImg = () => {
     useEffect(() => {
         if (user?.id) loadCart(user.id)
     }, [user])
-
-    if (!product) {
-        return <div className="py-20 text-center text-slate-400 font-bold uppercase tracking-widest text-sm">Loading Product...</div>
-    }
 
     // Data Mapping for Supabase Structure
     const variant = product.variants?.[0]

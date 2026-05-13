@@ -6,8 +6,7 @@ import { useCart } from "../../context/CartContext/CartContext"
 import { useProduct } from "../../context/admin/ProductContext"
 import { useAuth } from "../../context/Auth/AuthContext"
 
-const RelatedProduct = () => {
-    const { id } = useParams()
+const RelatedProduct = ({ product }) => {
     const { products } = useProduct()
     const [featured, setFeatured] = useState([])
     const { handleAddToCart, isInCart } = useCart()
@@ -15,10 +14,10 @@ const RelatedProduct = () => {
 
     useEffect(() => {
         if (!products.length) return
-        const others = products.filter(p => p.id !== id)
+        const others = products.filter(p => p.id !== product?.id)
         const shuffled = [...others].sort(() => Math.random() - 0.5).slice(0, 8)
         setFeatured(shuffled)
-    }, [products, id])
+    }, [products, product?.id])
 
     return (
         <div className="bg-white rounded-2xl border border-blue-100 shadow-sm p-5 lg:p-6 mb-5">
@@ -50,7 +49,7 @@ const RelatedProduct = () => {
                             className="shrink-0 w-44 sm:w-48 flex flex-col bg-white rounded-2xl border border-blue-100 hover:border-blue-300 hover:shadow-lg hover:shadow-blue-100 transition-all duration-300 group overflow-hidden"
                         >
                             {/* Image */}
-                            <Link to={`/product/${item.id}`} target="_blank" className="relative">
+                            <Link to={`/products/${item.slug || item.id}`} target="_blank" className="relative">
                                 <div className="relative h-44 w-full bg-linear-to-br from-blue-50 to-slate-50 flex items-center justify-center p-4 overflow-hidden">
                                     <img
                                         className="h-full w-full object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-110"
@@ -66,7 +65,7 @@ const RelatedProduct = () => {
 
                             {/* Info */}
                             <div className="flex flex-col gap-3 p-3.5 flex-1">
-                                <Link to={`/product/${item.id}`} target="_blank" className="flex-1">
+                                <Link to={`/products/${item.slug || item.id}`} target="_blank" className="flex-1">
                                     <p className="text-xs font-semibold text-gray-800 leading-snug line-clamp-2 group-hover:text-blue-600 transition-colors">
                                         {item.name}
                                     </p>

@@ -1,27 +1,13 @@
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts"
 import { TrendingDown, TrendingUp, Minus } from "lucide-react"
-
-const ALL_DATA = [
-  { date: "Mar", price: 3199 },
-  { date: "Apr", price: 3099 },
-  { date: "May", price: 3299 },
-  { date: "Jun", price: 2999 },
-  { date: "Jul", price: 3199 },
-  { date: "Aug", price: 3399 },
-  { date: "Sep", price: 3249 },
-  { date: "Oct", price: 2799 },
-  { date: "Nov", price: 3499 },
-  { date: "Dec", price: 2499 },
-  { date: "Jan", price: 2899 },
-  { date: "Feb", price: 2699 },
-]
+import { usePriceHistory } from "../../../hooks/usePriceHistory";
 
 const FILTERS = [
-  { label: "1M", slice: 3 },
-  { label: "3M", slice: 3 },
-  { label: "6M", slice: 6 },
-  { label: "1Y", slice: 12 },
+  { label: "1M", days: 30 },
+  { label: "3M", days: 90 },
+  { label: "6M", days: 180 },
+  { label: "1Y", days: 365 },
 ]
 
 const CustomTooltip = ({ active, payload, label }) => {
@@ -38,12 +24,49 @@ export default function PriceHistoryChart({ product }) {
   const currentPrice = product?.variants?.[0]?.discount_price || product?.variants?.[0]?.price || 2699
   const [active, setActive] = useState("1Y")
 
-  const data = ALL_DATA.slice(-(FILTERS.find(f => f.label === active).slice))
-  const prices = data.map(d => d.price)
+  const { history, loading } = usePriceHistory(product?.id)
+
+  const chartData = useMemo(() => {
+    if (!history || history.length === 0) return []
+    
+    const days = FILTERS.find(f => f.label === active).days
+    const cutoffDate = new Date()
+    cutoffDate.setDate(cutoffDate.getDate() - days)
+    
+    let filtered = history.filter(item => new Date(item.recorded_at) >= cutoffDate)
+    
+    if (filtered.length === 0) {
+      filtered = history.slice(-5)
+    }
+      
+    return filtered.map(item => ({
+      date: new Date(item.recorded_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      price: item.price
+    }))
+  }, [history, active])
+
+  if (loading) return (
+    <div className="bg-slate-50 flex items-center justify-center p-5 min-h-[300px]">
+      <div className="w-full bg-white rounded-3xl border border-gray-100 p-5 shadow-xl shadow-slate-100 flex items-center justify-center h-64">
+        <p className="text-sm font-bold text-gray-400">Loading price history...</p>
+      </div>
+    </div>
+  )
+
+  if (!chartData || chartData.length === 0) return (
+    <div className="bg-slate-50 flex items-center justify-center p-5 min-h-[300px]">
+      <div className="w-full bg-white rounded-3xl border border-gray-100 p-5 shadow-xl shadow-slate-100 flex items-center justify-center h-64">
+        <p className="text-sm font-bold text-gray-400">No price history available</p>
+      </div>
+    </div>
+  )
+
+  const prices = chartData.map(d => d.price)
   const minPrice = Math.min(...prices)
   const maxPrice = Math.max(...prices)
-  const diff = currentPrice - data[0].price
-  const pct = Math.abs(((diff / data[0].price) * 100).toFixed(1))
+  const firstPrice = chartData[0].price
+  const diff = currentPrice - firstPrice
+  const pct = firstPrice ? Math.abs(((diff / firstPrice) * 100).toFixed(1)) : 0
   const trend = diff < 0 ? "down" : diff > 0 ? "up" : "flat"
 
   return (
@@ -99,12 +122,12 @@ export default function PriceHistoryChart({ product }) {
         {/* ── Chart ── */}
         <div style={{ height: 160 }}>
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={data} margin={{ top: 8, right: 4, left: 4, bottom: 0 }}>
+            <AreaChart data={chartData} margin={{ top: 8, right: 4, left: 4, bottom: 0 }}>
               <defs>
-                <linearlinear id="priceGrad" x1="0" y1="0" x2="0" y2="1">
+                <linearGradient id="priceGrad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#2563eb" stopOpacity={0.18} />
                   <stop offset="95%" stopColor="#2563eb" stopOpacity={0} />
-                </linearlinear>
+                </linearGradient>
               </defs>
 
               <XAxis

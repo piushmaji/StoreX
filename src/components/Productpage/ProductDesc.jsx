@@ -14,22 +14,18 @@ const TABS = [
     { label: 'Price History', icon: <History size={15} /> },
 ]
 
-const ProductDesc = () => {
-    const { id } = useParams()
+const ProductDesc = ({ product }) => {
     const { products } = useProduct()
-    const product = products.find(p => p.id === id)
     
     const [featured, setFeatured] = useState([])
     const [activeTab, setActiveTab] = useState('Description')
 
     useEffect(() => {
         if (!products.length) return
-        const others = products.filter(p => p.id !== id)
+        const others = products.filter(p => p.id !== product?.id)
         const shuffled = [...others].sort(() => Math.random() - 0.5).slice(0, 5)
         setFeatured(shuffled)
-    }, [products, id])
-
-    if (!product) return null;
+    }, [products, product?.id])
 
     const TabsContent = {
         "Description": <DescriptionTab product={product} />,
@@ -88,7 +84,7 @@ const ProductDesc = () => {
                             const img = item.image_urls?.[0] || 'https://via.placeholder.com/150'
 
                             return (
-                                <Link key={item.id} to={`/product/${item.id}`} target="_blank">
+                                <Link key={item.id} to={`/products/${item.slug || item.id}`} target="_blank">
                                     <div className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-blue-50 border border-transparent hover:border-blue-100 transition-all duration-200 group">
 
                                         {/* Image */}

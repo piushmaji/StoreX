@@ -1,6 +1,7 @@
 export class Product {
   constructor({
     id,
+    slug,
     name,
     description,
     category_id,
@@ -16,6 +17,7 @@ export class Product {
     product_reviews
   }) {
     this.id = id;
+    this.slug = slug || null;
     this.name = name;
     this.description = description || null;
     this.category_id = category_id || null;
