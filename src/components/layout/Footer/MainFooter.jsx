@@ -82,18 +82,18 @@ const MainFooter = () => {
         </div>
 
         {/* ── Massive Typography Bottom ── */}
-        <div className="w-full flex items-center justify-center border-t border-gray-900 pt-8 pb-4 relative overflow-hidden">
+        <div className="w-full flex items-center justify-center border-t border-gray-900 pt-8 pb-24 md:pb-4 relative overflow-hidden">
             <h1 className="text-[12vw] font-black uppercase tracking-tighter leading-none text-white/5 select-none pointer-events-none">
                 STOREX STUDIOS
             </h1>
             
             {/* Copyright overlays */}
-            <div className="absolute inset-0 flex flex-col sm:flex-row items-center justify-between px-4 mt-8 sm:mt-16 z-10 pointer-events-none">
+            <div className="absolute inset-0 flex flex-col sm:flex-row items-center justify-between px-4 mt-8 sm:mt-16 mb-16 md:mb-0 z-10 pointer-events-none">
                 <p className="text-xs font-bold tracking-widest uppercase text-gray-500">© 2026 StoreX Global.</p>
-                <div className="flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-gray-500">
+                <div className="flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-gray-500 mt-2 sm:mt-0">
                     <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Systems Online
                 </div>
-                <p className="text-xs font-bold tracking-widest uppercase text-gray-500">ENG 🇺🇸</p>
+                <p className="text-xs font-bold tracking-widest uppercase text-gray-500 mt-2 sm:mt-0">ENG 🇺🇸</p>
             </div>
         </div>
 

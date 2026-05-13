@@ -41,7 +41,7 @@ const ExtraService = () => {
     ];
 
     return (
-        <div className="py-16 font-sans mb-12">
+        <div className="pt-8 pb-2 font-sans mb-0">
             {/* ── Quirky Header ── */}
             <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 px-4 gap-6">
                 <div>
