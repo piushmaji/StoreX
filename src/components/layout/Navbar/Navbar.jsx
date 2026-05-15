@@ -1,218 +1,279 @@
-import { Heart, Search, ShoppingCart, Store, UserRound, Sparkles } from 'lucide-react'
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion"
-import { useLocation, Link, useNavigate } from "react-router-dom"
-import storex from "../../../assets/images/Logo/storex.svg"
-import storex2 from "../../../assets/images/Logo/namelogo.svg"
+import {
+  Heart,
+  Search,
+  ShoppingCart,
+  Store,
+  UserRound,
+  Sparkles,
+} from "lucide-react";
+import {
+  motion,
+  AnimatePresence,
+  useScroll,
+  useTransform,
+} from "framer-motion";
+import { useLocation, Link, useNavigate } from "react-router-dom";
+import storex from "../../../assets/images/Logo/storex.svg";
+import storex2 from "../../../assets/images/Logo/namelogo.svg";
 // SideDrawer removed — replaced by MobileBottomNav
-import { useCart } from '../../../context/CartContext/CartContext'
-import { useState } from 'react'
-import { useProduct } from '../../../context/admin/ProductContext'
-import Dropdown from '../SearchBar/Dropdown'
-import { useAuth } from '../../../context/Auth/AuthContext'
+import { useCart } from "../../../context/CartContext/CartContext";
+import { useState } from "react";
+import { useProduct } from "../../../context/admin/ProductContext";
+import Dropdown from "../SearchBar/Dropdown";
+import { useAuth } from "../../../context/Auth/AuthContext";
 
-
-import cart from "../../../assets/Icons/cart.gif"
+import cart from "../../../assets/Icons/cart.gif";
 
 const NAV_LINKS = [
-    { to: "/product", label: "Store", Icon: Store },
-    { to: "/wishlist", label: "Wishlist", Icon: Heart },
-]
+  { to: "/product", label: "Store", Icon: Store },
+  { to: "/wishlist", label: "Wishlist", Icon: Heart },
+];
 
 const Navbar = () => {
-    const navigate = useNavigate()
-    const { products } = useProduct()
-    const { cartItems } = useCart()
-    const { user,profile } = useAuth()
-    const location = useLocation()
+  const navigate = useNavigate();
+  const { products } = useProduct();
+  const { cartItems } = useCart();
+  const { user, profile } = useAuth();
+  const location = useLocation();
 
-    const [query, setQuery] = useState('')
-    const [show, setShow] = useState(false)
-    const [focused, setFocused] = useState(false)
+  const [query, setQuery] = useState("");
+  const [show, setShow] = useState(false);
+  const [focused, setFocused] = useState(false);
 
-    const filtered = products.filter(p =>
-        p.name?.toLowerCase().includes(query.toLowerCase())
-    )
+  const filtered = products.filter((p) =>
+    p.name?.toLowerCase().includes(query.toLowerCase()),
+  );
 
-    const { scrollY } = useScroll()
-    const navBg = useTransform(scrollY, [0, 60], ["rgba(255,255,255,0.7)", "rgba(255,255,255,0.92)"])
-    const navShadow = useTransform(scrollY, [0, 60], ["0 0 0 rgba(37,99,235,0)", "0 4px 24px rgba(37,99,235,0.08)"])
-    const navBorder = useTransform(scrollY, [0, 60], ["rgba(219,234,254,0.4)", "rgba(219,234,254,1)"])
+  const { scrollY } = useScroll();
+  const navBg = useTransform(
+    scrollY,
+    [0, 60],
+    ["rgba(255,255,255,0.7)", "rgba(255,255,255,0.92)"],
+  );
+  const navShadow = useTransform(
+    scrollY,
+    [0, 60],
+    ["0 0 0 rgba(37,99,235,0)", "0 4px 24px rgba(37,99,235,0.08)"],
+  );
+  const navBorder = useTransform(
+    scrollY,
+    [0, 60],
+    ["rgba(219,234,254,0.4)", "rgba(219,234,254,1)"],
+  );
 
-    const isActive = (path) => location.pathname === path
+  const isActive = (path) => location.pathname === path;
 
-    return (
-        <motion.div
-            style={{ backgroundColor: navBg, boxShadow: navShadow, borderColor: navBorder }}
-            className="sticky top-0 z-40 w-full backdrop-blur-xl border-b"
-        >
-            <div className="flex flex-col lg:flex-row w-full lg:px-16 xl:px-20 py-2 lg:py-3 px-4 gap-3 lg:gap-8 items-center justify-between">
+  return (
+    <div className="fixed top-0 left-0 right-0 z-50 w-full bg-white border-b border-gray-100 shadow-sm">
+      <div className="flex flex-col lg:flex-row w-full lg:px-16 xl:px-20 py-2 lg:py-3 px-4 gap-3 lg:gap-8 items-center justify-between">
+        {/* ── Brand ── */}
+        <div className="w-full lg:w-auto flex items-center justify-center lg:justify-start">
+          <Link
+            to="/"
+            className="flex flex-col items-center lg:items-start group px-2 py-1 rounded-xl transition-all hover:bg-blue-50/50"
+          >
+            <img
+              className="h-7 md:h-8 w-auto object-contain transition-transform duration-300 group-hover:scale-[1.03]"
+              src={storex2}
+              alt="StoreX Logo"
+            />
+            <span className="hidden md:block text-[9px] text-blue-500 font-extrabold tracking-[0.3em] uppercase leading-none mt-1 ml-1 opacity-90 transition-opacity duration-300 group-hover:opacity-100">
+              Shop Smarter
+            </span>
+          </Link>
+        </div>
 
-                {/* ── Brand ── */}
-                <div className="w-full lg:w-auto flex items-center justify-center lg:justify-start">
-                    <Link to="/" className="flex flex-col items-center lg:items-start group px-2 py-1 rounded-xl transition-all hover:bg-blue-50/50">
-                        <img
-                            className="h-7 md:h-8 w-auto object-contain transition-transform duration-300 group-hover:scale-[1.03]"
-                            src={storex2}
-                            alt="StoreX Logo"
-                        />
-                        <span className="hidden md:block text-[9px] text-blue-500 font-extrabold tracking-[0.3em] uppercase leading-none mt-1 ml-1 opacity-90 transition-opacity duration-300 group-hover:opacity-100">
-                            Shop Smarter
-                        </span>
-                    </Link>
-                </div>
-
-                {/* ── Search Bar ── */}
-                <div className="relative w-full lg:flex-1 lg:max-w-2xl flex justify-center items-center">
-                    <div className={`relative w-full flex items-center transition-all duration-300 ${focused ? "scale-[1.02] lg:scale-[1.01]" : ""}`}>
-
-                        {/* Input wrapper with glow */}
-                        <div className={`relative flex-1 transition-all duration-300 ${focused
-                            ? "drop-shadow-[0_0_12px_rgba(37,99,235,0.2)]"
-                            : "drop-shadow-[0_1px_4px_rgba(0,0,0,0.06)]"
-                            }`}>
-                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
-                            <input
-                                value={query}
-                                onChange={(e) => { setQuery(e.target.value); setShow(true) }}
-                                onFocus={() => { setShow(true); setFocused(true) }}
-                                onBlur={() => { setTimeout(() => setShow(false), 200); setFocused(false) }}
-                                className="w-full h-11 rounded-l-xl lg:rounded-l-2xl pl-11 pr-4 bg-gray-50/80 border border-r-0 border-blue-100 focus:border-blue-300 focus:bg-white focus:outline-none text-sm text-gray-700 placeholder-gray-400 transition-all duration-200"
-                                type="text"
-                                placeholder="Search for products, brands..."
-                            />
-                        </div>
-
-                        {/* Search button */}
-                        <button className="h-11 px-4 lg:px-6 rounded-r-xl lg:rounded-r-2xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-sm font-bold transition-all duration-200 border border-blue-600 hover:border-blue-700 flex items-center gap-2 shrink-0 shadow-md shadow-blue-500/20">
-                            <Search className="w-4 h-4 lg:w-3.5 lg:h-3.5" />
-                            <span className="hidden sm:block">Search</span>
-                        </button>
-                    </div>
-
-                    {/* Dropdown */}
-                    <div className="absolute left-0 right-0 top-12 lg:top-13 z-50 mt-1">
-                        <AnimatePresence>
-                            {show && (
-                                <Dropdown data={filtered} query={query} close={() => setShow(false)} />
-                            )}
-                        </AnimatePresence>
-                    </div>
-                </div>
-
-                {/* ── Nav Icons ── */}
-                <div className="hidden lg:flex items-center justify-end lg:col-span-3 col-span-6 lg:order-3">
-                    <div className="flex items-center gap-1">
-
-                        {/* Store + Wishlist */}
-                        {NAV_LINKS.map(({ to, label, Icon }) => (
-                            <Link key={to} to={to}>
-                                <motion.div
-                                    whileHover={{ y: -1 }}
-                                    whileTap={{ scale: 0.94 }}
-                                    className={`relative flex flex-col items-center px-3 py-2 rounded-xl cursor-pointer transition-all duration-200 ${isActive(to)
-                                        ? "bg-blue-50 text-blue-600"
-                                        : "text-gray-500 hover:bg-gray-50 hover:text-blue-500"
-                                        }`}
-                                >
-                                    <Icon
-                                        size={18}
-                                        strokeWidth={isActive(to) ? 2.5 : 1.5}
-                                        className="transition-all duration-200"
-                                    />
-                                    <span className={`text-[10px] font-semibold mt-0.5 transition-colors ${isActive(to) ? "text-blue-600" : "text-gray-400"
-                                        }`}>
-                                        {label}
-                                    </span>
-                                    {isActive(to) && (
-                                        <motion.div
-                                            layoutId="nav-pill"
-                                            className="absolute inset-0 bg-blue-50 rounded-xl -z-10 border border-blue-100"
-                                            transition={{ type: "spring", stiffness: 500, damping: 35 }}
-                                        />
-                                    )}
-                                </motion.div>
-                            </Link>
-                        ))}
-
-                        {/* Cart — hidden on mobile, bottom nav handles it */}
-                        <Link to="/cart">
-                            <motion.div
-                                whileHover={{ y: -1 }}
-                                whileTap={{ scale: 0.94 }}
-                                className={`relative flex flex-col items-center px-3 py-2 rounded-xl cursor-pointer transition-all duration-200 ${isActive("/cart")
-                                    ? "bg-blue-50 text-blue-600"
-                                    : "text-gray-500 hover:bg-gray-50 hover:text-blue-500"
-                                    }`}
-                            >
-                                <div className="relative">
-                                    <img src={cart} className="w-[20px] h-[20px] object-contain" alt="Cart" />
-                                    {cartItems.length > 0 && (
-                                        <motion.div
-                                            initial={{ scale: 0 }}
-                                            animate={{ scale: 1 }}
-                                            className="absolute -top-2 -right-2 w-4 h-4 bg-blue-600 text-white text-[9px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-sm"
-                                        >
-                                            {cartItems.length > 9 ? "9+" : cartItems.length}
-                                        </motion.div>
-                                    )}
-                                </div>
-                                <span className={`text-[10px] font-semibold mt-0.5 ${isActive("/cart") ? "text-blue-600" : "text-gray-400"}`}>
-                                    Cart
-                                </span>
-                                {isActive("/cart") && (
-                                    <motion.div
-                                        layoutId="nav-pill"
-                                        className="absolute inset-0 bg-blue-50 rounded-xl -z-10 border border-blue-100"
-                                        transition={{ type: "spring", stiffness: 500, damping: 35 }}
-                                    />
-                                )}
-                            </motion.div>
-                        </Link>
-
-                        {/* Profile / Login */}
-                        {user ? (
-                            <Link to={profile?.role === "admin" ? "/admin/dashboard" : "/profile"}>
-                                <motion.div
-                                    whileHover={{ y: -1 }}
-                                    whileTap={{ scale: 0.94 }}
-                                    className={`relative flex flex-col items-center px-3 py-2 rounded-xl cursor-pointer transition-all duration-200 ${isActive("/profile")
-                                        ? "bg-blue-50 text-blue-600"
-                                        : "text-gray-500 hover:bg-gray-50 hover:text-blue-500"
-                                        }`}
-                                >
-                                    <UserRound
-                                        size={18}
-                                        strokeWidth={isActive("/profile") ? 2.5 : 1.5}
-                                    />
-                                    <span className={`text-[10px] font-semibold mt-0.5 ${isActive("/profile") ? "text-blue-600" : "text-gray-400"}`}>
-                                        Profile
-                                    </span>
-                                    {isActive("/profile") && (
-                                        <motion.div
-                                            layoutId="nav-pill"
-                                            className="absolute inset-0 bg-blue-50 rounded-xl -z-10 border border-blue-100"
-                                            transition={{ type: "spring", stiffness: 500, damping: 35 }}
-                                        />
-                                    )}
-                                </motion.div>
-                            </Link>
-                        ) : (
-                            <motion.button
-                                whileHover={{ y: -1 }}
-                                whileTap={{ scale: 0.96 }}
-                                onClick={() => navigate("/login")}
-                                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all shadow-md shadow-blue-500/20 ml-1"
-                            >
-                                <UserRound size={14} />
-                                Sign In
-                            </motion.button>
-                        )}
-                    </div>
-                </div>
-
+        {/* ── Search Bar ── */}
+        <div className="relative w-full lg:flex-1 lg:max-w-2xl flex justify-center items-center">
+          <div
+            className={`relative w-full flex items-center transition-all duration-300 ${focused ? "scale-[1.02] lg:scale-[1.01]" : ""}`}
+          >
+            {/* Input wrapper with glow */}
+            <div
+              className={`relative flex-1 transition-all duration-300 ${
+                focused
+                  ? "drop-shadow-[0_0_12px_rgba(37,99,235,0.2)]"
+                  : "drop-shadow-[0_1px_4px_rgba(0,0,0,0.06)]"
+              }`}
+            >
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none z-10" />
+              <input
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setShow(true);
+                }}
+                onFocus={() => {
+                  setShow(true);
+                  setFocused(true);
+                }}
+                onBlur={() => {
+                  setTimeout(() => setShow(false), 200);
+                  setFocused(false);
+                }}
+                className="w-full h-11 rounded-l-xl lg:rounded-l-2xl pl-11 pr-4 bg-gray-50/80 border border-r-0 border-blue-100 focus:border-blue-300 focus:bg-white focus:outline-none text-sm text-gray-700 placeholder-gray-400 transition-all duration-200"
+                type="text"
+                placeholder="Search for products, brands..."
+              />
             </div>
-        </motion.div>
-    )
-}
 
-export default Navbar
+            {/* Search button */}
+            <button className="h-11 px-4 lg:px-6 rounded-r-xl lg:rounded-r-2xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-sm font-bold transition-all duration-200 border border-blue-600 hover:border-blue-700 flex items-center gap-2 shrink-0 shadow-md shadow-blue-500/20">
+              <Search className="w-4 h-4 lg:w-3.5 lg:h-3.5" />
+              <span className="hidden sm:block">Search</span>
+            </button>
+          </div>
+
+          {/* Dropdown */}
+          <div className="absolute left-0 right-0 top-12 lg:top-13 z-50 mt-1">
+            <AnimatePresence>
+              {show && (
+                <Dropdown
+                  data={filtered}
+                  query={query}
+                  close={() => setShow(false)}
+                />
+              )}
+            </AnimatePresence>
+          </div>
+        </div>
+
+        {/* ── Nav Icons ── */}
+        <div className="hidden lg:flex items-center justify-end lg:col-span-3 col-span-6 lg:order-3">
+          <div className="flex items-center gap-1">
+            {/* Store + Wishlist */}
+            {NAV_LINKS.map(({ to, label, Icon }) => (
+              <Link key={to} to={to}>
+                <motion.div
+                  whileHover={{ y: -1 }}
+                  whileTap={{ scale: 0.94 }}
+                  className={`relative flex flex-col items-center px-3 py-2 rounded-xl cursor-pointer transition-all duration-200 ${
+                    isActive(to)
+                      ? "bg-blue-50 text-blue-600"
+                      : "text-gray-500 hover:bg-gray-50 hover:text-blue-500"
+                  }`}
+                >
+                  <Icon
+                    size={18}
+                    strokeWidth={isActive(to) ? 2.5 : 1.5}
+                    className="transition-all duration-200"
+                  />
+                  <span
+                    className={`text-[10px] font-semibold mt-0.5 transition-colors ${
+                      isActive(to) ? "text-blue-600" : "text-gray-400"
+                    }`}
+                  >
+                    {label}
+                  </span>
+                  {isActive(to) && (
+                    <motion.div
+                      layoutId="nav-pill"
+                      className="absolute inset-0 bg-blue-50 rounded-xl -z-10 border border-blue-100"
+                      transition={{
+                        type: "spring",
+                        stiffness: 500,
+                        damping: 35,
+                      }}
+                    />
+                  )}
+                </motion.div>
+              </Link>
+            ))}
+
+            {/* Cart — hidden on mobile, bottom nav handles it */}
+            <Link to="/cart">
+              <motion.div
+                whileHover={{ y: -1 }}
+                whileTap={{ scale: 0.94 }}
+                className={`relative flex flex-col items-center px-3 py-2 rounded-xl cursor-pointer transition-all duration-200 ${
+                  isActive("/cart")
+                    ? "bg-blue-50 text-blue-600"
+                    : "text-gray-500 hover:bg-gray-50 hover:text-blue-500"
+                }`}
+              >
+                <div className="relative">
+                  <img
+                    src={cart}
+                    className="w-[20px] h-[20px] object-contain"
+                    alt="Cart"
+                  />
+                  {cartItems.length > 0 && (
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className="absolute -top-2 -right-2 w-4 h-4 bg-blue-600 text-white text-[9px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-sm"
+                    >
+                      {cartItems.length > 9 ? "9+" : cartItems.length}
+                    </motion.div>
+                  )}
+                </div>
+                <span
+                  className={`text-[10px] font-semibold mt-0.5 ${isActive("/cart") ? "text-blue-600" : "text-gray-400"}`}
+                >
+                  Cart
+                </span>
+                {isActive("/cart") && (
+                  <motion.div
+                    layoutId="nav-pill"
+                    className="absolute inset-0 bg-blue-50 rounded-xl -z-10 border border-blue-100"
+                    transition={{ type: "spring", stiffness: 500, damping: 35 }}
+                  />
+                )}
+              </motion.div>
+            </Link>
+
+            {/* Profile / Login */}
+            {user ? (
+              <Link
+                to={profile?.role === "admin" ? "/admin/dashboard" : "/profile"}
+              >
+                <motion.div
+                  whileHover={{ y: -1 }}
+                  whileTap={{ scale: 0.94 }}
+                  className={`relative flex flex-col items-center px-3 py-2 rounded-xl cursor-pointer transition-all duration-200 ${
+                    isActive("/profile")
+                      ? "bg-blue-50 text-blue-600"
+                      : "text-gray-500 hover:bg-gray-50 hover:text-blue-500"
+                  }`}
+                >
+                  <UserRound
+                    size={18}
+                    strokeWidth={isActive("/profile") ? 2.5 : 1.5}
+                  />
+                  <span
+                    className={`text-[10px] font-semibold mt-0.5 ${isActive("/profile") ? "text-blue-600" : "text-gray-400"}`}
+                  >
+                    Profile
+                  </span>
+                  {isActive("/profile") && (
+                    <motion.div
+                      layoutId="nav-pill"
+                      className="absolute inset-0 bg-blue-50 rounded-xl -z-10 border border-blue-100"
+                      transition={{
+                        type: "spring",
+                        stiffness: 500,
+                        damping: 35,
+                      }}
+                    />
+                  )}
+                </motion.div>
+              </Link>
+            ) : (
+              <motion.button
+                whileHover={{ y: -1 }}
+                whileTap={{ scale: 0.96 }}
+                onClick={() => navigate("/login")}
+                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all shadow-md shadow-blue-500/20 ml-1"
+              >
+                <UserRound size={14} />
+                Sign In
+              </motion.button>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Navbar;

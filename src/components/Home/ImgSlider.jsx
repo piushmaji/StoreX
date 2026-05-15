@@ -80,24 +80,24 @@ const ImgSlider = ({ slides }) => {
                 className="absolute inset-0 z-10 flex flex-col justify-center px-6 sm:px-16 lg:px-24 pointer-events-none max-w-screen-2xl mx-auto w-full"
             >
                 <div 
-                    className="max-w-xl"
-                    style={{ animation: "fadeUpIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards" }}
+                    className="max-w-2xl"
+                    style={{ animation: "fadeUpIn 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards" }}
                 >
-                    <p className="text-[10px] sm:text-xs lg:text-sm tracking-[0.4em] text-white/80 mb-6 font-medium uppercase">
+                    <p className="text-[9px] sm:text-xs lg:text-sm tracking-[0.5em] text-white/70 mb-6 font-black uppercase">
                         {meta.sub}
                     </p>
                     <h1
-                        className="text-4xl sm:text-6xl lg:text-7xl font-light text-white mb-10 leading-[1.1] tracking-tight"
+                        className="text-5xl sm:text-7xl lg:text-8xl font-black text-white mb-10 leading-[0.95] tracking-tighter uppercase"
                         style={{ whiteSpace: "pre-line" }}
                     >
                         {meta.heading}
                     </h1>
                     <a
                         href="#"
-                        className="pointer-events-auto inline-flex items-center gap-4 self-start text-white text-xs lg:text-sm font-medium tracking-[0.15em] uppercase border-b border-white/40 pb-2 hover:border-white transition-all duration-300 group"
+                        className="pointer-events-auto inline-flex items-center gap-4 self-start text-white text-[10px] lg:text-sm font-black tracking-[0.2em] uppercase bg-white/10 backdrop-blur-md px-8 py-4 rounded-full border border-white/20 hover:bg-white hover:text-black transition-all duration-500 group"
                     >
                         {meta.cta} 
-                        <ArrowRight size={16} strokeWidth={1.5} className="group-hover:translate-x-2 transition-transform duration-300" />
+                        <ArrowRight size={16} strokeWidth={2.5} className="group-hover:translate-x-2 transition-transform duration-300" />
                     </a>
                 </div>
             </div>
@@ -121,17 +121,17 @@ const ImgSlider = ({ slides }) => {
             </div>
 
             {/* ── Dot Indicators ────────────────────────────────────── */}
-            <div className="absolute bottom-12 left-6 sm:left-16 lg:left-24 z-20 flex items-center gap-3">
+            <div className="absolute bottom-12 left-6 sm:left-16 lg:left-24 z-20 flex items-center gap-4">
                 {slides.map((_, i) => (
                     <button
                         key={i}
                         onClick={() => goTo(i, i > index ? "next" : "prev")}
                         aria-label={`Go to slide ${i + 1}`}
-                        className="transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] relative overflow-hidden"
+                        className="transition-all duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] relative overflow-hidden rounded-full"
                         style={{
-                            width: i === index ? "48px" : "24px",
-                            height: "2px",
-                            background: "rgba(255,255,255,0.3)"
+                            width: i === index ? "64px" : "12px",
+                            height: "3px",
+                            background: "rgba(255,255,255,0.2)"
                         }}
                     >
                         {/* Progress bar effect for active dot */}

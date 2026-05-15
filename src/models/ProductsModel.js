@@ -10,6 +10,7 @@ export class Product {
     rating,
     reviews,
     image_urls,
+    gender,
     
     // Virtual or nested fields from SELECT queries
     product_variants,
@@ -26,6 +27,7 @@ export class Product {
     this.rating = rating ? Number(rating) : 0.0;
     this.reviews = reviews ? Number(reviews) : 0;
     this.image_urls = image_urls || [];
+    this.gender = gender || null;
     
     // Attach nested relational schemas if requested
     this.variants = product_variants || [];

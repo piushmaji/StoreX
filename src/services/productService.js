@@ -6,7 +6,7 @@ export const getProducts = async () => {
       *,
       product_variants (*),
       categories (*),
-      product_reviews (*)
+      product_reviews (*),
     `);
 
   if (error) throw error;
@@ -175,4 +175,40 @@ export const getProductBySlug = async (slug) => {
   if (error) throw error;
 
   return new Product(data);
+};
+
+export const getProductsByCategory = async (categorySlug) => {
+  // First, find the category ID by name (case-insensitive)
+  const { data: categoryData, error: categoryError } = await supabase
+    .from("categories")
+    .select("id, name")
+    .ilike("name", categorySlug)
+    .single();
+
+  if (categoryError || !categoryData) {
+    // Fallback: search by gender field if category not found
+    const { data, error } = await supabase
+      .from("products")
+      .select(`
+        *,
+        product_variants (*),
+        categories (*)
+      `)
+      .ilike("gender", categorySlug);
+
+    if (error) throw error;
+    return data.map((item) => new Product(item));
+  }
+
+  const { data, error } = await supabase
+    .from("products")
+    .select(`
+      *,
+      product_variants (*),
+      categories (*)
+    `)
+    .eq("category_id", categoryData.id);
+
+  if (error) throw error;
+  return data.map((item) => new Product(item));
 };

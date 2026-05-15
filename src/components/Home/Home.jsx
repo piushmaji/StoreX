@@ -12,6 +12,7 @@ const womensCollectionData = {
   id: 101,
   title: "Women's Collection",
   buttonText: "Shop Women's",
+  categorySlug: "women",
   bgImage:
     "https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=1470&auto=format&fit=crop",
   items: [
@@ -85,6 +86,7 @@ const mensCollectionData = {
   id: 102,
   title: "Men's Essentials",
   buttonText: "Shop Men's",
+  categorySlug: "men",
   bgImage:
     "https://images.unsplash.com/photo-1516257984-b1b4d707412e?q=80&w=1470&auto=format&fit=crop",
   items: [
@@ -139,14 +141,6 @@ const mensCollectionData = {
   ],
 };
 
-const clothingCategories = [
-  { id: 1, label: "NEW IN", href: "#" },
-  { id: 2, label: "WOMEN", href: "#" },
-  { id: 3, label: "MEN", href: "#" },
-  { id: 4, label: "ACCESSORIES", href: "#" },
-  { id: 5, label: "SALE", href: "#" },
-];
-
 const Home = () => {
   const [featuredProducts, setFeaturedProducts] = useState([]);
 
@@ -172,55 +166,31 @@ const Home = () => {
         <ImgSlider slides={slides} />
       </section>
 
-      {/* 2. Categories (Sticky Glassmorphic Header) */}
-      <div className="sticky top-0 z-40 w-full bg-white/70 backdrop-blur-xl border-b border-gray-100/50 shadow-[0_4px_30px_rgba(0,0,0,0.03)] supports-backdrop-blur:bg-white/50">
-        <nav className="max-w-screen-2xl mx-auto flex items-center justify-start sm:justify-center gap-8 py-4 px-6 overflow-x-auto no-scrollbar">
-          {clothingCategories.map((cat) => (
-            <a
-              key={cat.id}
-              href={cat.href}
-              className={`relative text-[11px] sm:text-xs font-bold tracking-[0.2em] transition-all duration-300 pb-1 whitespace-nowrap shrink-0 group
-                              ${
-                                cat.label === "NEW IN"
-                                  ? "text-blue-600"
-                                  : "text-gray-500 hover:text-gray-900"
-                              }`}
-            >
-              {cat.label}
-              {/* Animated underline */}
-              <span
-                className={`absolute -bottom-1 left-0 w-full h-[2px] transition-all duration-300 ${cat.label === "NEW IN" ? "bg-blue-600" : "bg-gray-900 scale-x-0 group-hover:scale-x-100 origin-left"}`}
-              />
-            </a>
-          ))}
-        </nav>
-      </div>
-
       {/* ── Main content wrapper ──────────────────────────────────── */}
-      <div className="max-w-screen-2xl mx-auto space-y-20 pb-20 pt-12">
+      <div className="max-w-screen-2xl mx-auto space-y-12 md:space-y-24 pb-20 pt-8">
         {/* 3. Deals section */}
-        <section className="px-4 lg:px-8">
+        <section className="px-4 lg:px-8 animate-premium-fade">
           <Deal />
         </section>
 
         {/* 4. Recommended Items */}
-        <section className="px-4 lg:px-8">
+        <section className="px-4 lg:px-8 animate-premium-fade [animation-delay:200ms]">
           <RecomendedItems products={featuredProducts} />
         </section>
 
         {/* 5. Women's/Men's Category Cards */}
-        <section className="px-4 lg:px-8 space-y-12">
+        <section className="px-4 lg:px-8 space-y-12 animate-premium-fade [animation-delay:400ms]">
           <CategoryCards {...womensCollectionData} />
           <CategoryCards {...mensCollectionData} />
         </section>
 
         {/* 6. Extra Services (Member Perks) */}
-        <section className="px-4 lg:px-8 border-t border-gray-100 pt-12">
+        <section className="px-4 lg:px-8 border-t border-gray-100 pt-12 animate-premium-fade [animation-delay:600ms]">
           <ExtraService />
         </section>
 
         {/* 8. Send Inquiry / Query */}
-        <section className="px-4 lg:px-8">
+        <section className="px-4 lg:px-8 animate-premium-fade [animation-delay:800ms]">
           <SendInquiry />
         </section>
       </div>

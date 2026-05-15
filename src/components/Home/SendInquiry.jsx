@@ -22,8 +22,8 @@ const SendInquiry = () => {
     }
 
     return (
-        <section className="py-2 font-sans px-4 lg:px-8">
-            <div className="bg-white rounded-[3rem] p-8 md:p-12 lg:p-16 flex flex-col lg:flex-row gap-12 lg:gap-20 items-center relative overflow-hidden border border-gray-100 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)]">
+        <section className="py-2 font-sans animate-premium-fade [animation-delay:600ms]">
+            <div className="bg-white rounded-[3rem] p-8 md:p-12 lg:p-20 flex flex-col lg:flex-row gap-12 lg:gap-24 items-center relative overflow-hidden border border-gray-100 shadow-[0_20px_50px_-15px_rgba(0,0,0,0.03)]">
                 
                 {/* ── Soft Premium Glows ── */}
                 <div className="absolute -top-32 -right-32 w-96 h-96 bg-blue-100/50 rounded-full blur-[100px] pointer-events-none" />
@@ -35,14 +35,14 @@ const SendInquiry = () => {
                         <Sparkles size={12} /> B2B Concierge
                     </div>
                     
-                    <h2 className="text-4xl md:text-6xl font-black tracking-tighter leading-[1.05] mb-6 text-gray-900">
+                    <h2 className="text-4xl md:text-7xl font-black tracking-tighter leading-[0.95] mb-8 text-gray-900 uppercase">
                         Sourcing, <br/>
-                        <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 to-purple-600">
+                        <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 to-indigo-600">
                             Reimagined.
                         </span>
                     </h2>
                     
-                    <p className="text-gray-500 font-medium text-sm md:text-base leading-relaxed max-w-sm mb-8">
+                    <p className="text-gray-500 font-bold text-sm md:text-base leading-relaxed max-w-sm mb-10 tracking-tight">
                         Drop your requirements and let our smart matchmaking engine connect you with elite global manufacturers.
                     </p>
 
@@ -60,9 +60,9 @@ const SendInquiry = () => {
 
                 {/* ── Right: App-Native Form ── */}
                 <div className="w-full lg:w-1/2 relative z-10">
-                    <div className="bg-white p-6 md:p-8 rounded-[2rem] border border-gray-100 shadow-2xl shadow-blue-900/5 relative">
+                    <div className="bg-white p-6 md:p-10 rounded-[2.5rem] border border-gray-100 shadow-3xl shadow-blue-900/5 relative">
                         
-                        <h3 className="text-xl font-black text-gray-900 mb-6 uppercase tracking-tight">Request Quote</h3>
+                        <h3 className="text-lg font-black text-gray-900 mb-8 uppercase tracking-[0.1em]">Request Quote</h3>
 
                         {submitted ? (
                             <div className="flex flex-col items-center text-center py-12 animate-fade-in">
@@ -129,9 +129,9 @@ const SendInquiry = () => {
                                 {/* Submit Button */}
                                 <button
                                     onClick={handleSubmit}
-                                    className="w-full bg-blue-600 text-white py-4 rounded-xl text-xs font-black uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-blue-700 active:scale-[0.98] transition-all mt-4 shadow-lg shadow-blue-600/30"
+                                    className="w-full bg-gray-900 text-white py-5 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] flex items-center justify-center gap-3 hover:bg-blue-600 active:scale-[0.98] transition-all mt-6 shadow-xl shadow-gray-200"
                                 >
-                                    <Send size={16} /> Submit Request
+                                    <Send size={14} strokeWidth={3} /> Submit Request
                                 </button>
                             </div>
                         )}

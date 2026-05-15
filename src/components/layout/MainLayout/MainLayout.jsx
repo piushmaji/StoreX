@@ -5,25 +5,27 @@ import ScrollToTop from "../../common/ScrollToTop";
 import MobileBottomNav from "../Navbar/MobileBottomNav";
 
 const MainLayout = () => {
-    const location = useLocation();
+  const location = useLocation();
 
-    return (
-        <>
-            <ScrollToTop />
-            <Navbar />
-            <div
-                key={location.pathname}
-                className="pb-20 md:pb-0"
-                style={{
-                    animation: "fadeIn 0.25s ease-in-out"
-                }}
-            >
-                <Outlet />
-            </div>
-            <Footer />
-            <MobileBottomNav />
-        </>
-    );
+  return (
+    <>
+      <ScrollToTop />
+      <Navbar />
+      {/* Navbar Spacer */}
+      <div className="h-[105px] lg:h-[72px]" />
+      <div
+        key={location.pathname}
+        className="pb-20 md:pb-0"
+        style={{
+          animation: "fadeIn 0.25s ease-in-out",
+        }}
+      >
+        <Outlet />
+      </div>
+      <Footer />
+      <MobileBottomNav />
+    </>
+  );
 };
 
 export default MainLayout;

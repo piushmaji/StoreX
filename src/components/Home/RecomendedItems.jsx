@@ -3,8 +3,11 @@ import { Heart, ShoppingCart, Star, ArrowRight } from "lucide-react";
 import WishListIcon from "../common/WishListIcon/WishListIcon";
 
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/Auth/AuthContext";
+import { useCart } from "../../context/CartContext/CartContext";
+import toast from "react-hot-toast";
 
-const FILTERS = ["All", "Men", "Women", "Accessories", "New"];
+const FILTERS = ["All", "Men", "Women", "Accessories"];
 
 const StarRating = ({ rating }) => {
   return (
@@ -32,6 +35,8 @@ const badgeStyles = {
 
 const RecomendedItems = ({ products = [] }) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { handleAddToCart: addToCartCtx, isInCart } = useCart();
   const [activeFilter, setActiveFilter] = useState("All");
   const [wishlist, setWishlist] = useState([]);
   const [addedToCart, setAddedToCart] = useState([]);
@@ -55,15 +60,31 @@ const RecomendedItems = ({ products = [] }) => {
       reviews: p.reviews || 0,
       badge: p.is_featured ? "Bestseller" : null,
       category: p.category?.name || "Uncategorized",
+      gender: p.gender || "Unisex",
+      variantId: variant.id,
     };
   });
 
   const filtered =
     activeFilter === "All"
       ? displayProducts
-      : activeFilter === "New"
-        ? displayProducts.filter((p) => p.badge === "New")
-        : displayProducts.filter((p) => p.category === activeFilter);
+      : activeFilter === "Men"
+        ? displayProducts.filter(
+            (p) =>
+              p.gender?.toLowerCase() === "men" ||
+              p.category?.toLowerCase() === "men",
+          )
+        : activeFilter === "Women"
+          ? displayProducts.filter(
+              (p) =>
+                p.gender?.toLowerCase() === "women" ||
+                p.category?.toLowerCase() === "women",
+            )
+          : displayProducts.filter(
+              (p) =>
+                p.category?.toLowerCase() === activeFilter.toLowerCase() ||
+                p.gender?.toLowerCase() === activeFilter.toLowerCase(),
+            );
 
   const toggleWishlist = (id) => {
     setWishlist((prev) =>
@@ -71,12 +92,25 @@ const RecomendedItems = ({ products = [] }) => {
     );
   };
 
-  const handleAddToCart = (product) => {
-    // Visual feedback only
+  const handleAddToCart = async (product) => {
+    if (!user) {
+      toast.error("Please login to add to cart");
+      return;
+    }
+
+    // Visual feedback
     setAddedToCart((prev) => [...prev, product.id]);
-    setTimeout(() => {
+
+    try {
+      await addToCartCtx(user.id, product.id, product.variantId, 1);
+      // Wait a bit before clearing visual feedback
+      setTimeout(() => {
+        setAddedToCart((prev) => prev.filter((i) => i !== product.id));
+      }, 1800);
+    } catch (err) {
+      console.error("Cart error:", err);
       setAddedToCart((prev) => prev.filter((i) => i !== product.id));
-    }, 1800);
+    }
   };
 
   const discount = (orig, price) =>
@@ -128,18 +162,18 @@ const RecomendedItems = ({ products = [] }) => {
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         {filtered.map((product) => {
           const isWishlisted = wishlist.includes(product.id);
-          const isAdded = addedToCart.includes(product.id);
+          const isAdded = addedToCart.includes(product.id) || isInCart(product.id);
           const disc = discount(product.originalPrice, product.price);
 
           return (
             <div
               key={product.id}
               onClick={() => navigate(`/products/${product.slug || product.id}`)}
-              className="group relative flex flex-col bg-white border border-gray-100 rounded-4xl overflow-hidden hover:shadow-xl hover:-translate-y-1.5 transition-all duration-500 cursor-pointer"
+              className="group relative flex flex-col bg-white rounded-[2rem] overflow-hidden border border-gray-100/50 hover:shadow-[0_20px_50px_-12px_rgba(0,0,0,0.08)] hover:-translate-y-2 transition-all duration-700 cursor-pointer premium-shadow"
             >
               {/* ── Image Zone ─────────────────────────────── */}
               <div
-                className="relative bg-gray-50 overflow-hidden"
+                className="relative bg-[#F9FAFB] overflow-hidden"
                 style={{ aspectRatio: "3/4" }}
               >
                 <img
@@ -159,19 +193,19 @@ const RecomendedItems = ({ products = [] }) => {
 
                 {/* Discount pill */}
                 {disc > 0 && (
-                  <span className="absolute top-4 right-4 bg-red-500 shadow-sm shadow-red-500/30 text-white text-[10px] font-black px-2.5 py-1 rounded-full pointer-events-none">
+                  <span className="absolute top-4 right-4 bg-gray-900/90 backdrop-blur-md text-white text-[9px] font-black px-2.5 py-1 rounded-full pointer-events-none tracking-widest">
                     -{disc}%
                   </span>
                 )}
               </div>
 
               {/* ── Info Zone ──────────────────────────────── */}
-              <div className="flex flex-col gap-3 p-5 flex-1 relative z-10 bg-white">
+              <div className="flex flex-col gap-2.5 p-5 flex-1 relative z-10 bg-white">
                 {/* Rating & Wishlist Row */}
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center gap-1.5">
                     <StarRating rating={product.rating} />
-                    <span className="text-[10px] text-gray-400 font-medium">
+                    <span className="text-[9px] text-gray-400 font-bold uppercase tracking-wider">
                       ({product.reviews})
                     </span>
                   </div>
@@ -205,12 +239,12 @@ const RecomendedItems = ({ products = [] }) => {
                 </p>
 
                 {/* Price */}
-                <div className="flex items-end gap-2 mt-auto pt-2">
-                  <span className="text-[22px] font-black text-gray-900 leading-none">
+                <div className="flex items-baseline gap-2 mt-auto pt-3">
+                  <span className="text-xl font-black text-gray-900 tracking-tighter">
                     ₹{product.price}
                   </span>
                   {disc > 0 && (
-                    <span className="text-xs text-gray-400 line-through font-medium mb-0.5">
+                    <span className="text-[11px] text-gray-400 line-through font-bold tracking-tight">
                       ₹{product.originalPrice}
                     </span>
                   )}
@@ -222,18 +256,18 @@ const RecomendedItems = ({ products = [] }) => {
                     e.stopPropagation();
                     handleAddToCart(product);
                   }}
-                  className={`w-full flex items-center justify-center gap-2 text-xs font-bold tracking-widest uppercase py-3.5 rounded-xl transition-all duration-300 mt-2
+                  className={`w-full flex items-center justify-center gap-2 text-[10px] font-black tracking-[0.15em] uppercase py-4 rounded-2xl transition-all duration-500 mt-3
                                         ${
                                           isAdded
-                                            ? "bg-green-50 text-green-600 border border-green-200"
-                                            : "bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white"
+                                            ? "bg-green-50 text-green-600 border border-green-100"
+                                            : "bg-gray-900 text-white hover:bg-blue-600 shadow-lg shadow-gray-200"
                                         }`}
                 >
                   {isAdded ? (
                     <>✓ Added</>
                   ) : (
                     <>
-                      <ShoppingCart size={14} />
+                      <ShoppingCart size={13} strokeWidth={2.5} />
                       Add to Cart
                     </>
                   )}

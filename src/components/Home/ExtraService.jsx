@@ -43,7 +43,7 @@ const ExtraService = () => {
     return (
         <div className="pt-8 pb-2 font-sans mb-0">
             {/* ── Quirky Header ── */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 px-4 gap-6">
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
                 <div>
                     <div className="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-full text-xs font-black uppercase tracking-widest mb-4 shadow-[4px_4px_0px_0px_rgba(200,200,200,1)]">
                         <Sparkles size={14} className="text-yellow-300" /> Member Perks
@@ -59,7 +59,7 @@ const ExtraService = () => {
 
             {/* ── Atrangi Bento Grid ── */}
             {/* Removed hardcoded h-[1200px] md:h-[600px] and used auto-rows to prevent overlap */}
-            <div className="grid grid-cols-1 md:grid-cols-4 auto-rows-[280px] gap-4 px-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 auto-rows-[280px] gap-4">
                 
                 {/* 1. Big Hero Card */}
                 <a href="#service-1" className={`group relative rounded-[2rem] p-6 flex flex-col justify-between overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 ${extraServices[0].color} ${extraServices[0].span}`}>
