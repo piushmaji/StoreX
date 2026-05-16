@@ -1,711 +1,675 @@
-import { useState, useRef } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { useNavigate } from "react-router-dom"
+import { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import {
-    ArrowLeft, Type, AlignLeft, IndianRupee,
-    Tag, Percent, Layers, Eye, EyeOff, ChevronDown,
-    Plus, X, Image as ImageIcon, Sparkles, Upload, Star,
-    AlertCircle, CheckCircle2, Palette, Ruler, ListTree, Sliders
-} from "lucide-react"
-import { useProduct } from "../../context/admin/ProductContext"
+  ArrowLeft,
+  Type,
+  AlignLeft,
+  IndianRupee,
+  Tag,
+  Percent,
+  Layers,
+  Eye,
+  EyeOff,
+  ChevronDown,
+  Plus,
+  X,
+  Image as ImageIcon,
+  Sparkles,
+  Upload,
+  Star,
+  AlertCircle,
+  CheckCircle2,
+  Palette,
+  Ruler,
+  ListTree,
+  Sliders,
+  Globe,
+  Smartphone,
+  Layout,
+  Box,
+  Trash2,
+  GripVertical,
+  Settings2,
+} from "lucide-react";
 
-// ─── Reusable label ───────────────────────────────────────────
-const Label = ({ icon: Icon, text, required }) => (
-    <label className="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.22em] flex items-center gap-1.5">
-        {Icon && <Icon size={9} className="text-blue-400" />}
-        {text}
-        {required && <span className="text-blue-500">*</span>}
-    </label>
-)
+// ─── Constants ────────────────────────────────────────────────
+const CATEGORIES = [
+  { id: "1", name: "Men" },
+  { id: "2", name: "Women" },
+  { id: "3", name: "Accessories" },
+  { id: "4", name: "Streetwear" },
+  { id: "5", name: "Luxury" },
+];
 
-const inputCls = "w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-[13.5px] text-slate-700 placeholder-slate-300 focus:outline-none focus:border-blue-400 focus:bg-white focus:shadow-[0_0_0_3px_rgba(59,130,246,0.1)] transition-all duration-200"
+const GENDERS = ["Men", "Women", "Unisex", "Kids"];
 
-// ─── Main ─────────────────────────────────────────────────────
-const AddProduct = () => {
-    const navigate = useNavigate()
-    const { addProduct, categories } = useProduct()
-    const fileInputRef = useRef()
+// ─── Components ───────────────────────────────────────────────
 
-    // ── form state ──
-    const [visible, setVisible] = useState(true)
-    const [category, setCategory] = useState("")
-    const [files, setFiles] = useState([])         // File objects
-    const [previews, setPreviews] = useState([])   // blob URLs for preview
-    const [dragging, setDragging] = useState(false)
-    const [loading, setLoading] = useState(false)
-    const [success, setSuccess] = useState(false)
-    const [errors, setErrors] = useState({})
-
-    const [form, setForm] = useState({
-        name: "",
-        description: "",
-        price: "",
-        discount: "",
-        stock: "",
-        sizes: [], 
-        colors: [], 
-        features: [],
-        specs: [], 
-    })
-
-    const set = (key, val) => {
-        setForm(f => ({ ...f, [key]: val }))
-        if (errors[key]) setErrors(e => ({ ...e, [key]: "" }))
-    }
-
-    // ── Dynamic Array Handlers ──
-    const handleAddSize = (e) => {
-        if (e.key === 'Enter' && e.target.value.trim()) {
-            e.preventDefault();
-            const val = e.target.value.trim().toUpperCase();
-            if (!form.sizes.includes(val)) {
-                setForm(f => ({ ...f, sizes: [...f.sizes, val] }));
-            }
-            e.target.value = '';
-        }
-    };
-    const removeSize = (idx) => setForm(f => ({ ...f, sizes: f.sizes.filter((_, i) => i !== idx) }));
-
-    const addColor = () => setForm(f => ({ ...f, colors: [...f.colors, { name: "", hex: "#000000" }] }));
-    const updateColor = (idx, field, val) => {
-        const newCols = [...form.colors];
-        newCols[idx][field] = val;
-        setForm(f => ({ ...f, colors: newCols }));
-    }
-    const removeColor = (idx) => setForm(f => ({ ...f, colors: f.colors.filter((_, i) => i !== idx) }));
-
-    const addFeature = () => setForm(f => ({ ...f, features: [...f.features, ""] }));
-    const updateFeature = (idx, val) => {
-        const newFeats = [...form.features];
-        newFeats[idx] = val;
-        setForm(f => ({ ...f, features: newFeats }));
-    }
-    const removeFeature = (idx) => setForm(f => ({ ...f, features: f.features.filter((_, i) => i !== idx) }));
-
-    const addSpec = () => setForm(f => ({ ...f, specs: [...f.specs, { key: "", value: "" }] }));
-    const updateSpec = (idx, field, val) => {
-        const newSpecs = [...form.specs];
-        newSpecs[idx][field] = val;
-        setForm(f => ({ ...f, specs: newSpecs }));
-    }
-    const removeSpec = (idx) => setForm(f => ({ ...f, specs: f.specs.filter((_, i) => i !== idx) }));
-
-    // ── image handlers ──
-    const addFiles = (incoming) => {
-        const imageFiles = Array.from(incoming).filter(f => f.type.startsWith("image/"))
-        setFiles(prev => [...prev, ...imageFiles])
-        setPreviews(prev => [...prev, ...imageFiles.map(f => URL.createObjectURL(f))])
-        if (errors.images) setErrors(e => ({ ...e, images: "" }))
-    }
-
-    const removeImage = (i) => {
-        URL.revokeObjectURL(previews[i])
-        setFiles(prev => prev.filter((_, idx) => idx !== i))
-        setPreviews(prev => prev.filter((_, idx) => idx !== i))
-    }
-
-    const setMain = (i) => {
-        setFiles(prev => { const a = [...prev]; const [x] = a.splice(i, 1); a.unshift(x); return a })
-        setPreviews(prev => { const a = [...prev]; const [x] = a.splice(i, 1); a.unshift(x); return a })
-    }
-
-    // ── validation ──
-    const validate = () => {
-        const e = {}
-        if (!form.name.trim()) e.name = "Product name is required"
-        if (!form.description.trim()) e.description = "Description is required"
-        if (!form.price || isNaN(form.price) || Number(form.price) <= 0) e.price = "Enter a valid price"
-        if (!category) e.category = "Please select a category"
-        if (form.stock === "" || isNaN(form.stock) || Number(form.stock) < 0) e.stock = "Enter a valid stock quantity"
-        if (files.length === 0) e.images = "Upload at least one product image"
-        if (form.discount && (isNaN(form.discount) || Number(form.discount) >= Number(form.price)))
-            e.discount = "Discount price must be less than original price"
-        setErrors(e)
-        return Object.keys(e).length === 0
-    }
-
-    // ── submit ──
-    const handleSubmit = async () => {
-        if (!validate()) {
-            // Scroll to top to see validation errors
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            return;
-        }
-        setLoading(true)
-
-        // Clean up arrays/JSON to prevent empty blanks overriding good logic
-        const validColors = form.colors.filter(c => c.name.trim() !== "");
-        const validFeatures = form.features.filter(f => f.trim() !== "");
-        const validSpecs = form.specs.filter(s => s.key.trim() !== "" && s.value.trim() !== "");
-        
-        let specsObj = null;
-        if (validSpecs.length > 0) {
-            specsObj = validSpecs.reduce((acc, curr) => ({ ...acc, [curr.key.trim()]: curr.value.trim() }), {});
-        }
-
-        try {
-            await addProduct(
-                {
-                    name: form.name.trim(),
-                    description: form.description.trim(),
-                    price: Number(form.price),
-                    discount_price: form.discount ? Number(form.discount) : null,
-                    stock: Number(form.stock),
-                    category_id: category,
-                    is_visible: visible,
-                    sizes: form.sizes.length > 0 ? form.sizes : null,
-                    colors: validColors.length > 0 ? validColors : null,
-                    features: validFeatures.length > 0 ? validFeatures : null,
-                    specs: specsObj
-                },
-                files
-            )
-            setSuccess(true)
-            setTimeout(() => navigate("/admin/products"), 1800)
-        } catch (err) {
-            setErrors(e => ({ ...e, submit: err.message || "Something went wrong" }))
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        } finally {
-            setLoading(false)
-        }
-    }
-
-    const handleReset = () => {
-        previews.forEach(url => URL.revokeObjectURL(url))
-        setForm({ name: "", description: "", price: "", discount: "", stock: "", sizes: [], colors: [], features: [], specs: [] })
-        setCategory("")
-        setFiles([])
-        setPreviews([])
-        setVisible(true)
-        setErrors({})
-    }
-
-    return (
-        <div
-            className="min-h-screen bg-[#f8faff] p-5 md:p-8"
-            style={{ fontFamily: "'Plus Jakarta Sans', 'DM Sans', sans-serif" }}
-        >
-            {/* Grid background */}
-            <div className="fixed inset-0 pointer-events-none"
-                style={{
-                    backgroundImage: "radial-linear(circle at 1px 1px, #dbeafe 1px, transparent 0)",
-                    backgroundSize: "32px 32px", opacity: 0.45
-                }}
-            />
-
-            <div className="relative max-w-6xl mx-auto space-y-6">
-
-                {/* ══ HEADER ══ */}
-                <motion.div
-                    initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                    className="flex items-center justify-between"
-                >
-                    <div className="flex items-center gap-4">
-                        <button onClick={() => navigate("/admin/products")}
-                            className="w-10 h-10 rounded-2xl bg-white border border-slate-200 hover:border-blue-400 hover:text-blue-600 text-slate-500 flex items-center justify-center shadow-sm transition-all duration-200 group">
-                            <ArrowLeft size={17} className="group-hover:-translate-x-0.5 transition-transform" />
-                        </button>
-                        <div>
-                            <div className="flex items-center gap-2.5">
-                                <h1 className="text-[22px] font-black text-slate-900 tracking-tight">New Product</h1>
-                                <div className="flex items-center gap-1 bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full">
-                                    <Sparkles size={9} className="fill-blue-500" />
-                                    <span className="text-[9px] font-extrabold tracking-widest uppercase">Draft</span>
-                                </div>
-                            </div>
-                            <p className="text-slate-400 text-[13px] mt-0.5">Fill in the details below and publish to your store</p>
-                        </div>
-                    </div>
-
-                    {/* Visibility pill — desktop */}
-                    <button onClick={() => setVisible(v => !v)}
-                        className={`hidden sm:flex items-center gap-2.5 px-4 py-2.5 rounded-2xl border-2 font-bold text-sm transition-all duration-300
-                            ${visible ? "bg-emerald-50 border-emerald-200 text-emerald-700" : "bg-slate-100 border-slate-200 text-slate-500"}`}>
-                        <div className={`w-8 h-4 rounded-full relative transition-all duration-300 ${visible ? "bg-emerald-500" : "bg-slate-300"}`}>
-                            <div className={`absolute top-0.5 w-3 h-3 bg-white rounded-full shadow transition-all duration-300 ${visible ? "left-4" : "left-0.5"}`} />
-                        </div>
-                        {visible ? <Eye size={14} /> : <EyeOff size={14} />}
-                        {visible ? "Visible" : "Hidden"}
-                    </button>
-                </motion.div>
-
-                {/* ══ BODY ══ */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-
-                    {/* ── LEFT (2/3) ── */}
-                    <div className="lg:col-span-2 space-y-5">
-
-                        {/* Card: Basic Info */}
-                        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.05, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                            className="bg-white rounded-3xl border border-slate-100 shadow-[0_2px_20px_rgba(0,0,0,0.04)] overflow-hidden">
-                            <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-50">
-                                <div className="w-7 h-7 rounded-xl bg-blue-600 flex items-center justify-center shadow-md shadow-blue-500/30">
-                                    <Type size={13} className="text-white" />
-                                </div>
-                                <span className="text-[13px] font-extrabold text-slate-700">Basic Information</span>
-                            </div>
-
-                            <div className="p-6 space-y-5">
-                                {/* Name */}
-                                <div className="space-y-2">
-                                    <Label icon={Type} text="Product Name" required />
-                                    <input
-                                        value={form.name}
-                                        onChange={e => set("name", e.target.value)}
-                                        placeholder="e.g. Oversized Cotton Hoodie"
-                                        className={`${inputCls} ${errors.name ? "border-red-300 focus:border-red-400 focus:shadow-[0_0_0_3px_rgba(239,68,68,0.08)]" : ""}`}
-                                    />
-                                    {errors.name && <p className="flex items-center gap-1 text-[11px] text-red-500 font-medium"><AlertCircle size={10} />{errors.name}</p>}
-                                </div>
-
-                                {/* Description */}
-                                <div className="space-y-2">
-                                    <Label icon={AlignLeft} text="Description" required />
-                                    <textarea
-                                        value={form.description}
-                                        onChange={e => set("description", e.target.value)}
-                                        placeholder="Describe the product — fabric, fit, styling tips, what makes it special..."
-                                        rows={5}
-                                        className={`${inputCls} resize-none leading-relaxed ${errors.description ? "border-red-300" : ""}`}
-                                    />
-                                    <div className="flex items-center justify-between">
-                                        {errors.description
-                                            ? <p className="flex items-center gap-1 text-[11px] text-red-500 font-medium"><AlertCircle size={10} />{errors.description}</p>
-                                            : <span />
-                                        }
-                                        <p className="text-[10px] text-slate-300 font-semibold">{form.description.length} / 2000</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </motion.div>
-
-                        {/* Card: Images */}
-                        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.15, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                            className="bg-white rounded-3xl border border-slate-100 shadow-[0_2px_20px_rgba(0,0,0,0.04)] overflow-hidden">
-                            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-50">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-7 h-7 rounded-xl bg-blue-600 flex items-center justify-center shadow-md shadow-blue-500/30">
-                                        <ImageIcon size={13} className="text-white" />
-                                    </div>
-                                    <span className="text-[13px] font-extrabold text-slate-700">Product Images</span>
-                                </div>
-                                <span className="text-[10px] font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full">
-                                    {files.length} / 8 uploaded
-                                </span>
-                            </div>
-
-                            <div className="p-6 space-y-4">
-                                {/* Hidden file input */}
-                                <input
-                                    ref={fileInputRef}
-                                    type="file"
-                                    accept="image/*"
-                                    multiple
-                                    className="hidden"
-                                    onChange={e => addFiles(e.target.files)}
-                                />
-
-                                {/* Drop zone */}
-                                <div
-                                    onDragOver={e => { e.preventDefault(); setDragging(true) }}
-                                    onDragLeave={() => setDragging(false)}
-                                    onDrop={e => { e.preventDefault(); setDragging(false); addFiles(e.dataTransfer.files) }}
-                                    onClick={() => fileInputRef.current?.click()}
-                                    className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all duration-200
-                                        ${dragging ? "border-blue-400 bg-blue-50 scale-[1.01]"
-                                            : errors.images ? "border-red-300 bg-red-50/30"
-                                            : "border-slate-200 bg-slate-50/50 hover:border-blue-300 hover:bg-blue-50/40"}`}
-                                >
-                                    <div className={`w-12 h-12 rounded-2xl mx-auto mb-3 flex items-center justify-center transition-colors ${dragging ? "bg-blue-100" : "bg-slate-100"}`}>
-                                        <Upload size={20} className={dragging ? "text-blue-600" : "text-slate-400"} />
-                                    </div>
-                                    <p className="text-sm font-bold text-slate-600">
-                                        {dragging ? "Drop images here" : "Drag & drop or click to upload"}
-                                    </p>
-                                    <p className="text-xs text-slate-400 mt-1">
-                                        PNG, JPG, WEBP · Max 5MB each · <span className="text-blue-500 font-semibold">Browse files</span>
-                                    </p>
-                                </div>
-
-                                {errors.images && (
-                                    <p className="flex items-center gap-1 text-[11px] text-red-500 font-medium">
-                                        <AlertCircle size={10} />{errors.images}
-                                    </p>
-                                )}
-
-                                {/* Image previews grid */}
-                                <AnimatePresence>
-                                    {previews.length > 0 && (
-                                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                                            className="grid grid-cols-4 sm:grid-cols-5 gap-2.5">
-                                            {previews.map((src, i) => (
-                                                <motion.div key={src}
-                                                    initial={{ opacity: 0, scale: 0.88 }}
-                                                    animate={{ opacity: 1, scale: 1 }}
-                                                    exit={{ opacity: 0, scale: 0.85 }}
-                                                    transition={{ duration: 0.18 }}
-                                                    className={`relative group aspect-square rounded-xl overflow-hidden border-2 cursor-pointer transition-all
-                                                        ${i === 0 ? "border-blue-500 shadow-md shadow-blue-500/20" : "border-slate-200 hover:border-blue-300"}`}
-                                                    onClick={() => setMain(i)}
-                                                >
-                                                    <img src={src} alt="" className="w-full h-full object-cover" />
-
-                                                    {/* Cover badge */}
-                                                    {i === 0 && (
-                                                        <div className="absolute top-1 left-1 bg-blue-600 text-white text-[7px] font-black px-1.5 py-0.5 rounded-md flex items-center gap-0.5">
-                                                            <Star size={6} fill="white" /> Cover
-                                                        </div>
-                                                    )}
-
-                                                    {/* Remove */}
-                                                    <button
-                                                        onClick={e => { e.stopPropagation(); removeImage(i) }}
-                                                        className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all"
-                                                    >
-                                                        <X size={9} strokeWidth={3} />
-                                                    </button>
-                                                </motion.div>
-                                            ))}
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-                            </div>
-                        </motion.div>
-
-                        {/* Card: Variants & Options */}
-                        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.20, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                            className="bg-white rounded-3xl border border-slate-100 shadow-[0_2px_20px_rgba(0,0,0,0.04)] overflow-hidden">
-                            <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-50">
-                                <div className="w-7 h-7 rounded-xl bg-blue-600 flex items-center justify-center shadow-md shadow-blue-500/30">
-                                    <Ruler size={13} className="text-white" />
-                                </div>
-                                <span className="text-[13px] font-extrabold text-slate-700">Variants & Options</span>
-                            </div>
-
-                            <div className="p-6 space-y-6">
-                                {/* Sizes */}
-                                <div className="space-y-2">
-                                    <Label icon={Ruler} text="Available Sizes" />
-                                    <input
-                                        onKeyDown={handleAddSize}
-                                        placeholder="Type a size e.g. 'XL' and press Enter..."
-                                        className={inputCls}
-                                    />
-                                    <div className="pt-2 flex flex-wrap gap-2">
-                                        <AnimatePresence>
-                                            {form.sizes.map((s, idx) => (
-                                                <motion.span 
-                                                    key={idx}
-                                                    initial={{ opacity: 0, scale: 0.8 }}
-                                                    animate={{ opacity: 1, scale: 1 }}
-                                                    exit={{ opacity: 0, scale: 0.8 }}
-                                                    className="inline-flex items-center gap-1.5 bg-slate-100 border border-slate-200 text-slate-700 text-[11px] font-bold px-3 py-1.5 rounded-lg"
-                                                >
-                                                    {s}
-                                                    <button onClick={() => removeSize(idx)} className="hover:text-red-500 transition-colors">
-                                                        <X size={12} />
-                                                    </button>
-                                                </motion.span>
-                                            ))}
-                                        </AnimatePresence>
-                                    </div>
-                                </div>
-
-                                {/* Colors */}
-                                <div className="space-y-2">
-                                    <div className="flex items-center justify-between pb-1">
-                                        <Label icon={Palette} text="Color Options" />
-                                        <button onClick={addColor} className="text-[11px] font-bold text-blue-500 hover:text-blue-600 flex items-center gap-1">
-                                            <Plus size={12} /> Add Color
-                                        </button>
-                                    </div>
-                                    <div className="space-y-3">
-                                        {form.colors.map((c, idx) => (
-                                            <div key={idx} className="flex gap-3 items-center">
-                                                <input type="color" value={c.hex} onChange={e => updateColor(idx, "hex", e.target.value)} className="w-12 h-11 rounded-xl cursor-pointer border-0 bg-transparent shrink-0" />
-                                                <input value={c.name} onChange={e => updateColor(idx, "name", e.target.value)} placeholder="Color Name (e.g. Midnight Blue)" className={inputCls} />
-                                                <button onClick={() => removeColor(idx)} className="w-11 h-11 shrink-0 flex items-center justify-center rounded-xl bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-600 transition-colors">
-                                                    <X size={16} />
-                                                </button>
-                                            </div>
-                                        ))}
-                                        {form.colors.length === 0 && <p className="text-[12px] text-slate-400 italic">No color options added.</p>}
-                                    </div>
-                                </div>
-                            </div>
-                        </motion.div>
-
-                        {/* Card: Details & Specs */}
-                        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.25, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                            className="bg-white rounded-3xl border border-slate-100 shadow-[0_2px_20px_rgba(0,0,0,0.04)] overflow-hidden">
-                            <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-50">
-                                <div className="w-7 h-7 rounded-xl bg-blue-600 flex items-center justify-center shadow-md shadow-blue-500/30">
-                                    <Sliders size={13} className="text-white" />
-                                </div>
-                                <span className="text-[13px] font-extrabold text-slate-700">Details & Specifications</span>
-                            </div>
-
-                            <div className="p-6 space-y-8">
-                                {/* Features */}
-                                <div className="space-y-2">
-                                    <div className="flex items-center justify-between pb-1">
-                                        <Label icon={ListTree} text="Product Features" />
-                                        <button onClick={addFeature} className="text-[11px] font-bold text-blue-500 hover:text-blue-600 flex items-center gap-1">
-                                            <Plus size={12} /> Add Feature
-                                        </button>
-                                    </div>
-                                    <div className="space-y-3">
-                                        {form.features.map((f, idx) => (
-                                            <div key={idx} className="flex gap-3 items-center">
-                                                <div className="w-2 h-2 rounded-full bg-slate-300 shrink-0" />
-                                                <input value={f} onChange={e => updateFeature(idx, e.target.value)} placeholder="e.g. Made from 100% recycled materials" className={inputCls} />
-                                                <button onClick={() => removeFeature(idx)} className="w-11 h-11 shrink-0 flex items-center justify-center rounded-xl bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-600 transition-colors">
-                                                    <X size={16} />
-                                                </button>
-                                            </div>
-                                        ))}
-                                        {form.features.length === 0 && <p className="text-[12px] text-slate-400 italic">No features added.</p>}
-                                    </div>
-                                </div>
-
-                                {/* Specs */}
-                                <div className="space-y-2">
-                                    <div className="flex items-center justify-between pb-1">
-                                        <Label icon={Sliders} text="Technical Specs" />
-                                        <button onClick={addSpec} className="text-[11px] font-bold text-blue-500 hover:text-blue-600 flex items-center gap-1">
-                                            <Plus size={12} /> Add Spec Row
-                                        </button>
-                                    </div>
-                                    <div className="space-y-3">
-                                        {form.specs.map((s, idx) => (
-                                            <div key={idx} className="flex gap-3 items-center">
-                                                <input value={s.key} onChange={e => updateSpec(idx, "key", e.target.value)} placeholder="e.g. Material" className={inputCls} />
-                                                <input value={s.value} onChange={e => updateSpec(idx, "value", e.target.value)} placeholder="e.g. 100% Cotton" className={inputCls} />
-                                                <button onClick={() => removeSpec(idx)} className="w-11 h-11 shrink-0 flex items-center justify-center rounded-xl bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-600 transition-colors">
-                                                    <X size={16} />
-                                                </button>
-                                            </div>
-                                        ))}
-                                        {form.specs.length === 0 && <p className="text-[12px] text-slate-400 italic">No specifications added.</p>}
-                                    </div>
-                                </div>
-                            </div>
-                        </motion.div>
-                    </div>
-
-                    {/* ── RIGHT (1/3) ── */}
-                    <div className="space-y-5">
-
-                        {/* Card: Publish */}
-                        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.08, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                            className="bg-white rounded-3xl border border-slate-100 shadow-[0_2px_20px_rgba(0,0,0,0.04)] overflow-hidden">
-                            <div className="flex items-center gap-3 px-5 py-4 border-b border-slate-50">
-                                <div className="w-7 h-7 rounded-xl bg-blue-600 flex items-center justify-center shadow-md shadow-blue-500/30">
-                                    {visible ? <Eye size={13} className="text-white" /> : <EyeOff size={13} className="text-white" />}
-                                </div>
-                                <span className="text-[13px] font-extrabold text-slate-700">Publish</span>
-                            </div>
-
-                            <div className="p-5 space-y-4">
-                                {/* Visibility toggle */}
-                                <div
-                                    onClick={() => setVisible(v => !v)}
-                                    className={`flex items-center justify-between p-4 rounded-2xl border-2 cursor-pointer transition-all duration-300
-                                        ${visible ? "border-emerald-200 bg-emerald-50/60" : "border-slate-200 bg-slate-50"}`}
-                                >
-                                    <div>
-                                        <p className={`text-sm font-bold transition-colors ${visible ? "text-emerald-700" : "text-slate-500"}`}>
-                                            {visible ? "Live in Store" : "Hidden"}
-                                        </p>
-                                        <p className="text-[11px] text-slate-400 mt-0.5">
-                                            {visible ? "Customers can discover this" : "Only you can see this"}
-                                        </p>
-                                    </div>
-                                    <div className={`w-11 h-6 rounded-full relative transition-all duration-300 ${visible ? "bg-emerald-500" : "bg-slate-300"}`}>
-                                        <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow-md transition-all duration-300 ${visible ? "left-5" : "left-0.5"}`} />
-                                    </div>
-                                </div>
-
-                                {/* Submit error */}
-                                <AnimatePresence>
-                                    {errors.submit && (
-                                        <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                                            className="flex items-start gap-2 bg-red-50 border border-red-200 text-red-600 text-[11px] font-semibold px-3 py-2.5 rounded-xl">
-                                            <AlertCircle size={13} className="shrink-0 mt-0.5" /> {errors.submit}
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-
-                                {/* Success state */}
-                                <AnimatePresence>
-                                    {success && (
-                                        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
-                                            className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-bold px-3 py-2.5 rounded-xl">
-                                            <CheckCircle2 size={14} className="text-emerald-500" /> Save successful! Redir...
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-
-                                {/* Publish button */}
-                                <motion.button
-                                    onClick={handleSubmit}
-                                    disabled={loading || success}
-                                    whileHover={{ scale: (loading || success) ? 1 : 1.01 }}
-                                    whileTap={{ scale: (loading || success) ? 1 : 0.98 }}
-                                    className="w-full py-3.5 rounded-2xl bg-linear-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-black tracking-wide transition-all shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2"
-                                >
-                                    {loading ? (
-                                        <>
-                                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                            Syncing Database...
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Sparkles size={14} className="fill-white/40" />
-                                            Publish Product
-                                        </>
-                                    )}
-                                </motion.button>
-                            </div>
-                        </motion.div>
-
-                        {/* Card: Pricing */}
-                        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.1, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                            className="bg-white rounded-3xl border border-slate-100 shadow-[0_2px_20px_rgba(0,0,0,0.04)] overflow-hidden">
-                            <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-50">
-                                <div className="w-7 h-7 rounded-xl bg-blue-600 flex items-center justify-center shadow-md shadow-blue-500/30">
-                                    <IndianRupee size={13} className="text-white" />
-                                </div>
-                                <span className="text-[13px] font-extrabold text-slate-700">Pricing</span>
-                            </div>
-
-                            <div className="p-6 space-y-4">
-                                <div className="grid grid-cols-2 gap-4">
-                                    {/* Original Price */}
-                                    <div className="space-y-2">
-                                        <Label icon={IndianRupee} text="Original Price" required />
-                                        <div className="relative">
-                                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[13px] font-black text-slate-400">₹</span>
-                                            <input
-                                                type="number" min="0"
-                                                value={form.price}
-                                                onChange={e => set("price", e.target.value)}
-                                                placeholder="0.00"
-                                                className={`${inputCls} pl-8 ${errors.price ? "border-red-300" : ""}`}
-                                            />
-                                        </div>
-                                        {errors.price && <p className="flex items-center gap-1 text-[11px] text-red-500 font-medium"><AlertCircle size={10} />{errors.price}</p>}
-                                    </div>
-
-                                    {/* Discount Price */}
-                                    <div className="space-y-2">
-                                        <Label icon={Percent} text="Discount Price" />
-                                        <div className="relative">
-                                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[13px] font-black text-slate-400">₹</span>
-                                            <input
-                                                type="number" min="0"
-                                                value={form.discount}
-                                                onChange={e => set("discount", e.target.value)}
-                                                placeholder="0.00"
-                                                className={`${inputCls} pl-8 ${errors.discount ? "border-red-300" : ""}`}
-                                            />
-                                        </div>
-                                        {errors.discount && <p className="flex items-center gap-1 text-[11px] text-red-500 font-medium"><AlertCircle size={10} />{errors.discount}</p>}
-                                    </div>
-                                </div>
-                            </div>
-                        </motion.div>
-
-                        {/* Card: Category */}
-                        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.12, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                            className="bg-white rounded-3xl border border-slate-100 shadow-[0_2px_20px_rgba(0,0,0,0.04)] overflow-hidden">
-                            <div className="flex items-center gap-3 px-5 py-4 border-b border-slate-50">
-                                <div className="w-7 h-7 rounded-xl bg-blue-600 flex items-center justify-center shadow-md shadow-blue-500/30">
-                                    <Tag size={13} className="text-white" />
-                                </div>
-                                <span className="text-[13px] font-extrabold text-slate-700">Category</span>
-                                <span className="text-blue-500 text-xs ml-auto">*</span>
-                            </div>
-                            <div className="p-5 space-y-4">
-                                {/* The Dropdown */}
-                                <div className="relative">
-                                    <select
-                                        value={category}
-                                        onChange={e => {
-                                            setCategory(e.target.value)
-                                            if (errors.category) setErrors(er => ({ ...er, category: "" }))
-                                        }}
-                                        className={`w-full px-4 py-3 bg-slate-50 border rounded-2xl text-[13px] text-slate-600 appearance-none
-                                            ${errors.category ? "border-red-300" : "border-slate-200 focus:border-blue-400 focus:bg-white"}`}
-                                    >
-                                        <option value="">Select category…</option>
-                                        {categories.map(c => (
-                                            <option key={c.id} value={c.id}>
-                                                {c.name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-                                </div>
-
-                                {errors.category && (
-                                    <p className="flex items-center gap-1 text-[11px] text-red-500 font-medium">
-                                        <AlertCircle size={10} />{errors.category}
-                                    </p>
-                                )}
-                            </div>
-                        </motion.div>
-
-                        {/* Card: Inventory */}
-                        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.16, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                            className="bg-white rounded-3xl border border-slate-100 shadow-[0_2px_20px_rgba(0,0,0,0.04)] overflow-hidden">
-                            <div className="flex items-center gap-3 px-5 py-4 border-b border-slate-50">
-                                <div className="w-7 h-7 rounded-xl bg-blue-600 flex items-center justify-center shadow-md shadow-blue-500/30">
-                                    <Layers size={13} className="text-white" />
-                                </div>
-                                <span className="text-[13px] font-extrabold text-slate-700">Inventory</span>
-                            </div>
-
-                            <div className="p-5 space-y-2">
-                                <Label icon={Layers} text="Stock Quantity" required />
-                                <input
-                                    type="number" min="0"
-                                    value={form.stock}
-                                    onChange={e => set("stock", e.target.value)}
-                                    placeholder="0"
-                                    className={`${inputCls} ${errors.stock ? "border-red-300" : ""}`}
-                                />
-                                {errors.stock
-                                    ? <p className="flex items-center gap-1 text-[11px] text-red-500 font-medium"><AlertCircle size={10} />{errors.stock}</p>
-                                    : <p className="text-[11px] text-slate-400 font-medium pt-0.5">Set to <span className="font-bold text-slate-600">0</span> to mark as out of stock</p>
-                                }
-
-                                {/* Live stock status */}
-                                {form.stock !== "" && !errors.stock && (
-                                    <div className={`inline-flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded-lg border mt-1
-                                        ${Number(form.stock) === 0 ? "bg-red-50 text-red-500 border-red-200"
-                                        : Number(form.stock) <= 10 ? "bg-amber-50 text-amber-600 border-amber-200"
-                                        : "bg-emerald-50 text-emerald-600 border-emerald-200"}`}>
-                                        <span className={`w-1.5 h-1.5 rounded-full ${Number(form.stock) === 0 ? "bg-red-400" : Number(form.stock) <= 10 ? "bg-amber-400" : "bg-emerald-500"}`} />
-                                        {Number(form.stock) === 0 ? "Out of Stock" : Number(form.stock) <= 10 ? "Low Stock" : "In Stock"}
-                                    </div>
-                                )}
-                            </div>
-                        </motion.div>
-                    </div>
-                </div>
+const Card = ({ children, title, icon: Icon, badge, className = "" }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    className={`bg-white rounded-[24px] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)] overflow-hidden ${className}`}
+  >
+    {(title || Icon) && (
+      <div className="px-6 py-5 border-b border-slate-50 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          {Icon && (
+            <div className="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
+              <Icon size={18} />
             </div>
+          )}
+          <h3 className="text-[15px] font-bold text-slate-800">{title}</h3>
         </div>
-    )
-}
+        {badge && (
+          <span className="px-2.5 py-1 bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-wider rounded-lg">
+            {badge}
+          </span>
+        )}
+      </div>
+    )}
+    <div className="p-6">{children}</div>
+  </motion.div>
+);
 
-export default AddProduct
+const Input = ({ label, icon: Icon, error, ...props }) => (
+  <div className="space-y-2 flex-1">
+    {label && (
+      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+        {Icon && <Icon size={12} className="text-blue-500/60" />}
+        {label}
+      </label>
+    )}
+    <div className="relative group">
+      <input
+        {...props}
+        className={`w-full px-4 py-3.5 bg-slate-50 border ${error ? "border-red-200" : "border-slate-200"} rounded-2xl text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 focus:bg-white transition-all duration-300`}
+      />
+      {error && (
+        <p className="mt-1.5 text-[11px] font-medium text-red-500 flex items-center gap-1">
+          <AlertCircle size={12} /> {error}
+        </p>
+      )}
+    </div>
+  </div>
+);
+
+const Toggle = ({ active, onClick, label, sub }) => (
+  <div
+    onClick={onClick}
+    className={`flex items-center justify-between p-4 rounded-2xl border-2 cursor-pointer transition-all duration-300 ${
+      active
+        ? "bg-blue-50/50 border-blue-100"
+        : "bg-white border-slate-100 hover:border-slate-200"
+    }`}
+  >
+    <div>
+      <p
+        className={`text-sm font-bold ${active ? "text-blue-700" : "text-slate-700"}`}
+      >
+        {label}
+      </p>
+      <p className="text-[11px] text-slate-400 mt-0.5">{sub}</p>
+    </div>
+    <div
+      className={`w-10 h-6 rounded-full relative transition-colors duration-300 ${active ? "bg-blue-600" : "bg-slate-200"}`}
+    >
+      <motion.div
+        animate={{ x: active ? 18 : 2 }}
+        className="absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm"
+      />
+    </div>
+  </div>
+);
+
+// ─── Main Page ───────────────────────────────────────────────
+
+const AddProduct = () => {
+  const navigate = useNavigate();
+  const fileInputRef = useRef();
+
+  // Form State
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [brand, setBrand] = useState("");
+  const [material, setMaterial] = useState("");
+  const [style, setStyle] = useState("");
+  const [gender, setGender] = useState("Unisex");
+  const [category, setCategory] = useState("");
+  const [slug, setSlug] = useState("");
+
+  // Images
+  const [previews, setPreviews] = useState([]);
+  const [dragging, setDragging] = useState(false);
+
+  // Status
+  const [status, setStatus] = useState({
+    visible: true,
+    featured: false,
+    newArrival: true,
+    onSale: false,
+  });
+
+  // Variants
+  const [variants, setVariants] = useState([
+    {
+      id: Date.now(),
+      size: "M",
+      color: "#000000",
+      stock: 10,
+      price: 1299,
+      discountPrice: "",
+    },
+  ]);
+
+  // Slug generation
+  useEffect(() => {
+    setSlug(
+      name
+        .toLowerCase()
+        .replace(/ /g, "-")
+        .replace(/[^\w-]+/g, ""),
+    );
+  }, [name]);
+
+  const handleImageUpload = (files) => {
+    const newPreviews = Array.from(files).map((file) =>
+      URL.createObjectURL(file),
+    );
+    setPreviews((prev) => [...prev, ...newPreviews].slice(0, 8));
+  };
+
+  const addVariant = () => {
+    setVariants([
+      ...variants,
+      {
+        id: Date.now(),
+        size: "M",
+        color: "#3B82F6",
+        stock: 10,
+        price: 1299,
+        discountPrice: "",
+      },
+    ]);
+  };
+
+  const removeVariant = (id) => {
+    if (variants.length > 1) {
+      setVariants(variants.filter((v) => v.id !== id));
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-[#F8FAFC] pb-20">
+      {/* ── Action Toolbar ── */}
+      <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-6 flex items-center justify-between border-b border-slate-100 mb-8 bg-white/50 backdrop-blur-sm rounded-b-[32px]">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => navigate("/admin/products")}
+            className="w-10 h-10 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-white hover:shadow-sm transition-all shadow-sm"
+          >
+            <ArrowLeft size={18} />
+          </button>
+          <div className="h-8 w-px bg-slate-200 mx-1 hidden sm:block" />
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 px-2.5 py-1 bg-blue-50 text-blue-600 text-[10px] font-black rounded-lg border border-blue-100 uppercase tracking-widest">
+              <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+              Draft
+            </div>
+            <p className="text-slate-400 font-bold text-[11px] tracking-tight hidden md:block">
+              StoreX Cloud • Auto-saving...
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <button className="px-4 py-2 text-sm font-bold text-slate-500 hover:text-slate-800 transition-colors">Discard</button>
+          <button className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 text-white text-sm font-black rounded-xl shadow-lg shadow-blue-500/20 hover:bg-blue-700 hover:-translate-y-0.5 transition-all active:scale-95">
+            <Sparkles size={16} />
+            <span>Publish Product</span>
+          </button>
+        </div>
+      </div>
+
+      <main className="max-w-[1400px] mx-auto px-6 md:px-10 pt-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* LEFT COLUMN — Main Forms */}
+          <div className="lg:col-span-8 space-y-8">
+            {/* 1. Product Information */}
+            <Card title="Product Information" icon={Box}>
+              <div className="space-y-6">
+                <Input
+                  label="Product Name"
+                  placeholder="e.g. Classic Oversized Essential Hoodie"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+
+                <div className="space-y-2">
+                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                    <AlignLeft size={12} className="text-blue-500/60" />
+                    Description
+                  </label>
+                  <textarea
+                    rows={5}
+                    placeholder="Tell the story of this product..."
+                    className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 focus:bg-white transition-all duration-300 resize-none"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <Input
+                    label="Brand"
+                    placeholder="StoreX"
+                    value={brand}
+                    onChange={(e) => setBrand(e.target.value)}
+                  />
+                  <Input
+                    label="Material"
+                    placeholder="100% Organic Cotton"
+                    value={material}
+                    onChange={(e) => setMaterial(e.target.value)}
+                  />
+                  <Input
+                    label="Style"
+                    placeholder="Modern / Minimal"
+                    value={style}
+                    onChange={(e) => setStyle(e.target.value)}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                      Category
+                    </label>
+                    <div className="relative">
+                      <select
+                        className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm text-slate-700 appearance-none focus:outline-none focus:border-blue-500 transition-all"
+                        value={category}
+                        onChange={(e) => setCategory(e.target.value)}
+                      >
+                        <option value="">Select Category</option>
+                        {CATEGORIES.map((c) => (
+                          <option key={c.id} value={c.name}>
+                            {c.name}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown
+                        size={14}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                      Gender
+                    </label>
+                    <div className="relative">
+                      <select
+                        className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm text-slate-700 appearance-none focus:outline-none focus:border-blue-500 transition-all"
+                        value={gender}
+                        onChange={(e) => setGender(e.target.value)}
+                      >
+                        {GENDERS.map((g) => (
+                          <option key={g} value={g}>
+                            {g}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown
+                        size={14}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Slug Preview */}
+                <div className="pt-2">
+                  <div className="flex items-center gap-2 text-[11px] font-bold text-slate-400 bg-slate-50 px-4 py-3 rounded-xl border border-slate-100">
+                    <Globe size={12} className="text-blue-500" />
+                    <span>storex.com/product/</span>
+                    <span className="text-blue-600 truncate">
+                      {slug || "product-slug"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </Card>
+
+            {/* 2. Product Images */}
+            <Card
+              title="Product Images"
+              icon={ImageIcon}
+              badge={`${previews.length}/8`}
+            >
+              <div className="space-y-6">
+                <div
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    setDragging(true);
+                  }}
+                  onDragLeave={() => setDragging(false)}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    setDragging(false);
+                    handleImageUpload(e.dataTransfer.files);
+                  }}
+                  onClick={() => fileInputRef.current.click()}
+                  className={`relative h-52 rounded-[24px] border-2 border-dashed flex flex-col items-center justify-center transition-all cursor-pointer ${
+                    dragging
+                      ? "border-blue-400 bg-blue-50/50 scale-[1.01]"
+                      : "border-slate-200 bg-slate-50/50 hover:bg-slate-50 hover:border-blue-200"
+                  }`}
+                >
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    multiple
+                    className="hidden"
+                    onChange={(e) => handleImageUpload(e.target.files)}
+                  />
+                  <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center text-blue-500 mb-3 border border-slate-100">
+                    <Upload size={24} />
+                  </div>
+                  <p className="text-sm font-bold text-slate-700">
+                    Drag & drop images here
+                  </p>
+                  <p className="text-[11px] text-slate-400 mt-1 font-medium">
+                    PNG, JPG, WebP up to 10MB
+                  </p>
+                </div>
+
+                {/* Preview Grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  <AnimatePresence>
+                    {previews.map((src, idx) => (
+                      <motion.div
+                        key={src}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        className="group relative aspect-square rounded-[20px] overflow-hidden border border-slate-100 bg-white"
+                      >
+                        <img
+                          src={src}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                          alt=""
+                        />
+                        <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setPreviews((prev) =>
+                                prev.filter((_, i) => i !== idx),
+                              );
+                            }}
+                            className="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-md text-white hover:bg-red-500 transition-colors flex items-center justify-center"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                        {idx === 0 && (
+                          <div className="absolute top-2 left-2 px-2 py-1 bg-blue-600 text-white text-[8px] font-black uppercase rounded-md shadow-lg">
+                            Main
+                          </div>
+                        )}
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+
+                  {previews.length < 8 && (
+                    <div
+                      onClick={() => fileInputRef.current.click()}
+                      className="aspect-square rounded-[20px] border border-slate-200 border-dashed bg-slate-50/50 flex flex-col items-center justify-center text-slate-400 hover:border-blue-300 hover:text-blue-500 transition-all cursor-pointer"
+                    >
+                      <Plus size={20} />
+                      <span className="text-[10px] font-bold uppercase mt-2">
+                        Add
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </Card>
+
+            {/* 3. Product Variants */}
+            <Card title="Product Variants" icon={Layers}>
+              <div className="space-y-6">
+                <AnimatePresence mode="popLayout">
+                  {variants.map((v, idx) => (
+                    <motion.div
+                      key={v.id}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 10 }}
+                      className="relative p-6 bg-slate-50/50 rounded-[24px] border border-slate-100 group"
+                    >
+                      <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
+                        <div className="md:col-span-1 space-y-2">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            Size
+                          </label>
+                          <select className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition-all">
+                            {["XS", "S", "M", "L", "XL", "XXL"].map((s) => (
+                              <option key={s} value={s}>
+                                {s}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="md:col-span-1 space-y-2">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            Color
+                          </label>
+                          <div className="relative">
+                            <input
+                              type="color"
+                              className="w-full h-10 p-1 bg-white border border-slate-200 rounded-xl cursor-pointer"
+                              value={v.color}
+                              onChange={(e) => {
+                                const newV = [...variants];
+                                newV[idx].color = e.target.value;
+                                setVariants(newV);
+                              }}
+                            />
+                          </div>
+                        </div>
+                        <div className="md:col-span-1 space-y-2">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            Stock
+                          </label>
+                          <input
+                            type="number"
+                            className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition-all"
+                            value={v.stock}
+                          />
+                        </div>
+                        <div className="md:col-span-1 space-y-2">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            Price
+                          </label>
+                          <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">
+                              ₹
+                            </span>
+                            <input
+                              type="number"
+                              className="w-full pl-6 pr-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition-all font-bold"
+                              value={v.price}
+                            />
+                          </div>
+                        </div>
+                        <div className="md:col-span-1 space-y-2">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-emerald-500">
+                            Discount
+                          </label>
+                          <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-400 text-xs">
+                              ₹
+                            </span>
+                            <input
+                              type="number"
+                              placeholder="Off"
+                              className="w-full pl-6 pr-3 py-2.5 bg-emerald-50/50 border border-emerald-100 rounded-xl text-sm focus:outline-none focus:border-emerald-500 transition-all text-emerald-700"
+                              value={v.discountPrice}
+                            />
+                          </div>
+                        </div>
+                        <div className="md:col-span-1 flex justify-end">
+                          <button
+                            onClick={() => removeVariant(v.id)}
+                            className="w-10 h-10 rounded-xl bg-red-50 text-red-500 opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500 hover:text-white flex items-center justify-center"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+
+                <button
+                  onClick={addVariant}
+                  className="w-full py-4 rounded-[20px] border-2 border-dashed border-slate-200 text-slate-500 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50/30 transition-all flex items-center justify-center gap-2 text-sm font-bold"
+                >
+                  <Plus size={18} /> Add Another Variant
+                </button>
+              </div>
+            </Card>
+          </div>
+
+          {/* RIGHT COLUMN — Sticky Preview & Status */}
+          <div className="lg:col-span-4 space-y-8 sticky top-28">
+            {/* 4. Product Status */}
+            <Card title="Availability & Visibility" icon={Settings2}>
+              <div className="space-y-3">
+                <Toggle
+                  label="Visible in Store"
+                  sub="Enable product for customers"
+                  active={status.visible}
+                  onClick={() =>
+                    setStatus((s) => ({ ...s, visible: !s.visible }))
+                  }
+                />
+                <Toggle
+                  label="Featured Product"
+                  sub="Display in homepage spotlight"
+                  active={status.featured}
+                  onClick={() =>
+                    setStatus((s) => ({ ...s, featured: !s.featured }))
+                  }
+                />
+                <Toggle
+                  label="New Arrival"
+                  sub="Showcase in 'What's New'"
+                  active={status.newArrival}
+                  onClick={() =>
+                    setStatus((s) => ({ ...s, newArrival: !s.newArrival }))
+                  }
+                />
+                <Toggle
+                  label="On Sale"
+                  sub="Enable promotional pricing"
+                  active={status.onSale}
+                  onClick={() =>
+                    setStatus((s) => ({ ...s, onSale: !s.onSale }))
+                  }
+                />
+              </div>
+            </Card>
+
+            {/* 5. Live Product Preview */}
+            <div className="relative group">
+              <div className="absolute -inset-1 bg-linear-to-r from-blue-500 to-sky-400 rounded-[34px] blur-xl opacity-20 group-hover:opacity-30 transition duration-1000"></div>
+              <div className="relative bg-white rounded-[32px] border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.05)] overflow-hidden">
+                <div className="px-6 py-5 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
+                  <span className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                    Live Preview
+                  </span>
+                  <Layout size={14} className="text-blue-500" />
+                </div>
+
+                <div className="p-6 space-y-5">
+                  {/* Preview Image */}
+                  <div className="aspect-[4/5] rounded-[24px] bg-slate-100 overflow-hidden relative border border-slate-50">
+                    {previews[0] ? (
+                      <img
+                        src={previews[0]}
+                        className="w-full h-full object-cover"
+                        alt=""
+                      />
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center text-slate-300">
+                        <ImageIcon size={48} strokeWidth={1} />
+                        <span className="text-[10px] font-bold uppercase tracking-widest mt-4">
+                          No Image
+                        </span>
+                      </div>
+                    )}
+                    {status.onSale && (
+                      <div className="absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur-md rounded-full text-[10px] font-black text-blue-600 shadow-sm">
+                        SALE 20%
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Info */}
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[9px] font-black text-blue-600 px-2 py-0.5 bg-blue-50 rounded-md uppercase tracking-wider">
+                        {category || "Category"}
+                      </span>
+                      <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">
+                        {brand || "StoreX"}
+                      </span>
+                    </div>
+
+                    <h2 className="text-lg font-black text-slate-900 leading-tight">
+                      {name || "Premium Product Title"}
+                    </h2>
+
+                    <div className="flex items-end gap-3 pt-1">
+                      <span className="text-2xl font-black text-slate-900 leading-none">
+                        ₹{variants[0].price}
+                      </span>
+                      {variants[0].discountPrice && (
+                        <span className="text-sm font-bold text-slate-300 line-through pb-0.5">
+                          ₹{variants[0].price + 500}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Color Dots */}
+                    <div className="flex gap-2 pt-2">
+                      {variants.slice(0, 4).map((v) => (
+                        <div
+                          key={v.id}
+                          className="w-4 h-4 rounded-full border-2 border-white shadow-sm ring-1 ring-slate-100"
+                          style={{ backgroundColor: v.color }}
+                        />
+                      ))}
+                    </div>
+
+                    <div className="pt-4">
+                      <div className="w-full h-12 rounded-2xl bg-slate-900 flex items-center justify-center text-white text-sm font-black tracking-tight">
+                        Preview Checkout
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default AddProduct;

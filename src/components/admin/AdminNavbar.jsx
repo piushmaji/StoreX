@@ -1,11 +1,12 @@
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Bell, Search, ChevronDown, Settings, LogOut, User, Moon, Sun } from "lucide-react"
+import { Bell, Search, ChevronDown, Settings, LogOut, User, Moon, Sun, Menu } from "lucide-react"
 import { useAuth } from "../../context/Auth/AuthContext"
 import { useLocation } from "react-router-dom"
 
 const PAGE_TITLES = {
     "/admin": { title: "Dashboard", sub: "Welcome back 👋" },
+    "/admin/dashboard": { title: "Dashboard", sub: "Welcome back 👋" },
     "/admin/orders": { title: "Orders", sub: "Manage all customer orders" },
     "/admin/products": { title: "Products", sub: "Your product catalog" },
     "/admin/add-product": { title: "Add Product", sub: "Create a new listing" },
@@ -19,7 +20,7 @@ const NOTIFS = [
     { id: 4, text: "New order #STX-28449 received", time: "2h ago", dot: "bg-blue-500" },
 ]
 
-const AdminNavbar = () => {
+const AdminNavbar = ({ onMenuClick }) => {
     const { user, logout } = useAuth()
     const location = useLocation()
 
@@ -30,17 +31,31 @@ const AdminNavbar = () => {
     const page = PAGE_TITLES[location.pathname] ?? { title: "Admin", sub: "StoreX Panel" }
 
     return (
-        <header className="sticky top-0 z-30 bg-white border-b border-gray-100 shadow-[0_1px_12px_rgba(0,0,0,0.05)]">
-            <div className="flex items-center justify-between px-6 py-3.5 gap-4">
+        <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-[0_1px_12px_rgba(0,0,0,0.02)]">
+            <div className="flex items-center justify-between px-4 md:px-8 py-3 gap-4">
 
-                {/* Left — Page title */}
-                <div className="min-w-0">
-                    <h1 className="text-lg font-black text-slate-900 leading-tight truncate">{page.title}</h1>
-                    <p className="text-xs text-slate-400 font-medium">{page.sub}</p>
+                {/* Left — Toggle & Page title */}
+                <div className="flex items-center gap-4 min-w-0">
+                    <button
+                        onClick={onMenuClick}
+                        className="md:hidden flex items-center justify-center w-10 h-10 rounded-xl bg-gray-50 border border-gray-200 text-slate-600 hover:bg-gray-100 transition-colors shrink-0"
+                    >
+                        <Menu size={20} />
+                    </button>
+                    <div className="flex items-center gap-3 min-w-0">
+                        <div className="hidden lg:flex items-center gap-2 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                            <span>Admin</span>
+                            <span className="text-slate-200">/</span>
+                        </div>
+                        <div className="min-w-0">
+                            <h1 className="text-lg md:text-xl font-black text-slate-900 leading-tight truncate tracking-tight">{page.title}</h1>
+                            <p className="hidden md:block text-[10px] text-blue-500 font-extrabold uppercase tracking-widest mt-0.5">{page.sub}</p>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Right — Actions */}
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex items-center gap-3 shrink-0">
 
                     {/* Search */}
                     <div className="relative hidden md:block">
