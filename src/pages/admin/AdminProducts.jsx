@@ -1,117 +1,44 @@
 import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import {  Search,  Filter,  Plus,  Edit3,  Trash2,  Eye,  EyeOff,  ChevronLeft,  ChevronRight,  ArrowUpDown,  ChevronDown,  X,  Package,  MoreHorizontal,  Star,  CheckCircle2,  AlertCircle,  Clock,  LayoutGrid,  List as ListIcon,  Sparkles,  Smartphone,  Globe,  ArrowRight,  ExternalLink,  Tag,  IndianRupee,
+import {
+  Search,
+  Filter,
+  Plus,
+  Edit3,
+  Trash2,
+  Eye,
+  EyeOff,
+  ChevronLeft,
+  ChevronRight,
+  ArrowUpDown,
+  ChevronDown,
+  X,
+  Package,
+  MoreHorizontal,
+  Star,
+  CheckCircle2,
+  AlertCircle,
+  Clock,
+  LayoutGrid,
+  List as ListIcon,
+  Sparkles,
+  Smartphone,
+  Globe,
+  ArrowRight,
+  ExternalLink,
+  Tag,
+  IndianRupee,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
-// ─── Mock Data ────────────────────────────────────────────────
-const MOCK_PRODUCTS = [
-  {
-    id: "STX-001",
-    name: "Classic Denim Trucker Jacket",
-    brand: "StoreX Essentials",
-    category: "Streetwear",
-    price: 4999,
-    discountPrice: 3999,
-    stock: 24,
-    rating: 4.8,
-    gender: "Men",
-    isVisible: true,
-    isFeatured: true,
-    isOnSale: true,
-    image:
-      "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&q=80",
-  },
-  {
-    id: "STX-002",
-    name: "Premium Oversized Hoodie",
-    brand: "StoreX Studio",
-    category: "Luxury",
-    price: 2999,
-    discountPrice: null,
-    stock: 12,
-    rating: 4.9,
-    gender: "Unisex",
-    isVisible: true,
-    isFeatured: false,
-    isOnSale: false,
-    image:
-      "https://images.unsplash.com/photo-1556821840-3a63f15732ce?w=400&q=80",
-  },
-  {
-    id: "STX-003",
-    name: "Cotton Essential Tee",
-    brand: "StoreX Basic",
-    category: "Streetwear",
-    price: 999,
-    discountPrice: 799,
-    stock: 156,
-    rating: 4.5,
-    gender: "Unisex",
-    isVisible: true,
-    isFeatured: false,
-    isOnSale: true,
-    image:
-      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&q=80",
-  },
-  {
-    id: "STX-004",
-    name: "Linen Summer Shirt",
-    brand: "StoreX Studio",
-    category: "Luxury",
-    price: 2499,
-    discountPrice: null,
-    stock: 0,
-    rating: 4.7,
-    gender: "Men",
-    isVisible: false,
-    isFeatured: true,
-    isOnSale: false,
-    image:
-      "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400&q=80",
-  },
-  {
-    id: "STX-005",
-    name: "Silk Evening Dress",
-    brand: "StoreX Premium",
-    category: "Luxury",
-    price: 8999,
-    discountPrice: 7499,
-    stock: 8,
-    rating: 5.0,
-    gender: "Women",
-    isVisible: true,
-    isFeatured: true,
-    isOnSale: true,
-    image:
-      "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=400&q=80",
-  },
-  {
-    id: "STX-006",
-    name: "Cargo Utility Pants",
-    brand: "StoreX Street",
-    category: "Streetwear",
-    price: 3499,
-    discountPrice: null,
-    stock: 42,
-    rating: 4.6,
-    gender: "Men",
-    isVisible: true,
-    isFeatured: false,
-    isOnSale: false,
-    image:
-      "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=400&q=80",
-  },
-];
-
-const CATEGORIES = ["All", "Streetwear", "Luxury", "Accessories", "Essentials"];
-const BRANDS = [
-  "All",
-  "StoreX Studio",
-  "StoreX Basic",
-  "StoreX Premium",
-  "StoreX Street",
-];
+import { toast } from "react-hot-toast";
+import {
+  getProducts,
+  updateProduct,
+  deleteProduct,
+  getCategories,
+  getPaginatedProducts,
+} from "../../services/productService";
+import supabase from "../../lib/Supabase/Supabase";
 
 // ─── Helper Components ────────────────────────────────────────
 
@@ -159,24 +86,74 @@ const AdminProducts = () => {
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [previewProduct, setPreviewProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isActionLoading, setIsActionLoading] = useState(false);
 
-  // Simulation loading
+  const [products, setProducts] = useState([]);
+  const [dbCategories, setDbCategories] = useState([]);
+  const [allBrands, setAllBrands] = useState(["All"]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 800);
-    return () => clearTimeout(timer);
+    const fetchMetadata = async () => {
+      try {
+        const [cats, brandRes] = await Promise.all([
+          getCategories(),
+          supabase.from("products").select("brand"),
+        ]);
+        setDbCategories(cats || []);
+        const brandsSet = new Set(
+          brandRes.data?.map((p) => p.brand).filter(Boolean) || [],
+        );
+        setAllBrands(["All", ...Array.from(brandsSet)]);
+      } catch (err) {
+        console.error("Failed to load initial metadata:", err);
+      }
+    };
+    fetchMetadata();
   }, []);
 
-  const filteredProducts = useMemo(() => {
-    return MOCK_PRODUCTS.filter((p) => {
-      const matchesSearch =
-        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.id.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory =
-        selectedCategory === "All" || p.category === selectedCategory;
-      const matchesBrand = selectedBrand === "All" || p.brand === selectedBrand;
-      return matchesSearch && matchesCategory && matchesBrand;
-    });
+  const loadProducts = async () => {
+    try {
+      setIsLoading(true);
+      const catId =
+        dbCategories.find((c) => c.name === selectedCategory)?.id || null;
+      const { data, count } = await getPaginatedProducts({
+        page: currentPage,
+        limit: 10,
+        filters: {
+          search: searchQuery || null,
+          categoryId: catId,
+          brand: selectedBrand,
+        },
+      });
+      setProducts(data || []);
+      setTotalCount(count || 0);
+    } catch (err) {
+      console.error("Failed to load products page:", err);
+      toast.error("Failed to load products from server.");
+      setProducts([]);
+      setTotalCount(0);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadProducts();
+  }, [currentPage, searchQuery, selectedCategory, selectedBrand, dbCategories]);
+
+  useEffect(() => {
+    setCurrentPage(1);
   }, [searchQuery, selectedCategory, selectedBrand]);
+
+  const dbBrands = useMemo(() => {
+    return allBrands;
+  }, [allBrands]);
+
+  const filteredProducts = useMemo(() => {
+    return products;
+  }, [products]);
 
   const toggleSelectAll = () => {
     if (selectedProducts.length === filteredProducts.length) {
@@ -192,6 +169,128 @@ const AdminProducts = () => {
     );
   };
 
+  const handleToggleVisibility = async (productId, currentVisible) => {
+    try {
+      setIsActionLoading(true);
+      const loadingToast = toast.loading("Updating visibility status...");
+      await updateProduct({
+        productId,
+        productData: { is_visible: !currentVisible },
+      });
+      setProducts((prev) =>
+        prev.map((p) =>
+          p.id === productId ? { ...p, is_visible: !currentVisible } : p,
+        ),
+      );
+      toast.success("Product visibility updated!", { id: loadingToast });
+    } catch (err) {
+      console.error("Failed to toggle visibility:", err);
+      toast.error("Failed to update status. Please try again.");
+    } finally {
+      setIsActionLoading(false);
+    }
+  };
+
+  const handleToggleFeatured = async (productId, currentFeatured) => {
+    try {
+      setIsActionLoading(true);
+      const loadingToast = toast.loading("Updating featured status...");
+      await updateProduct({
+        productId,
+        productData: { is_featured: !currentFeatured },
+      });
+      setProducts((prev) =>
+        prev.map((p) =>
+          p.id === productId ? { ...p, is_featured: !currentFeatured } : p,
+        ),
+      );
+      toast.success("Product featured status updated!", { id: loadingToast });
+    } catch (err) {
+      console.error("Failed to toggle featured:", err);
+      toast.error("Failed to update status. Please try again.");
+    } finally {
+      setIsActionLoading(false);
+    }
+  };
+
+  const handleToggleSale = async (productId, currentSale) => {
+    try {
+      setIsActionLoading(true);
+      const loadingToast = toast.loading("Updating sale status...");
+      await updateProduct({
+        productId,
+        productData: { is_sale: !currentSale },
+      });
+      setProducts((prev) =>
+        prev.map((p) =>
+          p.id === productId ? { ...p, is_sale: !currentSale } : p,
+        ),
+      );
+      toast.success("Product sale status updated!", { id: loadingToast });
+    } catch (err) {
+      console.error("Failed to toggle sale:", err);
+      toast.error("Failed to update status. Please try again.");
+    } finally {
+      setIsActionLoading(false);
+    }
+  };
+
+  const handleDeleteProduct = async (productId) => {
+    if (
+      !window.confirm(
+        "Are you sure you want to delete this product? This action cannot be undone.",
+      )
+    ) {
+      return;
+    }
+    try {
+      setIsActionLoading(true);
+      const loadingToast = toast.loading("Deleting product...");
+      await deleteProduct(productId);
+      setSelectedProducts((prev) => prev.filter((id) => id !== productId));
+      if (previewProduct && previewProduct.id === productId) {
+        setPreviewProduct(null);
+      }
+      toast.success("Product deleted successfully!", { id: loadingToast });
+      loadProducts();
+    } catch (err) {
+      console.error("Failed to delete product:", err);
+      toast.error("Failed to delete product. Please try again.");
+    } finally {
+      setIsActionLoading(false);
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (
+      !window.confirm(
+        `Are you sure you want to delete all ${selectedProducts.length} selected products? This will delete them permanently.`,
+      )
+    ) {
+      return;
+    }
+    try {
+      setIsActionLoading(true);
+      const loadingToast = toast.loading(
+        `Deleting ${selectedProducts.length} products...`,
+      );
+      await Promise.all(selectedProducts.map((id) => deleteProduct(id)));
+      setSelectedProducts([]);
+      setPreviewProduct(null);
+      toast.success("Selected products deleted successfully!", {
+        id: loadingToast,
+      });
+      loadProducts();
+    } catch (err) {
+      console.error("Failed bulk deletion:", err);
+      toast.error(
+        "An error occurred during deletion. Some items may not have been deleted.",
+      );
+    } finally {
+      setIsActionLoading(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="p-8 space-y-6">
@@ -200,6 +299,8 @@ const AdminProducts = () => {
       </div>
     );
   }
+
+  const totalPages = Math.ceil(totalCount / 10) || 1;
 
   return (
     <div className="p-6 md:p-10 space-y-8 max-w-[1600px] mx-auto min-h-screen pb-20">
@@ -215,7 +316,7 @@ const AdminProducts = () => {
                 Catalog
               </span>
               <div className="px-2 py-0.5 bg-blue-50 text-blue-600 text-[10px] font-black rounded-full border border-blue-100">
-                {MOCK_PRODUCTS.length} Items
+                {products.length} Items
               </div>
             </div>
             <p className="text-slate-500 font-bold text-xs tracking-tight">
@@ -268,7 +369,7 @@ const AdminProducts = () => {
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
             >
-              {CATEGORIES.map((c) => (
+              {["All", ...dbCategories.map((c) => c.name)].map((c) => (
                 <option key={c} value={c}>
                   {c}
                 </option>
@@ -286,7 +387,7 @@ const AdminProducts = () => {
               value={selectedBrand}
               onChange={(e) => setSelectedBrand(e.target.value)}
             >
-              {BRANDS.map((b) => (
+              {dbBrands.map((b) => (
                 <option key={b} value={b}>
                   {b}
                 </option>
@@ -327,7 +428,11 @@ const AdminProducts = () => {
                 </button>
               </div>
             </div>
-            <button className="text-sm font-black text-white hover:underline flex items-center gap-2">
+            <button
+              onClick={handleBulkDelete}
+              disabled={isActionLoading}
+              className="text-sm font-black text-white hover:underline flex items-center gap-2 disabled:opacity-50 disabled:pointer-events-none"
+            >
               <Trash2 size={16} /> Delete Selected
             </button>
           </motion.div>
@@ -372,113 +477,143 @@ const AdminProducts = () => {
               </thead>
               <tbody className="divide-y divide-slate-50">
                 <AnimatePresence>
-                  {filteredProducts.map((p, idx) => (
-                    <motion.tr
-                      key={p.id}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: idx * 0.05 }}
-                      className="group hover:bg-slate-50/50 transition-colors"
-                    >
-                      <td className="px-6 py-4">
-                        <input
-                          type="checkbox"
-                          className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
-                          checked={selectedProducts.includes(p.id)}
-                          onChange={() => toggleSelect(p.id)}
-                        />
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-4">
-                          <div className="w-14 h-14 rounded-2xl bg-slate-100 overflow-hidden border border-slate-50">
-                            <img
-                              src={p.image}
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                              alt=""
-                            />
-                          </div>
-                          <div>
-                            <p className="text-[15px] font-bold text-slate-800 leading-tight mb-1">
-                              {p.name}
-                            </p>
-                            <div className="flex items-center gap-2">
-                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                                {p.brand}
-                              </span>
-                              <span className="text-[10px] font-bold text-blue-500 px-1.5 py-0.5 bg-blue-50 rounded uppercase">
-                                {p.category}
-                              </span>
+                  {filteredProducts.map((p, idx) => {
+                    const price = p.variants?.[0]?.price || p.price || 0;
+                    const discountPrice =
+                      p.variants?.[0]?.discount_price ||
+                      p.variants?.[0]?.discountPrice ||
+                      p.discountPrice ||
+                      null;
+                    const totalStock =
+                      p.variants?.reduce(
+                        (acc, v) => acc + Number(v.stock || 0),
+                        0,
+                      ) ??
+                      p.stock ??
+                      0;
+                    const categoryName =
+                      p.category?.name || p.category_id || "Streetwear";
+                    const imageUrl =
+                      p.thumbnail ||
+                      p.image_urls[0] ||
+                      "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&q=80";
+
+                    return (
+                      <motion.tr
+                        key={p.id}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: idx * 0.05 }}
+                        className="group hover:bg-slate-50/50 transition-colors"
+                      >
+                        <td className="px-6 py-4">
+                          <input
+                            type="checkbox"
+                            className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                            checked={selectedProducts.includes(p.id)}
+                            onChange={() => toggleSelect(p.id)}
+                          />
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-4">
+                            <div className="w-14 h-14 rounded-2xl bg-slate-100 overflow-hidden border border-slate-50">
+                              <img
+                                src={imageUrl}
+                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                alt=""
+                              />
+                            </div>
+                            <div>
+                              <p className="text-[15px] font-bold text-slate-800 leading-tight mb-1">
+                                {p.name}
+                              </p>
+                              <div className="flex items-center gap-2">
+                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                  {p.brand || "StoreX"}
+                                </span>
+                                <span className="text-[10px] font-bold text-blue-500 px-1.5 py-0.5 bg-blue-50 rounded uppercase">
+                                  {categoryName}
+                                </span>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div>
-                          <p className="text-base font-black text-slate-900">
-                            ₹{p.discountPrice || p.price}
-                          </p>
-                          {p.discountPrice && (
-                            <p className="text-[11px] text-slate-400 line-through font-bold">
-                              ₹{p.price}
+                        </td>
+                        <td className="px-6 py-4">
+                          <div>
+                            <p className="text-base font-black text-slate-900">
+                              ₹{discountPrice || price}
                             </p>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex flex-col gap-1.5">
-                          <div className="flex items-center gap-2">
-                            <div
-                              className={`w-2 h-2 rounded-full ${p.stock > 10 ? "bg-emerald-500" : p.stock > 0 ? "bg-amber-500" : "bg-red-500"}`}
-                            />
-                            <span className="text-[13px] font-bold text-slate-700">
-                              {p.stock} units
-                            </span>
+                            {discountPrice && (
+                              <p className="text-[11px] text-slate-400 line-through font-bold">
+                                ₹{price}
+                              </p>
+                            )}
                           </div>
-                          <div className="w-24 h-1 bg-slate-100 rounded-full overflow-hidden">
-                            <div
-                              className={`h-full rounded-full ${p.stock > 10 ? "bg-emerald-500" : p.stock > 0 ? "bg-amber-500" : "bg-red-500"}`}
-                              style={{ width: `${Math.min(p.stock, 100)}%` }}
-                            />
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex flex-col gap-1.5">
+                            <div className="flex items-center gap-2">
+                              <div
+                                className={`w-2 h-2 rounded-full ${totalStock > 10 ? "bg-emerald-500" : totalStock > 0 ? "bg-amber-500" : "bg-red-500"}`}
+                              />
+                              <span className="text-[13px] font-bold text-slate-700">
+                                {totalStock} units
+                              </span>
+                            </div>
+                            <div className="w-24 h-1 bg-slate-100 rounded-full overflow-hidden">
+                              <div
+                                className={`h-full rounded-full ${totalStock > 10 ? "bg-emerald-500" : totalStock > 0 ? "bg-amber-500" : "bg-red-500"}`}
+                                style={{
+                                  width: `${Math.min(totalStock, 100)}%`,
+                                }}
+                              />
+                            </div>
                           </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex flex-wrap gap-2">
-                          <VisibilityToggle
-                            isVisible={p.isVisible}
-                            onToggle={() => {}}
-                          />
-                          {p.isFeatured && (
-                            <StatusBadge label="Featured" variant="amber" />
-                          )}
-                          {p.isOnSale && (
-                            <StatusBadge label="Sale" variant="emerald" />
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button
-                            onClick={() => setPreviewProduct(p)}
-                            className="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-blue-600 hover:border-blue-200 transition-all flex items-center justify-center shadow-sm"
-                          >
-                            <Eye size={16} />
-                          </button>
-                          <button
-                            onClick={() =>
-                              navigate(`/admin/edit-product/${p.id}`)
-                            }
-                            className="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-blue-600 hover:border-blue-200 transition-all flex items-center justify-center shadow-sm"
-                          >
-                            <Edit3 size={16} />
-                          </button>
-                          <button className="w-9 h-9 rounded-xl bg-white border border-slate-200 text-red-400 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-all flex items-center justify-center shadow-sm">
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                      </td>
-                    </motion.tr>
-                  ))}
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="flex flex-wrap gap-2">
+                            <VisibilityToggle
+                              isVisible={p.is_visible}
+                              onToggle={() =>
+                                handleToggleVisibility(p.id, p.is_visible)
+                              }
+                            />
+                            {p.is_featured && (
+                              <StatusBadge label="Featured" variant="amber" />
+                            )}
+                            {p.is_sale && (
+                              <StatusBadge label="Sale" variant="emerald" />
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button
+                              onClick={() => setPreviewProduct(p)}
+                              className="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-blue-600 hover:border-blue-200 transition-all flex items-center justify-center shadow-sm"
+                            >
+                              <Eye size={16} />
+                            </button>
+                            <button
+                              onClick={() =>
+                                navigate(`/admin/edit-product/${p.id}`)
+                              }
+                              className="w-9 h-9 rounded-xl bg-white border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-blue-600 hover:border-blue-200 transition-all flex items-center justify-center shadow-sm"
+                            >
+                              <Edit3 size={16} />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteProduct(p.id)}
+                              disabled={isActionLoading}
+                              className="w-9 h-9 rounded-xl bg-white border border-slate-200 text-red-400 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-all flex items-center justify-center shadow-sm disabled:opacity-50 disabled:pointer-events-none"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        </td>
+                      </motion.tr>
+                    );
+                  })}
                 </AnimatePresence>
               </tbody>
             </table>
@@ -508,130 +643,180 @@ const AdminProducts = () => {
               </button>
             </div>
           )}
-
-          {/* Pagination */}
-          <div className="px-6 py-6 border-t border-slate-50 flex items-center justify-between">
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-              Showing 1 to {filteredProducts.length} of{" "}
-              {filteredProducts.length} results
-            </p>
-            <div className="flex items-center gap-2">
-              <button className="w-10 h-10 rounded-xl border border-slate-200 flex items-center justify-center text-slate-400 hover:bg-slate-50 transition-all">
-                <ChevronLeft size={18} />
-              </button>
-              <button className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center text-xs font-black shadow-lg shadow-blue-500/20">
-                1
-              </button>
-              <button className="w-10 h-10 rounded-xl border border-slate-200 flex items-center justify-center text-slate-400 hover:bg-slate-50 transition-all text-xs font-bold">
-                2
-              </button>
-              <button className="w-10 h-10 rounded-xl border border-slate-200 flex items-center justify-center text-slate-400 hover:bg-slate-50 transition-all">
-                <ChevronRight size={18} />
-              </button>
-            </div>
-          </div>
         </div>
       ) : (
         /* GRID VIEW */
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           <AnimatePresence>
-            {filteredProducts.map((p, idx) => (
-              <motion.div
-                key={p.id}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: idx * 0.05 }}
-                className="bg-white rounded-[32px] border border-slate-100 shadow-[0_10px_40px_rgba(0,0,0,0.02)] overflow-hidden group hover:shadow-[0_20px_60px_rgba(0,0,0,0.06)] transition-all duration-500"
-              >
-                <div className="relative aspect-[4/5] overflow-hidden">
-                  <img
-                    src={p.image}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    alt=""
-                  />
-                  <div className="absolute top-4 inset-x-4 flex items-center justify-between pointer-events-none">
-                    <div className="flex flex-col gap-2">
-                      {p.isFeatured && (
-                        <StatusBadge label="Featured" variant="amber" />
-                      )}
-                      {p.isOnSale && (
-                        <StatusBadge label="Sale" variant="emerald" />
-                      )}
+            {filteredProducts.map((p, idx) => {
+              const price = p.variants?.[0]?.price || p.price || 0;
+              const discountPrice =
+                p.variants?.[0]?.discount_price ||
+                p.variants?.[0]?.discountPrice ||
+                p.discountPrice ||
+                null;
+              const totalStock =
+                p.variants?.reduce((acc, v) => acc + Number(v.stock || 0), 0) ??
+                p.stock ??
+                0;
+              const categoryName =
+                p.category?.name || p.category_id || "Streetwear";
+              const imageUrl =
+                p.thumbnail ||
+                p.image_urls[0] ||
+                "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&q=80";
+
+              return (
+                <motion.div
+                  key={p.id}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: idx * 0.05 }}
+                  className="bg-white rounded-[32px] border border-slate-100 shadow-[0_10px_40px_rgba(0,0,0,0.02)] overflow-hidden group hover:shadow-[0_20px_60px_rgba(0,0,0,0.06)] transition-all duration-500"
+                >
+                  <div className="relative aspect-4/5 overflow-hidden">
+                    <img
+                      src={imageUrl}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      alt=""
+                    />
+                    <div className="absolute top-4 inset-x-4 flex items-center justify-between pointer-events-none">
+                      <div className="flex flex-col gap-2">
+                        {p.is_featured && (
+                          <StatusBadge label="Featured" variant="amber" />
+                        )}
+                        {p.is_sale && (
+                          <StatusBadge label="Sale" variant="emerald" />
+                        )}
+                      </div>
+                      <div className="pointer-events-auto">
+                        <VisibilityToggle
+                          isVisible={p.is_visible}
+                          onToggle={() =>
+                            handleToggleVisibility(p.id, p.is_visible)
+                          }
+                        />
+                      </div>
                     </div>
-                    <div className="pointer-events-auto">
-                      <VisibilityToggle
-                        isVisible={p.isVisible}
-                        onToggle={() => {}}
-                      />
+
+                    <div className="absolute inset-x-4 bottom-4 flex justify-center translate-y-12 group-hover:translate-y-0 transition-transform duration-300">
+                      <div className="bg-white/90 backdrop-blur-md p-1.5 rounded-2xl shadow-xl flex items-center gap-1">
+                        <button
+                          onClick={() => setPreviewProduct(p)}
+                          className="w-9 h-9 rounded-xl bg-white hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center shadow-sm"
+                        >
+                          <Eye size={16} />
+                        </button>
+                        <button
+                          onClick={() =>
+                            navigate(`/admin/edit-product/${p.id}`)
+                          }
+                          className="w-9 h-9 rounded-xl bg-white hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center shadow-sm"
+                        >
+                          <Edit3 size={16} />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteProduct(p.id)}
+                          disabled={isActionLoading}
+                          className="w-9 h-9 rounded-xl bg-white hover:bg-red-500 hover:text-white transition-all flex items-center justify-center shadow-sm disabled:opacity-50 disabled:pointer-events-none"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="absolute inset-x-4 bottom-4 flex justify-center translate-y-12 group-hover:translate-y-0 transition-transform duration-300">
-                    <div className="bg-white/90 backdrop-blur-md p-1.5 rounded-2xl shadow-xl flex items-center gap-1">
-                      <button
-                        onClick={() => setPreviewProduct(p)}
-                        className="w-9 h-9 rounded-xl bg-white hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center shadow-sm"
-                      >
-                        <Eye size={16} />
-                      </button>
-                      <button
-                        onClick={() => navigate(`/admin/edit-product/${p.id}`)}
-                        className="w-9 h-9 rounded-xl bg-white hover:bg-blue-600 hover:text-white transition-all flex items-center justify-center shadow-sm"
-                      >
-                        <Edit3 size={16} />
-                      </button>
-                      <button className="w-9 h-9 rounded-xl bg-white hover:bg-red-500 hover:text-white transition-all flex items-center justify-center shadow-sm">
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-6 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest bg-blue-50 px-2 py-0.5 rounded-md">
-                      {p.category}
-                    </span>
-                    <div className="flex items-center gap-1">
-                      <Star
-                        size={10}
-                        className="fill-amber-400 text-amber-400"
-                      />
-                      <span className="text-[11px] font-bold text-slate-500">
-                        {p.rating}
+                  <div className="p-6 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest bg-blue-50 px-2 py-0.5 rounded-md">
+                        {categoryName}
                       </span>
+                      <div className="flex items-center gap-1">
+                        <Star
+                          size={10}
+                          className="fill-amber-400 text-amber-400"
+                        />
+                        <span className="text-[11px] font-bold text-slate-500">
+                          {p.rating || 0}
+                        </span>
+                      </div>
                     </div>
-                  </div>
 
-                  <h3 className="text-base font-black text-slate-800 leading-tight truncate">
-                    {p.name}
-                  </h3>
+                    <h3 className="text-base font-black text-slate-800 leading-tight truncate">
+                      {p.name}
+                    </h3>
 
-                  <div className="flex items-end justify-between pt-2">
-                    <div>
-                      <p className="text-xl font-black text-slate-900">
-                        ₹{p.discountPrice || p.price}
-                      </p>
-                      {p.discountPrice && (
-                        <p className="text-[11px] text-slate-400 line-through font-bold">
-                          ₹{p.price}
+                    <div className="flex items-end justify-between pt-2">
+                      <div>
+                        <p className="text-xl font-black text-slate-900">
+                          ₹{discountPrice || price}
                         </p>
-                      )}
-                    </div>
-                    <div className="text-right">
-                      <p
-                        className={`text-[10px] font-black uppercase tracking-wider ${p.stock > 0 ? "text-emerald-500" : "text-red-500"}`}
-                      >
-                        {p.stock > 0 ? `${p.stock} In Stock` : "Out of Stock"}
-                      </p>
+                        {discountPrice && (
+                          <p className="text-[11px] text-slate-400 line-through font-bold">
+                            ₹{price}
+                          </p>
+                        )}
+                      </div>
+                      <div className="text-right">
+                        <p
+                          className={`text-[10px] font-black uppercase tracking-wider ${totalStock > 0 ? "text-emerald-500" : "text-red-500"}`}
+                        >
+                          {totalStock > 0
+                            ? `${totalStock} In Stock`
+                            : "Out of Stock"}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              );
+            })}
           </AnimatePresence>
         </div>
       )}
+
+      {/* Unified Pagination */}
+      <div className="mt-8 px-6 py-6 bg-white rounded-[32px] border border-slate-100 shadow-[0_10px_40px_rgba(0,0,0,0.02)] flex flex-col sm:flex-row items-center justify-between gap-4">
+        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+          Showing {totalCount > 0 ? (currentPage - 1) * 10 + 1 : 0} to{" "}
+          {Math.min(currentPage * 10, totalCount)} of {totalCount} results
+        </p>
+        {totalPages > 1 && (
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="w-10 h-10 rounded-xl border border-slate-200 flex items-center justify-center text-slate-400 hover:bg-slate-50 transition-all disabled:opacity-30 disabled:pointer-events-none"
+            >
+              <ChevronLeft size={18} />
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+              (pageNum) => (
+                <button
+                  key={pageNum}
+                  onClick={() => setCurrentPage(pageNum)}
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center text-xs font-black shadow-lg transition-all ${
+                    currentPage === pageNum
+                      ? "bg-blue-600 text-white shadow-blue-500/20"
+                      : "border border-slate-200 text-slate-400 hover:bg-slate-50"
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              ),
+            )}
+            <button
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
+              disabled={currentPage === totalPages}
+              className="w-10 h-10 rounded-xl border border-slate-200 flex items-center justify-center text-slate-400 hover:bg-slate-50 transition-all disabled:opacity-30 disabled:pointer-events-none"
+            >
+              <ChevronRight size={18} />
+            </button>
+          </div>
+        )}
+      </div>
 
       {/* ── Quick Preview Drawer ── */}
       <AnimatePresence>
@@ -642,14 +827,14 @@ const AdminProducts = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setPreviewProduct(null)}
-              className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[60]"
+              className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-60"
             />
             <motion.div
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 h-full w-full max-w-md bg-white z-[70] shadow-2xl overflow-y-auto"
+              className="fixed top-0 right-0 h-full w-full max-w-md bg-white z-70 shadow-2xl overflow-y-auto"
             >
               <div className="p-8 space-y-8">
                 {/* Drawer Header */}
@@ -666,111 +851,205 @@ const AdminProducts = () => {
                 </div>
 
                 {/* Preview Image Carousel Placeholder */}
-                <div className="aspect-[4/5] rounded-[40px] overflow-hidden border border-slate-100 shadow-lg relative group">
-                  <img
-                    src={previewProduct.image}
-                    className="w-full h-full object-cover"
-                    alt=""
-                  />
-                  <div className="absolute top-6 left-6 flex flex-col gap-2">
-                    {previewProduct.isFeatured && (
-                      <StatusBadge label="Featured" variant="amber" />
-                    )}
-                    {previewProduct.isOnSale && (
-                      <StatusBadge label="Sale" variant="emerald" />
-                    )}
-                  </div>
-                </div>
+                {(() => {
+                  const price =
+                    previewProduct.variants?.[0]?.price ||
+                    previewProduct.price ||
+                    0;
+                  const discountPrice =
+                    previewProduct.variants?.[0]?.discount_price ||
+                    previewProduct.variants?.[0]?.discountPrice ||
+                    previewProduct.discountPrice ||
+                    null;
+                  const totalStock =
+                    previewProduct.variants?.reduce(
+                      (acc, v) => acc + Number(v.stock || 0),
+                      0,
+                    ) ??
+                    previewProduct.stock ??
+                    0;
+                  const categoryName =
+                    previewProduct.category?.name ||
+                    previewProduct.category_id ||
+                    "Streetwear";
+                  const imageUrl =
+                    previewProduct.thumbnail ||
+                    previewProduct.image_urls[0] ||
+                    "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400&q=80";
 
-                {/* Product Core Info */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-black text-blue-600 uppercase tracking-widest">
-                      {previewProduct.brand}
-                    </span>
-                    <div className="flex items-center gap-1.5 px-3 py-1 bg-slate-50 rounded-xl border border-slate-100">
-                      <Star
-                        size={14}
-                        className="fill-amber-400 text-amber-400"
-                      />
-                      <span className="text-sm font-black text-slate-700">
-                        {previewProduct.rating}
-                      </span>
-                    </div>
-                  </div>
-                  <h3 className="text-3xl font-black text-slate-900 leading-tight">
-                    {previewProduct.name}
-                  </h3>
+                  return (
+                    <>
+                      <div className="aspect-4/5 rounded-[40px] overflow-hidden border border-slate-100 shadow-lg relative group">
+                        <img
+                          src={imageUrl}
+                          className="w-full h-full object-cover"
+                          alt=""
+                        />
+                        <div className="absolute top-6 left-6 flex flex-col gap-2">
+                          {previewProduct.is_featured && (
+                            <StatusBadge label="Featured" variant="amber" />
+                          )}
+                          {previewProduct.is_sale && (
+                            <StatusBadge label="Sale" variant="emerald" />
+                          )}
+                        </div>
+                      </div>
 
-                  <div className="flex items-center gap-4">
-                    <div className="px-4 py-2 bg-blue-50 rounded-2xl border border-blue-100">
-                      <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-0.5">
-                        Category
-                      </p>
-                      <p className="text-sm font-bold text-slate-800">
-                        {previewProduct.category}
-                      </p>
-                    </div>
-                    <div className="px-4 py-2 bg-slate-50 rounded-2xl border border-slate-100">
-                      <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">
-                        Gender
-                      </p>
-                      <p className="text-sm font-bold text-slate-800">
-                        {previewProduct.gender}
-                      </p>
-                    </div>
-                  </div>
-                </div>
+                      {/* Product Core Info */}
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-black text-blue-600 uppercase tracking-widest">
+                            {previewProduct.brand || "StoreX"}
+                          </span>
+                          <div className="flex items-center gap-1.5 px-3 py-1 bg-slate-50 rounded-xl border border-slate-100">
+                            <Star
+                              size={14}
+                              className="fill-amber-400 text-amber-400"
+                            />
+                            <span className="text-sm font-black text-slate-700">
+                              {previewProduct.rating || 0}
+                            </span>
+                          </div>
+                        </div>
+                        <h3 className="text-3xl font-black text-slate-900 leading-tight">
+                          {previewProduct.name}
+                        </h3>
 
-                <div className="h-px bg-slate-100" />
+                        <div className="flex items-center gap-4">
+                          <div className="px-4 py-2 bg-blue-50 rounded-2xl border border-blue-100">
+                            <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-0.5">
+                              Category
+                            </p>
+                            <p className="text-sm font-bold text-slate-800">
+                              {categoryName}
+                            </p>
+                          </div>
+                          <div className="px-4 py-2 bg-slate-50 rounded-2xl border border-slate-100">
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">
+                              Gender
+                            </p>
+                            <p className="text-sm font-bold text-slate-800 capitalize">
+                              {previewProduct.gender || "Unisex"}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
 
-                {/* Detailed Stats Grid */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="p-5 bg-slate-50 rounded-3xl border border-slate-100">
-                    <IndianRupee className="text-blue-500 mb-3" size={20} />
-                    <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest">
-                      Base Price
-                    </p>
-                    <p className="text-xl font-black text-slate-900">
-                      ₹{previewProduct.price}
-                    </p>
-                  </div>
-                  <div className="p-5 bg-emerald-50/50 rounded-3xl border border-emerald-100">
-                    <Tag className="text-emerald-500 mb-3" size={20} />
-                    <p className="text-[11px] font-black text-emerald-600 uppercase tracking-widest">
-                      Stock Level
-                    </p>
-                    <p className="text-xl font-black text-emerald-900">
-                      {previewProduct.stock} Units
-                    </p>
-                  </div>
-                </div>
+                      <div className="h-px bg-slate-100" />
 
-                {/* Status Toggles */}
-                <div className="space-y-3 pt-2">
-                  <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100">
-                    <div className="flex items-center gap-3">
-                      <Eye className="text-slate-400" size={18} />
-                      <span className="text-sm font-bold text-slate-700">
-                        Visibility Status
-                      </span>
-                    </div>
-                    <VisibilityToggle
-                      isVisible={previewProduct.isVisible}
-                      onToggle={() => {}}
-                    />
-                  </div>
-                </div>
+                      {/* Detailed Stats Grid */}
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="p-5 bg-slate-50 rounded-3xl border border-slate-100">
+                          <IndianRupee
+                            className="text-blue-500 mb-3"
+                            size={20}
+                          />
+                          <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest">
+                            Base Price
+                          </p>
+                          <p className="text-xl font-black text-slate-900">
+                            ₹{discountPrice || price}
+                          </p>
+                          {discountPrice && (
+                            <p className="text-[11px] text-slate-400 line-through font-bold">
+                              ₹{price}
+                            </p>
+                          )}
+                        </div>
+                        <div className="p-5 bg-emerald-50/50 rounded-3xl border border-emerald-100">
+                          <Tag className="text-emerald-500 mb-3" size={20} />
+                          <p className="text-[11px] font-black text-emerald-600 uppercase tracking-widest">
+                            Stock Level
+                          </p>
+                          <p className="text-xl font-black text-emerald-900">
+                            {totalStock} Units
+                          </p>
+                        </div>
+                      </div>
 
-                {/* Action Buttons */}
-                <div className="flex flex-col gap-3 pt-4">
-                  <button className="w-full h-14 bg-blue-600 text-white font-black rounded-2xl shadow-xl shadow-blue-500/20 hover:bg-blue-700 transition-all flex items-center justify-center gap-2">
-                    <Edit3 size={18} /> Full Product Edit
-                  </button>
-                  <button className="w-full h-14 border border-slate-200 text-slate-600 font-bold rounded-2xl hover:bg-slate-50 transition-all flex items-center justify-center gap-2">
-                    <ExternalLink size={18} /> View on Website
-                  </button>
-                </div>
+                      {/* Status Toggles */}
+                      <div className="space-y-3 pt-2">
+                        <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                          <div className="flex items-center gap-3">
+                            <Eye className="text-slate-400" size={18} />
+                            <span className="text-sm font-bold text-slate-700">
+                              Visibility Status
+                            </span>
+                          </div>
+                          <VisibilityToggle
+                            isVisible={previewProduct.is_visible}
+                            onToggle={() =>
+                              handleToggleVisibility(
+                                previewProduct.id,
+                                previewProduct.is_visible,
+                              )
+                            }
+                          />
+                        </div>
+                        <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                          <div className="flex items-center gap-3">
+                            <Star className="text-slate-400" size={18} />
+                            <span className="text-sm font-bold text-slate-700">
+                              Featured Product
+                            </span>
+                          </div>
+                          <VisibilityToggle
+                            isVisible={previewProduct.is_featured}
+                            onToggle={() =>
+                              handleToggleFeatured(
+                                previewProduct.id,
+                                previewProduct.is_featured,
+                              )
+                            }
+                          />
+                        </div>
+                        <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100">
+                          <div className="flex items-center gap-3">
+                            <Tag className="text-slate-400" size={18} />
+                            <span className="text-sm font-bold text-slate-700">
+                              On Sale Status
+                            </span>
+                          </div>
+                          <VisibilityToggle
+                            isVisible={previewProduct.is_sale}
+                            onToggle={() =>
+                              handleToggleSale(
+                                previewProduct.id,
+                                previewProduct.is_sale,
+                              )
+                            }
+                          />
+                        </div>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="flex flex-col gap-3 pt-4">
+                        <button
+                          onClick={() => {
+                            setPreviewProduct(null);
+                            navigate(
+                              `/admin/edit-product/${previewProduct.id}`,
+                            );
+                          }}
+                          className="w-full h-14 bg-blue-600 text-white font-black rounded-2xl shadow-xl shadow-blue-500/20 hover:bg-blue-700 transition-all flex items-center justify-center gap-2"
+                        >
+                          <Edit3 size={18} /> Full Product Edit
+                        </button>
+                        <button
+                          onClick={() => {
+                            setPreviewProduct(null);
+                            navigate(
+                              `/products/${previewProduct.slug || previewProduct.id}`,
+                            );
+                          }}
+                          className="w-full h-14 border border-slate-200 text-slate-600 font-bold rounded-2xl hover:bg-slate-50 transition-all flex items-center justify-center gap-2"
+                        >
+                          <ExternalLink size={18} /> View on Website
+                        </button>
+                      </div>
+                    </>
+                  );
+                })()}
               </div>
             </motion.div>
           </>

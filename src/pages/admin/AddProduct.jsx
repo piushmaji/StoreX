@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
+import { createProduct, getCategories } from "../../services/productService";
 import {
   ArrowLeft,
   Type,
@@ -33,14 +35,7 @@ import {
   Settings2,
 } from "lucide-react";
 
-// ─── Constants ────────────────────────────────────────────────
-const CATEGORIES = [
-  { id: "1", name: "Men" },
-  { id: "2", name: "Women" },
-  { id: "3", name: "Accessories" },
-  { id: "4", name: "Streetwear" },
-  { id: "5", name: "Luxury" },
-];
+
 
 const GENDERS = ["Men", "Women", "Unisex", "Kids"];
 
@@ -141,7 +136,10 @@ const AddProduct = () => {
 
   // Images
   const [previews, setPreviews] = useState([]);
+  const [imageFiles, setImageFiles] = useState([]);
   const [dragging, setDragging] = useState(false);
+  const [dbCategories, setDbCategories] = useState([]);
+  const [isPublishing, setIsPublishing] = useState(false);
 
   // Status
   const [status, setStatus] = useState({
@@ -173,8 +171,29 @@ const AddProduct = () => {
     );
   }, [name]);
 
+  // Load categories from database on mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await getCategories();
+        if (data && data.length > 0) {
+          setDbCategories(data);
+        } else {
+          setDbCategories(CATEGORIES);
+        }
+      } catch (err) {
+        console.error("Failed to load DB categories, falling back:", err);
+        setDbCategories(CATEGORIES);
+      }
+    };
+    fetchCategories();
+  }, []);
+
   const handleImageUpload = (files) => {
-    const newPreviews = Array.from(files).map((file) =>
+    const newFiles = Array.from(files);
+    setImageFiles((prev) => [...prev, ...newFiles].slice(0, 8));
+
+    const newPreviews = newFiles.map((file) =>
       URL.createObjectURL(file),
     );
     setPreviews((prev) => [...prev, ...newPreviews].slice(0, 8));
@@ -197,6 +216,82 @@ const AddProduct = () => {
   const removeVariant = (id) => {
     if (variants.length > 1) {
       setVariants(variants.filter((v) => v.id !== id));
+    }
+  };
+
+  const handlePublish = async () => {
+    // 1. Validation
+    if (!name.trim()) {
+      toast.error("Please enter a product name.");
+      return;
+    }
+    if (!category) {
+      toast.error("Please select a category.");
+      return;
+    }
+    if (imageFiles.length === 0) {
+      toast.error("Please upload at least one product image.");
+      return;
+    }
+
+    // Validate variants
+    for (let i = 0; i < variants.length; i++) {
+      const v = variants[i];
+      if (!v.price || Number(v.price) <= 0) {
+        toast.error(`Variant #${i + 1} must have a valid price greater than 0.`);
+        return;
+      }
+      if (v.stock === "" || Number(v.stock) < 0) {
+        toast.error(`Variant #${i + 1} must have a valid stock of 0 or more.`);
+        return;
+      }
+      if (!v.size) {
+        toast.error(`Variant #${i + 1} size is required.`);
+        return;
+      }
+    }
+
+    // 2. Insert into database
+    setIsPublishing(true);
+    const loadingToast = toast.loading("Publishing product and uploading assets...");
+
+    try {
+      const productPayload = {
+        name,
+        description: description || null,
+        category_id: category,
+        brand: brand || null,
+        material: material || null,
+        style: style || null,
+        gender,
+        slug,
+        is_visible: status.visible,
+        is_featured: status.featured,
+        is_new: status.newArrival,
+        is_sale: status.onSale,
+      };
+
+      const variantPayload = variants.map((v) => ({
+        size: v.size,
+        color: v.color,
+        stock: Number(v.stock),
+        price: Number(v.price),
+        discountPrice: v.discountPrice ? Number(v.discountPrice) : null,
+      }));
+
+      await createProduct({
+        productData: productPayload,
+        variants: variantPayload,
+        imageFiles,
+      });
+
+      toast.success("Product published successfully!", { id: loadingToast });
+      setIsPublishing(false);
+      navigate("/admin/products");
+    } catch (err) {
+      console.error("Error publishing product:", err);
+      toast.error(err.message || "Failed to publish product. Please try again.", { id: loadingToast });
+      setIsPublishing(false);
     }
   };
 
@@ -224,10 +319,23 @@ const AddProduct = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          <button className="px-4 py-2 text-sm font-bold text-slate-500 hover:text-slate-800 transition-colors">Discard</button>
-          <button className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 text-white text-sm font-black rounded-xl shadow-lg shadow-blue-500/20 hover:bg-blue-700 hover:-translate-y-0.5 transition-all active:scale-95">
-            <Sparkles size={16} />
-            <span>Publish Product</span>
+          <button
+            onClick={() => navigate("/admin/products")}
+            className="px-4 py-2 text-sm font-bold text-slate-500 hover:text-slate-800 transition-colors"
+          >
+            Discard
+          </button>
+          <button
+            onClick={handlePublish}
+            disabled={isPublishing}
+            className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 text-white text-sm font-black rounded-xl shadow-lg shadow-blue-500/20 hover:bg-blue-700 hover:-translate-y-0.5 transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
+          >
+            {isPublishing ? (
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <Sparkles size={16} />
+            )}
+            <span>{isPublishing ? "Publishing..." : "Publish Product"}</span>
           </button>
         </div>
       </div>
@@ -293,8 +401,8 @@ const AddProduct = () => {
                         onChange={(e) => setCategory(e.target.value)}
                       >
                         <option value="">Select Category</option>
-                        {CATEGORIES.map((c) => (
-                          <option key={c.id} value={c.name}>
+                        {dbCategories.map((c) => (
+                          <option key={c.id} value={c.id}>
                             {c.name}
                           </option>
                         ))}
@@ -408,6 +516,9 @@ const AddProduct = () => {
                               setPreviews((prev) =>
                                 prev.filter((_, i) => i !== idx),
                               );
+                              setImageFiles((prev) =>
+                                prev.filter((_, i) => i !== idx),
+                              );
                             }}
                             className="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-md text-white hover:bg-red-500 transition-colors flex items-center justify-center"
                           >
@@ -455,10 +566,18 @@ const AddProduct = () => {
                           <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                             Size
                           </label>
-                          <select className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition-all">
+                          <select
+                            className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition-all"
+                            value={v.size}
+                            onChange={(e) => {
+                              const newV = [...variants];
+                              newV[idx].size = e.target.value;
+                              setVariants(newV);
+                            }}
+                          >
                             {["XS", "S", "M", "L", "XL", "XXL"].map((s) => (
                               <option key={s} value={s}>
-                                {s}
+                                    {s}
                               </option>
                             ))}
                           </select>
@@ -488,6 +607,11 @@ const AddProduct = () => {
                             type="number"
                             className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition-all"
                             value={v.stock}
+                            onChange={(e) => {
+                              const newV = [...variants];
+                              newV[idx].stock = e.target.value;
+                              setVariants(newV);
+                            }}
                           />
                         </div>
                         <div className="md:col-span-1 space-y-2">
@@ -502,6 +626,11 @@ const AddProduct = () => {
                               type="number"
                               className="w-full pl-6 pr-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition-all font-bold"
                               value={v.price}
+                              onChange={(e) => {
+                                const newV = [...variants];
+                                newV[idx].price = e.target.value;
+                                setVariants(newV);
+                              }}
                             />
                           </div>
                         </div>
@@ -518,6 +647,11 @@ const AddProduct = () => {
                               placeholder="Off"
                               className="w-full pl-6 pr-3 py-2.5 bg-emerald-50/50 border border-emerald-100 rounded-xl text-sm focus:outline-none focus:border-emerald-500 transition-all text-emerald-700"
                               value={v.discountPrice}
+                              onChange={(e) => {
+                                const newV = [...variants];
+                                newV[idx].discountPrice = e.target.value;
+                                setVariants(newV);
+                              }}
                             />
                           </div>
                         </div>
@@ -597,7 +731,7 @@ const AddProduct = () => {
 
                 <div className="p-6 space-y-5">
                   {/* Preview Image */}
-                  <div className="aspect-[4/5] rounded-[24px] bg-slate-100 overflow-hidden relative border border-slate-50">
+                  <div className="aspect-4/5 rounded-[24px] bg-slate-100 overflow-hidden relative border border-slate-50">
                     {previews[0] ? (
                       <img
                         src={previews[0]}
@@ -623,7 +757,7 @@ const AddProduct = () => {
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
                       <span className="text-[9px] font-black text-blue-600 px-2 py-0.5 bg-blue-50 rounded-md uppercase tracking-wider">
-                        {category || "Category"}
+                        {dbCategories.find((c) => c.id === category)?.name || "Category"}
                       </span>
                       <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">
                         {brand || "StoreX"}

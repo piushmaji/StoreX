@@ -1,594 +1,970 @@
-import { useState, useRef, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { useNavigate, useParams } from "react-router-dom"
+import { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-hot-toast";
+import { getProductById, getCategories } from "../../services/productService";
+import supabase from "../../lib/Supabase/Supabase";
 import {
-  Upload, X, ChevronDown, Save, ArrowLeft,
-  Package, Tag, DollarSign, Layers, FileText,
-  ToggleLeft, ToggleRight, CheckCircle2, AlertCircle,
-  Image as ImageIcon, Plus, Trash2, Star, RefreshCw,
-  History, Eye, EyeOff, AlertTriangle
-} from "lucide-react"
-import { useProduct } from "../../context/admin/ProductContext"
-import Loader from "../../components/common/Loader/Loader"
+  ArrowLeft,
+  AlignLeft,
+  Layers,
+  Eye,
+  EyeOff,
+  ChevronDown,
+  Plus,
+  X,
+  Image as ImageIcon,
+  Sparkles,
+  Upload,
+  AlertCircle,
+  Layout,
+  Box,
+  Trash2,
+  Settings2,
+  Globe,
+} from "lucide-react";
 
-// ─── Helpers ──────────────────────────────────────────────────
-const inputCls = (hasError) =>
-  `w-full px-4 py-3 bg-slate-50 border rounded-xl text-sm text-slate-700 placeholder-slate-400
-     focus:outline-none focus:bg-white transition-all duration-200
-     ${hasError
-    ? "border-red-300 focus:border-red-400 focus:shadow-[0_0_0_3px_rgba(239,68,68,0.08)]"
-    : "border-slate-200 focus:border-blue-300 focus:shadow-[0_0_0_3px_rgba(59,130,246,0.08)]"}`
+const GENDERS = ["Men", "Women", "Unisex", "Kids"];
 
-const FIELD_VARIANTS = {
-  hidden: { opacity: 0, y: 10 },
-  visible: (i) => ({ opacity: 1, y: 0, transition: { delay: i * 0.05, duration: 0.28, ease: [0.22, 1, 0.36, 1] } })
-}
+// ─── Visual Custom Controls ────────────────────────────────────
 
-// ─── Field Wrapper ────────────────────────────────────────────
-const Field = ({ label, icon: Icon, error, children, index = 0, required, changed }) => (
-  <motion.div custom={index} variants={FIELD_VARIANTS} initial="hidden" animate="visible" className="space-y-1.5">
-    <div className="flex items-center justify-between">
-      <label className="flex items-center gap-1.5 text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.2em]">
-        {Icon && <Icon size={10} className="text-blue-400" />}
-        {label}
-        {required && <span className="text-blue-500">*</span>}
-      </label>
-      <AnimatePresence>
-        {changed && (
-          <motion.span initial={{ opacity: 0, x: 6 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }}
-            className="text-[9px] font-bold text-amber-500 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded-md">
-            Modified
-          </motion.span>
-        )}
-      </AnimatePresence>
-    </div>
-    {children}
-    <AnimatePresence>
-      {error && (
-        <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-          className="flex items-center gap-1 text-[11px] text-red-500 font-medium">
-          <AlertCircle size={10} /> {error}
-        </motion.p>
-      )}
-    </AnimatePresence>
-  </motion.div>
-)
-
-// ─── Image Manager ────────────────────────────────────────────
-const ImageManager = ({ images, onAdd, onRemove, onSetMain, error }) => {
-  const inputRef = useRef()
-
-  const processFiles = (files) => {
-    Array.from(files).forEach(file => {
-      if (!file.type.startsWith("image/")) return
-      const url = URL.createObjectURL(file)
-      onAdd({ file, preview: url, name: file.name, isNew: true })
-    })
-  }
-
-  return (
-    <div className="space-y-3">
-      <AnimatePresence>
-        {images.length > 0 && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-3 gap-2.5">
-            {images.map((img, i) => (
-              <motion.div key={img.preview || img.url}
-                initial={{ opacity: 0, scale: 0.92 }} animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.88 }} transition={{ duration: 0.18 }}
-                onClick={() => onSetMain(i)}
-                className={`relative group aspect-square rounded-xl overflow-hidden border-2 cursor-pointer transition-all duration-200
-                  ${i === 0 ? "border-blue-500 shadow-md shadow-blue-500/20" : "border-slate-200 hover:border-blue-300"}`}
-              >
-                <img src={img.preview || img.url} alt="" className="w-full h-full object-cover" />
-
-                {i === 0 && (
-                  <div className="absolute top-1.5 left-1.5 bg-blue-600 text-white text-[8px] font-black px-1.5 py-0.5 rounded-md flex items-center gap-0.5">
-                    <Star size={7} fill="white" /> Main
-                  </div>
-                )}
-
-                {img.isNew && (
-                  <div className="absolute top-1.5 right-6 bg-emerald-500 text-white text-[8px] font-black px-1.5 py-0.5 rounded-md">New</div>
-                )}
-
-                <button onClick={e => { e.stopPropagation(); onRemove(i) }}
-                  className="absolute top-1.5 right-1.5 w-5 h-5 bg-red-500 text-white rounded-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all shadow-md">
-                  <X size={9} strokeWidth={3} />
-                </button>
-
-                {i !== 0 && (
-                  <div className="absolute inset-0 bg-blue-600/0 group-hover:bg-blue-600/10 transition-all flex items-end justify-center pb-1.5 rounded-xl">
-                    <span className="text-[8px] font-bold text-blue-600 bg-white/90 px-1.5 py-0.5 rounded-md opacity-0 group-hover:opacity-100 transition-all">
-                      Set as main
-                    </span>
-                  </div>
-                )}
-              </motion.div>
-            ))}
-
-            <motion.div onClick={() => inputRef.current?.click()}
-              whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
-              className="aspect-square rounded-xl border-2 border-dashed border-slate-200 hover:border-blue-300 bg-slate-50 hover:bg-blue-50/40 flex flex-col items-center justify-center cursor-pointer transition-all gap-1">
-              <Plus size={16} className="text-slate-300" />
-              <span className="text-[9px] text-slate-400 font-semibold">Add</span>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {images.length === 0 && (
-        <div onClick={() => inputRef.current?.click()}
-          className={`border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer transition-all duration-200
-            ${error ? "border-red-300 bg-red-50/30" : "border-slate-200 bg-slate-50/50 hover:border-blue-300 hover:bg-blue-50/40"}`}
-        >
-          <div className="w-10 h-10 rounded-xl bg-slate-100 mx-auto mb-2 flex items-center justify-center">
-            <Upload size={16} className="text-slate-400" />
-          </div>
-          <p className="text-xs font-bold text-slate-500">Click to upload images</p>
-          <p className="text-[10px] text-slate-400 mt-0.5">PNG, JPG, WEBP · Max 5MB each</p>
+const Card = ({ children, title, icon: Icon, badge, className = "" }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    className={`bg-white rounded-[24px] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.02)] overflow-hidden ${className}`}
+  >
+    {(title || Icon) && (
+      <div className="px-6 py-5 border-b border-slate-50 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          {Icon && (
+            <div className="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
+              <Icon size={18} />
+            </div>
+          )}
+          <h3 className="text-[15px] font-bold text-slate-800">{title}</h3>
         </div>
-      )}
+        {badge && (
+          <span className="px-2.5 py-1 bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-wider rounded-lg">
+            {badge}
+          </span>
+        )}
+      </div>
+    )}
+    <div className="p-6">{children}</div>
+  </motion.div>
+);
 
-      <input ref={inputRef} type="file" accept="image/*" multiple className="hidden" onChange={e => processFiles(e.target.files)} />
-
-      {error && <p className="flex items-center gap-1 text-[11px] text-red-500 font-medium"><AlertCircle size={10} />{error}</p>}
-      {images.length > 0 && (
-        <p className="text-[10px] text-slate-400">
-          Click any image to <span className="text-blue-500 font-semibold">set as main</span>. Drag to reorder coming soon.
+const Input = ({ label, icon: Icon, error, ...props }) => (
+  <div className="space-y-2 flex-1">
+    {label && (
+      <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+        {Icon && <Icon size={12} className="text-blue-500/60" />}
+        {label}
+      </label>
+    )}
+    <div className="relative group">
+      <input
+        {...props}
+        className={`w-full px-4 py-3.5 bg-slate-50 border ${error ? "border-red-200" : "border-slate-200"} rounded-2xl text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 focus:bg-white transition-all duration-300`}
+      />
+      {error && (
+        <p className="mt-1.5 text-[11px] font-medium text-red-500 flex items-center gap-1">
+          <AlertCircle size={12} /> {error}
         </p>
       )}
     </div>
-  )
-}
+  </div>
+);
 
-// ─── Discard Confirm Modal ────────────────────────────────────
-const DiscardModal = ({ onConfirm, onClose }) => (
-  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-    className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm"
-    onClick={onClose}
+const Toggle = ({ active, onClick, label, sub }) => (
+  <div
+    onClick={onClick}
+    className={`flex items-center justify-between p-4 rounded-2xl border-2 cursor-pointer transition-all duration-300 ${
+      active
+        ? "bg-blue-50/50 border-blue-100"
+        : "bg-white border-slate-100 hover:border-slate-200"
+    }`}
   >
-    <motion.div initial={{ opacity: 0, scale: 0.95, y: 16 }} animate={{ opacity: 1, scale: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95 }} transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-      onClick={e => e.stopPropagation()}
-      className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl"
-    >
-      <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center mb-4">
-        <AlertTriangle size={20} className="text-amber-500" />
-      </div>
-      <h3 className="text-lg font-black text-slate-800">Discard Changes?</h3>
-      <p className="text-sm text-slate-400 mt-1 mb-5">All unsaved edits will be lost. This action cannot be undone.</p>
-      <div className="flex gap-2">
-        <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-500 hover:bg-slate-50 transition-all">
-          Keep Editing
-        </button>
-        <button onClick={onConfirm} className="flex-1 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold transition-all shadow-md shadow-amber-500/25">
-          Discard
-        </button>
-      </div>
-    </motion.div>
-  </motion.div>
-)
-
-// ─── Success Toast ────────────────────────────────────────────
-const SuccessToast = ({ onClose }) => (
-  <motion.div initial={{ opacity: 0, y: 24, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }}
-    exit={{ opacity: 0, y: 12, scale: 0.95 }}
-    className="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-white border border-emerald-200 px-5 py-4 rounded-2xl shadow-xl shadow-emerald-500/10"
-  >
-    <div className="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0">
-      <CheckCircle2 size={18} className="text-emerald-500" />
-    </div>
     <div>
-      <p className="text-sm font-bold text-slate-800">Changes Saved!</p>
-      <p className="text-xs text-slate-400">Product updated successfully.</p>
+      <p
+        className={`text-sm font-bold ${active ? "text-blue-700" : "text-slate-700"}`}
+      >
+        {label}
+      </p>
+      <p className="text-[11px] text-slate-400 mt-0.5">{sub}</p>
     </div>
-    <button onClick={onClose} className="ml-2 text-slate-300 hover:text-slate-500 transition-colors"><X size={14} /></button>
-  </motion.div>
-)
+    <div
+      className={`w-10 h-6 rounded-full relative transition-colors duration-300 ${active ? "bg-blue-600" : "bg-slate-200"}`}
+    >
+      <motion.div
+        animate={{ x: active ? 18 : 2 }}
+        className="absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm"
+      />
+    </div>
+  </div>
+);
 
-// ─── Main Page ────────────────────────────────────────────────
+// ─── Main Controller Page ──────────────────────────────────────
+
 const EditProduct = () => {
-  const { id } = useParams()
-  const navigate = useNavigate()
-  const { products, categories, updateProduct } = useProduct()
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const fileInputRef = useRef();
 
-  const [loading, setLoading] = useState(false)
-  const [fetching, setFetching] = useState(true)
-  const [showSuccess, setShowSuccess] = useState(false)
-  const [showDiscard, setShowDiscard] = useState(false)
-  const [images, setImages] = useState([])   // { url?, preview, file?, name?, isNew }
-  const [original, setOriginal] = useState(null)
-  const [errors, setErrors] = useState({})
+  // Form State
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [brand, setBrand] = useState("");
+  const [material, setMaterial] = useState("");
+  const [style, setStyle] = useState("");
+  const [gender, setGender] = useState("Unisex");
+  const [category, setCategory] = useState("");
+  const [slug, setSlug] = useState("");
 
-  const [form, setForm] = useState({
-    name: "", description: "", price: "",
-    category_id: "", stock: "", is_visible: true,
-  })
+  // Loading & Action states
+  const [loading, setLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [dbCategories, setDbCategories] = useState([]);
+  const [dragging, setDragging] = useState(false);
 
-  // ── Resolve product from context (no extra fetch needed) ──
+  // Status Toggles
+  const [status, setStatus] = useState({
+    visible: true,
+    featured: false,
+    newArrival: false,
+    onSale: false,
+  });
+
+  // Images state: contains { url, preview, file, isNew }
+  const [images, setImages] = useState([]);
+
+  // Variants state
+  const [variants, setVariants] = useState([]);
+  const [originalVariants, setOriginalVariants] = useState([]);
+
+  // Load product metadata & attributes from Supabase on mount
   useEffect(() => {
-    if (products.length === 0) return  // still loading from context
+    const fetchProductData = async () => {
+      try {
+        setLoading(true);
+        const [cats, prod] = await Promise.all([
+          getCategories(),
+          getProductById(id),
+        ]);
 
-    const data = products.find(p => p.id === id)
-    if (!data) {
-      navigate("/admin/products")
-      return
+        setDbCategories(cats || []);
+
+        if (prod) {
+          setName(prod.name || "");
+          setDescription(prod.description || "");
+          setBrand(prod.brand || "");
+          setMaterial(prod.material || "");
+          setStyle(prod.style || "");
+          setCategory(prod.category_id || "");
+          setGender(prod.gender || "Unisex");
+          setSlug(prod.slug || "");
+
+          setStatus({
+            visible: prod.is_visible ?? true,
+            featured: prod.is_featured ?? false,
+            newArrival: prod.is_new ?? false,
+            onSale: prod.is_sale ?? false,
+          });
+
+          // Preload existing images
+          if (prod.image_urls && prod.image_urls.length > 0) {
+            setImages(
+              prod.image_urls.map((url) => ({
+                url,
+                preview: url,
+                isNew: false,
+              })),
+            );
+          }
+
+          // Preload existing variants
+          if (prod.variants && prod.variants.length > 0) {
+            const mapped = prod.variants.map((v) => ({
+              id: v.id,
+              size: v.size || "M",
+              color: v.color || "#000000",
+              stock: v.stock ?? 10,
+              price: v.price ?? 0,
+              discountPrice: v.discount_price ?? v.discountPrice ?? "",
+              isNew: false,
+            }));
+            setVariants(mapped);
+            setOriginalVariants(mapped);
+          } else {
+            setVariants([
+              {
+                id: Date.now(),
+                size: "M",
+                color: "#000000",
+                stock: 10,
+                price: 1299,
+                discountPrice: "",
+                isNew: true,
+              },
+            ]);
+          }
+        } else {
+          toast.error("Product not found.");
+          navigate("/admin/products");
+        }
+      } catch (err) {
+        console.error("Failed to load product edit details:", err);
+        toast.error("Error retrieving product details.");
+        navigate("/admin/products");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProductData();
+  }, [id, navigate]);
+
+  // Handle Drag and Drop uploads
+  const handleImageUpload = (files) => {
+    const newFiles = Array.from(files);
+    const newImages = newFiles.map((file) => ({
+      file,
+      preview: URL.createObjectURL(file),
+      isNew: true,
+    }));
+    setImages((prev) => [...prev, ...newImages].slice(0, 8));
+  };
+
+  const addVariant = () => {
+    setVariants([
+      ...variants,
+      {
+        id: Date.now(),
+        size: "M",
+        color: "#3B82F6",
+        stock: 10,
+        price: 1299,
+        discountPrice: "",
+        isNew: true,
+      },
+    ]);
+  };
+
+  const removeVariant = (variantId) => {
+    if (variants.length > 1) {
+      setVariants(variants.filter((v) => v.id !== variantId));
+    } else {
+      toast.error("At least one product variant is required.");
+    }
+  };
+
+  const handleSlugRegenerate = () => {
+    setSlug(
+      name
+        .toLowerCase()
+        .replace(/ /g, "-")
+        .replace(/[^\w-]+/g, ""),
+    );
+    toast.success("Slug generated based on product name!");
+  };
+
+  // Perform database updating
+  const handleSaveProduct = async () => {
+    // Validation rules
+    if (!name.trim()) {
+      toast.error("Please enter a product name.");
+      return;
+    }
+    if (!category) {
+      toast.error("Please select a category.");
+      return;
+    }
+    if (images.length === 0) {
+      toast.error("Please upload at least one image.");
+      return;
     }
 
-    const loaded = {
-      name: data.name || "",
-      description: data.description || "",
-      price: String(data.price || ""),
-      category_id: data.category_id || "",
-      stock: String(data.stock || ""),
-      is_visible: data.is_visible ?? true,
+    // Validate variants price/stock
+    for (let i = 0; i < variants.length; i++) {
+      const v = variants[i];
+      if (!v.price || Number(v.price) <= 0) {
+        toast.error(
+          `Variant #${i + 1} must have a valid price greater than 0.`,
+        );
+        return;
+      }
+      if (v.stock === "" || Number(v.stock) < 0) {
+        toast.error(`Variant #${i + 1} must have a valid stock of 0 or more.`);
+        return;
+      }
+      if (!v.size) {
+        toast.error(`Variant #${i + 1} size is required.`);
+        return;
+      }
     }
 
-    setForm(loaded)
-    setOriginal(loaded)
+    setIsSaving(true);
+    const loadingToast = toast.loading("Saving changes & uploading assets...");
 
-    // Convert existing image_urls array → image objects
-    if (data.image_urls?.length) {
-      setImages(data.image_urls.map(url => ({ url, preview: url, isNew: false })))
-    }
-
-    setFetching(false)
-  }, [id, products])
-
-  const set = (key, val) => {
-    setForm(f => ({ ...f, [key]: val }))
-    if (errors[key]) setErrors(e => ({ ...e, [key]: "" }))
-  }
-
-  const isChanged = (key) => original && form[key] !== original[key]
-  const hasAnyChange = original && (
-    Object.keys(form).some(k => form[k] !== original[k]) ||
-    images.some(img => img.isNew) ||
-    // also detect removed images
-    images.filter(i => !i.isNew).length !== (original ? products.find(p => p.id === id)?.image_urls?.length ?? 0 : 0)
-  )
-
-  const validate = () => {
-    const e = {}
-    if (!form.name.trim()) e.name = "Product name is required"
-    if (!form.description.trim()) e.description = "Description is required"
-    if (!form.price || isNaN(form.price) || Number(form.price) <= 0) e.price = "Enter a valid price"
-    if (!form.category_id) e.category_id = "Please select a category"
-    if (form.stock === "" || isNaN(form.stock) || Number(form.stock) < 0) e.stock = "Enter valid stock quantity"
-    if (images.length === 0) e.images = "At least one product image is required"
-    setErrors(e)
-    return Object.keys(e).length === 0
-  }
-
-  const handleSave = async () => {
-    if (!validate()) return
-    setLoading(true)
     try {
-      // Separate kept existing URLs from new files
-      const keptUrls = images.filter(img => !img.isNew).map(img => img.url)
-      const newFiles = images.filter(img => img.isNew).map(img => img.file)
+      // 1. Upload newly added image files to Supabase storage bucket "products"
+      const uploadedUrls = [];
 
-      await updateProduct(id, {
-        name: form.name.trim(),
-        description: form.description.trim(),
-        price: Number(form.price),
-        category_id: form.category_id,
-        stock: Number(form.stock),
-        is_visible: form.is_visible,
-        image_urls: keptUrls,   // context merges new uploads on top
-      }, newFiles)
+      for (const img of images) {
+        if (img.isNew) {
+          const file = img.file;
+          const fileName = `${Date.now()}-${file.name}`;
 
-      setOriginal({ ...form })
-      setImages(prev => prev.map(img => ({ ...img, isNew: false })))
-      setShowSuccess(true)
-      setTimeout(() => setShowSuccess(false), 3000)
+          const { error: uploadError } = await supabase.storage
+            .from("products")
+            .upload(fileName, file);
+
+          if (uploadError) throw uploadError;
+
+          const { data } = supabase.storage
+            .from("products")
+            .getPublicUrl(fileName);
+          uploadedUrls.push(data.publicUrl);
+        } else {
+          // Keep existing URL
+          uploadedUrls.push(img.url);
+        }
+      }
+
+      // 2. Perform updates to parent product fields
+      const productPayload = {
+        name,
+        description: description || null,
+        category_id: category,
+        brand: brand || null,
+        material: material || null,
+        style: style || null,
+        gender,
+        slug,
+        is_visible: status.visible,
+        is_featured: status.featured,
+        is_new: status.newArrival,
+        is_sale: status.onSale,
+        image_urls: uploadedUrls,
+        thumbnail: uploadedUrls[0] || null,
+      };
+
+      const { error: productError } = await supabase
+        .from("products")
+        .update(productPayload)
+        .eq("id", id);
+
+      if (productError) throw productError;
+
+      // 3. Perform variant updates, additions, and deletions
+      const currentVariantIds = variants
+        .filter((v) => !v.isNew)
+        .map((v) => v.id);
+      const deletedVariantIds = originalVariants
+        .map((ov) => ov.id)
+        .filter((oid) => !currentVariantIds.includes(oid));
+
+      // Execute Deletions
+      if (deletedVariantIds.length > 0) {
+        const { error: deleteError } = await supabase
+          .from("product_variants")
+          .delete()
+          .in("id", deletedVariantIds);
+
+        if (deleteError) throw deleteError;
+      }
+
+      // Execute Inserts / Updates
+      for (const v of variants) {
+        const variantPayload = {
+          product_id: id,
+          size: v.size,
+          color: v.color,
+          stock: Number(v.stock),
+          price: Number(v.price),
+          discount_price: v.discountPrice ? Number(v.discountPrice) : null,
+        };
+
+        if (v.isNew) {
+          const { error: insertError } = await supabase
+            .from("product_variants")
+            .insert([variantPayload]);
+
+          if (insertError) throw insertError;
+        } else {
+          const { error: updateError } = await supabase
+            .from("product_variants")
+            .update(variantPayload)
+            .eq("id", v.id);
+
+          if (updateError) throw updateError;
+        }
+      }
+
+      toast.success("Product updated successfully!", { id: loadingToast });
+      setIsSaving(false);
+      navigate("/admin/products");
     } catch (err) {
-      setErrors(e => ({ ...e, submit: err.message }))
-    } finally {
-      setLoading(false)
+      console.error("Error saving changes:", err);
+      toast.error(err.message || "Failed to update product details.", {
+        id: loadingToast,
+      });
+      setIsSaving(false);
     }
-  }
+  };
 
-  const handleReset = () => {
-    if (!original) return
-    setForm({ ...original })
-    setErrors({})
-    // Remove newly added images, keep originals
-    setImages(prev => prev.filter(img => !img.isNew))
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-8">
+        <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4" />
+        <p className="text-slate-500 font-bold text-sm">
+          Retrieving product specs...
+        </p>
+      </div>
+    );
   }
-
-  const handleBack = () => {
-    if (hasAnyChange) setShowDiscard(true)
-    else navigate("/admin/products")
-  }
-
-  // ── Loading skeleton ──
-  if (fetching) return <Loader text="Loading product..." />
 
   return (
-    <div className="min-h-screen bg-slate-50/50 p-6">
-      <div className="max-w-4xl mx-auto space-y-6">
-
-        {/* ── Header ── */}
-        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <button onClick={handleBack}
-              className="w-9 h-9 rounded-xl bg-white border border-slate-200 hover:border-blue-300 text-slate-500 hover:text-blue-600 flex items-center justify-center shadow-sm transition-all shrink-0">
-              <ArrowLeft size={16} />
-            </button>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-2xl font-black text-slate-900 tracking-tight">Edit Product</h1>
-                <AnimatePresence>
-                  {hasAnyChange && (
-                    <motion.span initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
-                      className="text-[9px] font-extrabold bg-amber-100 text-amber-600 border border-amber-200 px-2 py-0.5 rounded-full uppercase tracking-wider">
-                      Unsaved
-                    </motion.span>
-                  )}
-                </AnimatePresence>
-              </div>
-              <p className="text-slate-400 text-sm mt-0.5 truncate max-w-xs">{original?.name || `Product #${id}`}</p>
+    <div className="min-h-screen bg-[#F8FAFC] pb-20">
+      {/* ── Action Toolbar ── */}
+      <div className="max-w-[1400px] mx-auto px-6 md:px-10 py-6 flex items-center justify-between border-b border-slate-100 mb-8 bg-white/50 backdrop-blur-sm rounded-b-[32px]">
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => navigate("/admin/products")}
+            className="w-10 h-10 rounded-2xl bg-white border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-white hover:shadow-sm transition-all shadow-sm"
+          >
+            <ArrowLeft size={18} />
+          </button>
+          <div className="h-8 w-px bg-slate-200 mx-1 hidden sm:block" />
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 px-2.5 py-1 bg-amber-50 text-amber-600 text-[10px] font-black rounded-lg border border-amber-100 uppercase tracking-widest">
+              <div className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+              Editing Mode
             </div>
+            <p className="text-slate-400 font-bold text-[11px] tracking-tight hidden md:block">
+              Product ID: #{id}
+            </p>
           </div>
+        </div>
 
-          {/* Visibility toggle — desktop */}
-          <div className="hidden sm:flex items-center gap-3 bg-white border border-slate-200 rounded-2xl px-4 py-2.5 shadow-sm shrink-0">
-            <div className="text-right">
-              <p className="text-xs font-bold text-slate-700 flex items-center gap-1.5 justify-end">
-                {form.is_visible ? <Eye size={12} className="text-emerald-500" /> : <EyeOff size={12} className="text-slate-400" />}
-                {form.is_visible ? "Visible" : "Hidden"}
-              </p>
-              <p className="text-[10px] text-slate-400">{form.is_visible ? "Shown in store" : "Not visible"}</p>
-            </div>
-            <button onClick={() => set("is_visible", !form.is_visible)} className="transition-all shrink-0">
-              {form.is_visible
-                ? <ToggleRight size={30} className="text-blue-600" />
-                : <ToggleLeft size={30} className="text-slate-300" />
-              }
-            </button>
-          </div>
-        </motion.div>
-
-        {/* ── Main Grid ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-
-          {/* ── Left: Images + Status ── */}
-          <motion.div initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="lg:col-span-2 space-y-4">
-
-            {/* Image card */}
-            <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-5">
-              <div className="h-[2.5px] w-full bg-linear-to-r from-blue-600 via-blue-400 to-sky-300 rounded-full mb-5" />
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center">
-                    <ImageIcon size={13} className="text-blue-600" />
-                  </div>
-                  <h2 className="text-sm font-extrabold text-slate-700">Product Images</h2>
-                </div>
-                <span className="text-[10px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-lg">
-                  {images.length} photo{images.length !== 1 ? "s" : ""}
-                </span>
-              </div>
-
-              <ImageManager
-                images={images}
-                onAdd={(img) => setImages(prev => [...prev, img])}
-                onRemove={(i) => setImages(prev => prev.filter((_, idx) => idx !== i))}
-                onSetMain={(i) => setImages(prev => {
-                  const arr = [...prev]
-                  const [item] = arr.splice(i, 1)
-                  arr.unshift(item)
-                  return arr
-                })}
-                error={errors.images}
-              />
-            </div>
-
-            {/* Visibility — mobile */}
-            <div className="sm:hidden bg-white rounded-2xl border border-slate-100 shadow-sm p-4 flex items-center justify-between">
-              <div>
-                <p className="text-sm font-bold text-slate-700">Store Visibility</p>
-                <p className="text-xs text-slate-400">{form.is_visible ? "Visible to customers" : "Hidden from store"}</p>
-              </div>
-              <button onClick={() => set("is_visible", !form.is_visible)}>
-                {form.is_visible
-                  ? <ToggleRight size={28} className="text-blue-600" />
-                  : <ToggleLeft size={28} className="text-slate-300" />
-                }
-              </button>
-            </div>
-
-            {/* Unsaved change summary */}
-            <AnimatePresence>
-              {hasAnyChange && (
-                <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                  className="bg-amber-50 border border-amber-200 rounded-2xl p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <History size={13} className="text-amber-500" />
-                    <p className="text-[10px] font-extrabold text-amber-600 uppercase tracking-widest">Unsaved Changes</p>
-                  </div>
-                  <ul className="space-y-1">
-                    {Object.keys(form).filter(k => isChanged(k)).map(k => (
-                      <li key={k} className="text-[11px] text-amber-700 font-medium capitalize flex items-center gap-1.5">
-                        <span className="w-1 h-1 rounded-full bg-amber-400 shrink-0" />
-                        {k === "category_id" ? "category" : k === "is_visible" ? "visibility" : k} updated
-                      </li>
-                    ))}
-                    {images.some(i => i.isNew) && (
-                      <li className="text-[11px] text-amber-700 font-medium flex items-center gap-1.5">
-                        <span className="w-1 h-1 rounded-full bg-amber-400 shrink-0" />
-                        New images added
-                      </li>
-                    )}
-                  </ul>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
-
-          {/* ── Right: Form ── */}
-          <motion.div initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="lg:col-span-3">
-
-            <div className="bg-white rounded-3xl border border-slate-100 shadow-sm p-5 space-y-5">
-              <div className="h-[2.5px] w-full bg-linear-to-r from-blue-600 via-blue-400 to-sky-300 rounded-full" />
-
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center">
-                  <Package size={13} className="text-blue-600" />
-                </div>
-                <h2 className="text-sm font-extrabold text-slate-700">Product Details</h2>
-              </div>
-
-              {/* Name */}
-              <Field label="Product Name" icon={Package} error={errors.name} index={0} required changed={isChanged("name")}>
-                <input value={form.name} onChange={e => set("name", e.target.value)}
-                  placeholder="e.g. Nike Air Max 270" className={inputCls(errors.name)} />
-              </Field>
-
-              {/* Description */}
-              <Field label="Description" icon={FileText} error={errors.description} index={1} required changed={isChanged("description")}>
-                <textarea value={form.description} onChange={e => set("description", e.target.value)}
-                  placeholder="Describe the product — features, material, use cases..."
-                  rows={4} className={inputCls(errors.description) + " resize-none leading-relaxed"} />
-                <p className="text-right text-[10px] text-slate-300 font-medium">{form.description.length} chars</p>
-              </Field>
-
-              {/* Price + Stock */}
-              <div className="grid grid-cols-2 gap-4">
-                <Field label="Price (₹)" icon={DollarSign} error={errors.price} index={2} required changed={isChanged("price")}>
-                  <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-bold">₹</span>
-                    <input type="number" value={form.price} onChange={e => set("price", e.target.value)}
-                      placeholder="0.00" className={inputCls(errors.price) + " pl-8"} />
-                  </div>
-                </Field>
-
-                <Field label="Stock Qty" icon={Layers} error={errors.stock} index={3} required changed={isChanged("stock")}>
-                  <input type="number" value={form.stock} onChange={e => set("stock", e.target.value)}
-                    placeholder="0" className={inputCls(errors.stock)} />
-                  {form.stock !== "" && !isNaN(form.stock) && (
-                    <div className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-lg border mt-1
-                      ${Number(form.stock) === 0 ? "bg-red-50 text-red-500 border-red-200"
-                        : Number(form.stock) <= 10 ? "bg-amber-50 text-amber-600 border-amber-200"
-                          : "bg-emerald-50 text-emerald-600 border-emerald-200"}`}>
-                      <span className={`w-1.5 h-1.5 rounded-full
-                        ${Number(form.stock) === 0 ? "bg-red-400"
-                          : Number(form.stock) <= 10 ? "bg-amber-400" : "bg-emerald-500"}`} />
-                      {Number(form.stock) === 0 ? "Out of Stock" : Number(form.stock) <= 10 ? "Low Stock" : "In Stock"}
-                    </div>
-                  )}
-                </Field>
-              </div>
-
-              {/* Category — dropdown */}
-              <Field label="Category" icon={Tag} error={errors.category_id} index={4} required changed={isChanged("category_id")}>
-                <div className="relative">
-                  <select value={form.category_id} onChange={e => set("category_id", e.target.value)}
-                    className={inputCls(errors.category_id) + " appearance-none pr-10"}>
-                    <option value="">Select a category</option>
-                    {categories.map(c => (
-                      <option key={c.id} value={c.id}>{c.name}</option>
-                    ))}
-                  </select>
-                  <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-                </div>
-              </Field>
-
-              {/* Category pills */}
-              <div className="flex flex-wrap gap-2 -mt-2">
-                {categories.map(c => (
-                  <button key={c.id} type="button" onClick={() => set("category_id", c.id)}
-                    className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold border transition-all duration-150
-                      ${form.category_id === c.id
-                        ? "bg-blue-600 text-white border-blue-600 shadow-sm"
-                        : "bg-slate-50 text-slate-500 border-slate-200 hover:border-blue-200 hover:text-blue-600"
-                      }`}>
-                    {c.name}
-                  </button>
-                ))}
-              </div>
-
-              {/* Submit error */}
-              <AnimatePresence>
-                {errors.submit && (
-                  <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-                    className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-600 text-xs font-semibold px-4 py-3 rounded-xl">
-                    <AlertCircle size={14} /> {errors.submit}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Before → After comparison */}
-              <AnimatePresence>
-                {hasAnyChange && original && (
-                  <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}
-                    className="overflow-hidden">
-                    <div className="bg-linear-to-r from-blue-50 to-sky-50 border border-blue-100 rounded-2xl p-4">
-                      <p className="text-[9px] font-extrabold text-blue-400 uppercase tracking-widest mb-3">Before → After</p>
-                      <div className="grid grid-cols-2 gap-3 text-xs">
-                        {[
-                          { key: "name", label: "Name" },
-                          { key: "price", label: "Price", prefix: "₹" },
-                          { key: "stock", label: "Stock" },
-                          {
-                            key: "category_id", label: "Category",
-                            display: (val) => categories.find(c => c.id === val)?.name || val
-                          },
-                        ].filter(({ key }) => isChanged(key)).map(({ key, label, prefix = "", display }) => (
-                          <div key={key} className="bg-white rounded-xl p-2.5 border border-blue-100">
-                            <p className="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">{label}</p>
-                            <p className="text-slate-400 line-through text-[11px]">
-                              {prefix}{display ? display(original[key]) : original[key]}
-                            </p>
-                            <p className="text-blue-600 font-bold text-[11px]">
-                              {prefix}{display ? display(form[key]) : form[key]}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Action buttons */}
-              <div className="flex gap-3 pt-1">
-                <button onClick={handleReset} disabled={!hasAnyChange}
-                  className="flex items-center gap-2 px-5 py-3 rounded-xl border border-slate-200 bg-white text-slate-500 text-sm font-semibold hover:border-amber-200 hover:text-amber-500 hover:bg-amber-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
-                  <RefreshCw size={14} /> Revert
-                </button>
-
-                <motion.button onClick={handleSave} disabled={loading || !hasAnyChange}
-                  whileHover={{ scale: (loading || !hasAnyChange) ? 1 : 1.01 }}
-                  whileTap={{ scale: (loading || !hasAnyChange) ? 1 : 0.98 }}
-                  className="flex-1 flex items-center justify-center gap-2.5 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-bold transition-all shadow-lg shadow-blue-500/25">
-                  {loading ? (
-                    <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Saving...</>
-                  ) : (
-                    <><Save size={15} /> Save Changes</>
-                  )}
-                </motion.button>
-              </div>
-            </div>
-          </motion.div>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => navigate("/admin/products")}
+            className="px-4 py-2 text-sm font-bold text-slate-500 hover:text-slate-800 transition-colors"
+          >
+            Discard
+          </button>
+          <button
+            onClick={handleSaveProduct}
+            disabled={isSaving}
+            className="flex items-center gap-2 px-6 py-2.5 bg-blue-600 text-white text-sm font-black rounded-xl shadow-lg shadow-blue-500/20 hover:bg-blue-700 hover:-translate-y-0.5 transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none"
+          >
+            {isSaving ? (
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <Sparkles size={16} />
+            )}
+            <span>{isSaving ? "Saving..." : "Save Changes"}</span>
+          </button>
         </div>
       </div>
 
-      {/* ── Modals & Toasts ── */}
-      <AnimatePresence>
-        {showDiscard && <DiscardModal onClose={() => setShowDiscard(false)} onConfirm={() => navigate("/admin/products")} />}
-      </AnimatePresence>
-      <AnimatePresence>
-        {showSuccess && <SuccessToast onClose={() => setShowSuccess(false)} />}
-      </AnimatePresence>
-    </div>
-  )
-}
+      <main className="max-w-[1400px] mx-auto px-6 md:px-10 pt-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* LEFT COLUMN — Main Forms */}
+          <div className="lg:col-span-8 space-y-8">
+            {/* 1. Product Information */}
+            <Card title="Product Information" icon={Box}>
+              <div className="space-y-6">
+                <Input
+                  label="Product Name"
+                  placeholder="e.g. Classic Oversized Essential Hoodie"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
 
-export default EditProduct
+                <div className="space-y-2">
+                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                    <AlignLeft size={12} className="text-blue-500/60" />
+                    Description
+                  </label>
+                  <textarea
+                    rows={5}
+                    placeholder="Tell the story of this product..."
+                    className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 focus:bg-white transition-all duration-300 resize-none"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <Input
+                    label="Brand"
+                    placeholder="StoreX"
+                    value={brand}
+                    onChange={(e) => setBrand(e.target.value)}
+                  />
+                  <Input
+                    label="Material"
+                    placeholder="100% Organic Cotton"
+                    value={material}
+                    onChange={(e) => setMaterial(e.target.value)}
+                  />
+                  <Input
+                    label="Style"
+                    placeholder="Modern / Minimal"
+                    value={style}
+                    onChange={(e) => setStyle(e.target.value)}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                      Category
+                    </label>
+                    <div className="relative">
+                      <select
+                        className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm text-slate-700 appearance-none focus:outline-none focus:border-blue-500 transition-all cursor-pointer"
+                        value={category}
+                        onChange={(e) => setCategory(e.target.value)}
+                      >
+                        <option value="">Select Category</option>
+                        {dbCategories.map((c) => (
+                          <option key={c.id} value={c.id}>
+                            {c.name}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown
+                        size={14}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                      Gender
+                    </label>
+                    <div className="relative">
+                      <select
+                        className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm text-slate-700 appearance-none focus:outline-none focus:border-blue-500 transition-all cursor-pointer"
+                        value={gender}
+                        onChange={(e) => setGender(e.target.value)}
+                      >
+                        {GENDERS.map((g) => (
+                          <option key={g} value={g}>
+                            {g}
+                          </option>
+                        ))}
+                      </select>
+                      <ChevronDown
+                        size={14}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Slug Generator UI */}
+                <div className="space-y-2">
+                  <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest flex items-center justify-between">
+                    <span>URL Slug</span>
+                    <button
+                      type="button"
+                      onClick={handleSlugRegenerate}
+                      className="text-xs text-blue-600 hover:underline font-bold capitalize normal-case tracking-normal"
+                    >
+                      Sync with title
+                    </button>
+                  </label>
+                  <div className="flex items-center gap-2 text-[11px] font-bold text-slate-400 bg-slate-50 px-4 py-3.5 rounded-2xl border border-slate-150">
+                    <Globe size={12} className="text-blue-500 shrink-0" />
+                    <span className="shrink-0">storex.com/product/</span>
+                    <input
+                      type="text"
+                      className="bg-transparent text-blue-600 border-none outline-none focus:ring-0 p-0 m-0 w-full font-bold"
+                      value={slug}
+                      onChange={(e) => setSlug(e.target.value)}
+                    />
+                  </div>
+                </div>
+              </div>
+            </Card>
+
+            {/* 2. Product Images */}
+            <Card
+              title="Product Images"
+              icon={ImageIcon}
+              badge={`${images.length}/8`}
+            >
+              <div className="space-y-6">
+                <div
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    setDragging(true);
+                  }}
+                  onDragLeave={() => setDragging(false)}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    setDragging(false);
+                    handleImageUpload(e.dataTransfer.files);
+                  }}
+                  onClick={() => fileInputRef.current.click()}
+                  className={`relative h-52 rounded-[24px] border-2 border-dashed flex flex-col items-center justify-center transition-all cursor-pointer ${
+                    dragging
+                      ? "border-blue-400 bg-blue-50/50 scale-[1.01]"
+                      : "border-slate-200 bg-slate-50/50 hover:bg-slate-50 hover:border-blue-200"
+                  }`}
+                >
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    multiple
+                    className="hidden"
+                    onChange={(e) => handleImageUpload(e.target.files)}
+                  />
+                  <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center text-blue-500 mb-3 border border-slate-100">
+                    <Upload size={24} />
+                  </div>
+                  <p className="text-sm font-bold text-slate-700">
+                    Drag & drop images here
+                  </p>
+                  <p className="text-[11px] text-slate-400 mt-1 font-medium">
+                    PNG, JPG, WebP up to 10MB
+                  </p>
+                </div>
+
+                {/* Preview Grid */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  <AnimatePresence>
+                    {images.map((img, idx) => (
+                      <motion.div
+                        key={img.preview}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.8 }}
+                        className="group relative aspect-square rounded-[20px] overflow-hidden border border-slate-100 bg-white"
+                      >
+                        <img
+                          src={img.preview}
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                          alt=""
+                        />
+                        <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                          {idx !== 0 && (
+                            <button
+                              onClick={() => {
+                                setImages((prev) => {
+                                  const arr = [...prev];
+                                  const [item] = arr.splice(idx, 1);
+                                  arr.unshift(item);
+                                  return arr;
+                                });
+                              }}
+                              className="px-2 py-1 bg-white/20 hover:bg-white/40 backdrop-blur-md rounded-lg text-white text-[9px] font-black transition-all"
+                            >
+                              Set Main
+                            </button>
+                          )}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setImages((prev) =>
+                                prev.filter((_, i) => i !== idx),
+                              );
+                            }}
+                            className="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-md text-white hover:bg-red-500 transition-colors flex items-center justify-center"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                        {idx === 0 && (
+                          <div className="absolute top-2 left-2 px-2 py-1 bg-blue-600 text-white text-[8px] font-black uppercase rounded-md shadow-lg">
+                            Main
+                          </div>
+                        )}
+                        {img.isNew && (
+                          <div className="absolute top-2 right-2 px-2 py-1 bg-emerald-500 text-white text-[8px] font-black uppercase rounded-md shadow-lg">
+                            New
+                          </div>
+                        )}
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+
+                  {images.length < 8 && (
+                    <div
+                      onClick={() => fileInputRef.current.click()}
+                      className="aspect-square rounded-[20px] border border-slate-200 border-dashed bg-slate-50/50 flex flex-col items-center justify-center text-slate-400 hover:border-blue-300 hover:text-blue-500 transition-all cursor-pointer"
+                    >
+                      <Plus size={20} />
+                      <span className="text-[10px] font-bold uppercase mt-2">
+                        Add
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </Card>
+
+            {/* 3. Product Variants */}
+            <Card title="Product Variants" icon={Layers}>
+              <div className="space-y-6">
+                <AnimatePresence mode="popLayout">
+                  {variants.map((v, idx) => (
+                    <motion.div
+                      key={v.id}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: 10 }}
+                      className="relative p-6 bg-slate-50/50 rounded-[24px] border border-slate-100 group"
+                    >
+                      <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
+                        <div className="md:col-span-1 space-y-2">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            Size
+                          </label>
+                          <select
+                            className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition-all cursor-pointer"
+                            value={v.size}
+                            onChange={(e) => {
+                              const newV = [...variants];
+                              newV[idx].size = e.target.value;
+                              setVariants(newV);
+                            }}
+                          >
+                            {["XS", "S", "M", "L", "XL", "XXL"].map((s) => (
+                              <option key={s} value={s}>
+                                {s}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div className="md:col-span-1 space-y-2">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            Color
+                          </label>
+                          <div className="relative">
+                            <input
+                              type="color"
+                              className="w-full h-10 p-1 bg-white border border-slate-200 rounded-xl cursor-pointer"
+                              value={v.color}
+                              onChange={(e) => {
+                                const newV = [...variants];
+                                newV[idx].color = e.target.value;
+                                setVariants(newV);
+                              }}
+                            />
+                          </div>
+                        </div>
+                        <div className="md:col-span-1 space-y-2">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            Stock
+                          </label>
+                          <input
+                            type="number"
+                            className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition-all font-semibold text-slate-700"
+                            value={v.stock}
+                            onChange={(e) => {
+                              const newV = [...variants];
+                              newV[idx].stock = e.target.value;
+                              setVariants(newV);
+                            }}
+                          />
+                        </div>
+                        <div className="md:col-span-1 space-y-2">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            Price
+                          </label>
+                          <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">
+                              ₹
+                            </span>
+                            <input
+                              type="number"
+                              className="w-full pl-6 pr-3 py-2.5 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-blue-500 transition-all font-black text-slate-800"
+                              value={v.price}
+                              onChange={(e) => {
+                                const newV = [...variants];
+                                newV[idx].price = e.target.value;
+                                setVariants(newV);
+                              }}
+                            />
+                          </div>
+                        </div>
+                        <div className="md:col-span-1 space-y-2">
+                          <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-emerald-500">
+                            Discount
+                          </label>
+                          <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-emerald-400 text-xs">
+                              ₹
+                            </span>
+                            <input
+                              type="number"
+                              placeholder="Off"
+                              className="w-full pl-6 pr-3 py-2.5 bg-emerald-50/50 border border-emerald-100 rounded-xl text-sm focus:outline-none focus:border-emerald-500 transition-all text-emerald-700 font-bold"
+                              value={v.discountPrice}
+                              onChange={(e) => {
+                                const newV = [...variants];
+                                newV[idx].discountPrice = e.target.value;
+                                setVariants(newV);
+                              }}
+                            />
+                          </div>
+                        </div>
+                        <div className="md:col-span-1 flex justify-end">
+                          <button
+                            onClick={() => removeVariant(v.id)}
+                            className="w-10 h-10 rounded-xl bg-red-50 text-red-500 opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500 hover:text-white flex items-center justify-center cursor-pointer"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+
+                <button
+                  onClick={addVariant}
+                  className="w-full py-4 rounded-[20px] border-2 border-dashed border-slate-200 text-slate-500 hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50/30 transition-all flex items-center justify-center gap-2 text-sm font-bold cursor-pointer"
+                >
+                  <Plus size={18} /> Add Another Variant
+                </button>
+              </div>
+            </Card>
+          </div>
+
+          {/* RIGHT COLUMN — Sticky Preview & Status */}
+          <div className="lg:col-span-4 space-y-8 sticky top-28">
+            {/* 4. Product Status */}
+            <Card title="Availability & Visibility" icon={Settings2}>
+              <div className="space-y-3">
+                <Toggle
+                  label="Visible in Store"
+                  sub="Enable product for customers"
+                  active={status.visible}
+                  onClick={() =>
+                    setStatus((s) => ({ ...s, visible: !s.visible }))
+                  }
+                />
+                <Toggle
+                  label="Featured Product"
+                  sub="Display in homepage spotlight"
+                  active={status.featured}
+                  onClick={() =>
+                    setStatus((s) => ({ ...s, featured: !s.featured }))
+                  }
+                />
+                <Toggle
+                  label="New Arrival"
+                  sub="Showcase in 'What's New'"
+                  active={status.newArrival}
+                  onClick={() =>
+                    setStatus((s) => ({ ...s, newArrival: !s.newArrival }))
+                  }
+                />
+                <Toggle
+                  label="On Sale"
+                  sub="Enable promotional pricing"
+                  active={status.onSale}
+                  onClick={() =>
+                    setStatus((s) => ({ ...s, onSale: !s.onSale }))
+                  }
+                />
+              </div>
+            </Card>
+
+            {/* 5. Live Product Preview */}
+            <div className="relative group">
+              <div className="absolute -inset-1 bg-linear-to-r from-blue-500 to-sky-400 rounded-[34px] blur-xl opacity-20 group-hover:opacity-30 transition duration-1000"></div>
+              <div className="relative bg-white rounded-[32px] border border-slate-100 shadow-[0_20px_50px_rgba(0,0,0,0.05)] overflow-hidden">
+                <div className="px-6 py-5 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
+                  <span className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                    Live Preview
+                  </span>
+                  <Layout size={14} className="text-blue-500" />
+                </div>
+
+                <div className="p-6 space-y-5">
+                  {/* Preview Image */}
+                  <div className="aspect-4/5 rounded-[24px] bg-slate-100 overflow-hidden relative border border-slate-50">
+                    {images[0] ? (
+                      <img
+                        src={images[0].preview}
+                        className="w-full h-full object-cover"
+                        alt=""
+                      />
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center text-slate-300">
+                        <ImageIcon size={48} strokeWidth={1} />
+                        <span className="text-[10px] font-bold uppercase tracking-widest mt-4">
+                          No Image
+                        </span>
+                      </div>
+                    )}
+                    {status.onSale && (
+                      <div className="absolute top-4 left-4 px-3 py-1 bg-white/90 backdrop-blur-md rounded-full text-[10px] font-black text-blue-600 shadow-sm">
+                        SALE 20%
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Info */}
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[9px] font-black text-blue-600 px-2 py-0.5 bg-blue-50 rounded-md uppercase tracking-wider">
+                        {dbCategories.find((c) => c.id === category)?.name ||
+                          "Category"}
+                      </span>
+                      <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">
+                        {brand || "StoreX"}
+                      </span>
+                    </div>
+
+                    <h2 className="text-lg font-black text-slate-900 leading-tight">
+                      {name || "Premium Product Title"}
+                    </h2>
+
+                    <div className="flex items-end gap-3 pt-1">
+                      <span className="text-2xl font-black text-slate-900 leading-none">
+                        ₹{variants[0]?.price || "0"}
+                      </span>
+                      {variants[0]?.discountPrice && (
+                        <span className="text-sm font-bold text-slate-300 line-through pb-0.5">
+                          ₹{Number(variants[0].price) + 500}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Color Dots */}
+                    <div className="flex gap-2 pt-2">
+                      {variants.slice(0, 4).map((v) => (
+                        <div
+                          key={v.id}
+                          className="w-4 h-4 rounded-full border-2 border-white shadow-sm ring-1 ring-slate-100"
+                          style={{ backgroundColor: v.color }}
+                        />
+                      ))}
+                    </div>
+
+                    <div className="pt-4">
+                      <div className="w-full h-12 rounded-2xl bg-slate-900 flex items-center justify-center text-white text-sm font-black tracking-tight cursor-pointer">
+                        Preview Checkout
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default EditProduct;

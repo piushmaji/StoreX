@@ -24,7 +24,7 @@ const NAV = [
     items: [
       {
         to: "/admin/dashboard",
-        label: "dashboard",
+        label: "Dashboard",
         icon: LayoutDashboard,
         file: <OrderTable />,
       },

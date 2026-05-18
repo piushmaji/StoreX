@@ -6,7 +6,7 @@ export const getProducts = async () => {
       *,
       product_variants (*),
       categories (*),
-      product_reviews (*),
+      product_reviews (*)
     `);
 
   if (error) throw error;
@@ -39,8 +39,14 @@ export const getPaginatedProducts = async ({
 
   let query = supabase.from("products").select(selectQuery, { count: "exact" });
   // Apply Product-level filters
+  if (filters.search) {
+    query = query.or(`name.ilike.%${filters.search}%,id.ilike.%${filters.search}%`);
+  }
   if (filters.categoryId) {
     query = query.eq("category_id", filters.categoryId);
+  }
+  if (filters.brand && filters.brand !== "All") {
+    query = query.eq("brand", filters.brand);
   }
   if (filters.brands?.length > 0) {
     query = query.in("brand", filters.brands);
@@ -177,6 +183,7 @@ export const getProductBySlug = async (slug) => {
   return new Product(data);
 };
 
+//Get Products By categories
 export const getProductsByCategory = async (categorySlug) => {
   // First, find the category ID by name (case-insensitive)
   const { data: categoryData, error: categoryError } = await supabase
@@ -189,11 +196,13 @@ export const getProductsByCategory = async (categorySlug) => {
     // Fallback: search by gender field if category not found
     const { data, error } = await supabase
       .from("products")
-      .select(`
+      .select(
+        `
         *,
         product_variants (*),
         categories (*)
-      `)
+      `,
+      )
       .ilike("gender", categorySlug);
 
     if (error) throw error;
@@ -202,13 +211,152 @@ export const getProductsByCategory = async (categorySlug) => {
 
   const { data, error } = await supabase
     .from("products")
-    .select(`
+    .select(
+      `
       *,
       product_variants (*),
       categories (*)
-    `)
+    `,
+    )
     .eq("category_id", categoryData.id);
 
   if (error) throw error;
   return data.map((item) => new Product(item));
+};
+
+//Create Products
+export const createProduct = async ({ productData, variants, imageFiles }) => {
+  // Upload images
+  const uploadedUrls = [];
+
+  for (const file of imageFiles) {
+    const fileName = `${Date.now()}-${file.name}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("products")
+      .upload(fileName, file);
+
+    if (uploadError) throw uploadError;
+
+    const { data } = supabase.storage.from("products").getPublicUrl(fileName);
+
+    uploadedUrls.push(data.publicUrl);
+  }
+
+  // Insert product
+  const { data: product, error } = await supabase
+    .from("products")
+    .insert([
+      {
+        ...productData,
+
+        image_urls: uploadedUrls,
+
+        thumbnail: uploadedUrls[0],
+      },
+    ])
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  // Insert variants
+  const variantPayload = variants.map((v) => ({
+    product_id: product.id,
+
+    size: v.size,
+
+    color: v.color,
+
+    stock: Number(v.stock),
+
+    price: Number(v.price),
+
+    discount_price: v.discountPrice ? Number(v.discountPrice) : null,
+  }));
+
+  const { error: variantError } = await supabase
+    .from("product_variants")
+    .insert(variantPayload);
+
+  if (variantError) throw variantError;
+
+  // Price history
+  await supabase.from("price_history").insert([
+    {
+      product_id: product.id,
+      price: variants[0].price,
+    },
+  ]);
+
+  return new Product(product);
+};
+
+//Delete Products
+export const deleteProduct = async (productId) => {
+  const { error } = await supabase
+    .from("products")
+    .delete()
+    .eq("id", productId);
+
+  if (error) throw error;
+
+  return true;
+};
+
+//Update Products
+export const updateProduct = async ({ productId, productData }) => {
+  const { data, error } = await supabase
+    .from("products")
+    .update(productData)
+    .eq("id", productId)
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  return new Product(data);
+};
+
+//Update Variant
+export const updateVariant = async ({ variantId, variantData }) => {
+  const { data, error } = await supabase
+    .from("product_variants")
+    .update(variantData)
+    .eq("id", variantId)
+    .select()
+    .single();
+
+  if (error) throw error;
+
+  return data;
+};
+
+//Get Product By Id
+export const getProductById = async (id) => {
+  const { data, error } = await supabase
+    .from("products")
+    .select(
+      `
+      *,
+      product_variants (*),
+      categories (*)
+    `,
+    )
+    .eq("id", id)
+    .single();
+
+  if (error) throw error;
+
+  return new Product(data);
+};
+
+//Get All Categories
+export const getCategories = async () => {
+  const { data, error } = await supabase
+    .from("categories")
+    .select("*");
+
+  if (error) throw error;
+  return data;
 };

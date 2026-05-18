@@ -11,6 +11,13 @@ export class Product {
     reviews,
     image_urls,
     gender,
+    brand,
+    material,
+    style,
+    is_featured,
+    is_new,
+    is_sale,
+    thumbnail,
     
     // Virtual or nested fields from SELECT queries
     product_variants,
@@ -28,6 +35,13 @@ export class Product {
     this.reviews = reviews ? Number(reviews) : 0;
     this.image_urls = image_urls || [];
     this.gender = gender || null;
+    this.brand = brand || null;
+    this.material = material || null;
+    this.style = style || null;
+    this.is_featured = is_featured ?? false;
+    this.is_new = is_new ?? false;
+    this.is_sale = is_sale ?? false;
+    this.thumbnail = thumbnail || null;
     
     // Attach nested relational schemas if requested
     this.variants = product_variants || [];
