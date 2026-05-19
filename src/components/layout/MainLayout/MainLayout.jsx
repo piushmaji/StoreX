@@ -3,6 +3,7 @@ import Navbar from "../Navbar/Navbar";
 import Footer from "../Footer/Footer";
 import ScrollToTop from "../../common/ScrollToTop";
 import MobileBottomNav from "../Navbar/MobileBottomNav";
+import LokiAssistant from "../../common/LokiAssistant";
 
 const MainLayout = () => {
   const location = useLocation();
@@ -24,6 +25,7 @@ const MainLayout = () => {
       </div>
       <Footer />
       <MobileBottomNav />
+      <LokiAssistant />
     </>
   );
 };
